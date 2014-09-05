@@ -16905,7 +16905,7 @@ miaou(function(mountyhall){
 		var id = rawDB[name];
 		mountyhall.trollsById[id] = name;
 		// I'll do a prettier regex the day we have unicode support in js regexes...
-		if (/^['-\d@A-Z_a-z~\xa1-\xac\xae-\xaf\xb5-\xba\xc0-\xfe]{3,}$/.test(name)) {
+		if (/^['\-\d@A-Z_a-z~\xa1-\xac\xae-\xaf\xb5-\xba\xc0-\xfe]{3,}$/.test(name)) {
 			//~ console.log('OK:', name);
 			tbn[name.toLowerCase()] = id;
 		} else {
@@ -16922,7 +16922,7 @@ miaou(function(mountyhall){
 		"hum",
 		"l'autre", "lourd",
 		"malus", 'max', 'merci', 'moi', "monstre", "mort",
-		"parfait", 'pas',
+		"parfait", 'pas', "personne",
 		'son', "six",
 		'test', 'troll',
 		"yop",
