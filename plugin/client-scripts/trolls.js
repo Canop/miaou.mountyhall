@@ -16900,17 +16900,12 @@ miaou(function(mountyhall){
 	//  are exactly one word
 	mountyhall.trollsById = {};
 	var tbn = mountyhall.trollsByName = {};
-	var removed = 0;
 	for (var name in rawDB) {
 		var id = rawDB[name];
 		mountyhall.trollsById[id] = name;
 		// I'll do a prettier regex the day we have unicode support in js regexes...
 		if (/^['\-\d@A-Z_a-z~\xa1-\xac\xae-\xaf\xb5-\xba\xc0-\xfe]{3,}$/.test(name)) {
-			//~ console.log('OK:', name);
 			tbn[name.toLowerCase()] = id;
-		} else {
-			//~ console.log('NOK:', name);
-			removed++;
 		}
 	}
 	
@@ -16918,12 +16913,13 @@ miaou(function(mountyhall){
 		'autre', "aura",
 		'chonchon',
 		"darkling", "diablotin", 'don', "dudu",
-		"gros",
+		"gowaps", "gros",
 		"hum",
+		"invi",
 		"l'autre", "lourd",
 		"malus", 'max', 'merci', 'moi', "monstre", "mort",
-		"parfait", 'pas', "personne",
-		'son', "six",
+		"parfait", 'pas', "personne", "popo",
+		'son', "six", "sympa",
 		'test', 'troll',
 		"yop",
 		"wiki"
@@ -16950,11 +16946,14 @@ miaou(function(mountyhall){
 	
 	// a few aliases
 	alias('canopée', 'canop');
+	alias('divadel', 'diva');
 	alias('squ@le', 'squale');
 	alias('cirederf', 'cire');
 	alias('wouchy', 'wouch');
 	alias('bob-le-troll', 'blt', 'bobtroll');
 	alias('kergrog', 'kerg');
 	alias('gogo27', 'g27');
+	alias('schtroumph_vert_pomme', 'svp');
+	alias('Gruhtzog', 'grutz');
 
 });

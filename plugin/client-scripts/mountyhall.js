@@ -40,13 +40,17 @@ miaou(function(mountyhall, md, plugins){
 			return charmap[c];
 		});
 	}
-
+	
 	// this function is called on messages after they've been already rendered
 	function renderMessage($c){
 		changeText($c[0], function(s){
-			return s.replace(/['\-\d@A-Z_a-z~\xa1-\xac\xae-\xaf\xb5-\xba\xc0-\xfe]{3,}/g, function(s){
+			return s.replace(/['\-\d@A-Z_a-z~\xa1-\xac\xae-\xaf\xb5-\xba\xc0-\xfe]{3,}/g, function(s, i, t){
 				var r;
-				if ( r = mountyhall.trollsById[s] ) {
+				if (+s>1000) {
+					r = mountyhall.trollsById[s];
+					if (!r) return s;
+					var after = t.slice(i+s.length);
+					if (/^\s*(pv|%|points)/i.test(after)) return s; // let's not replace "5000" in "j'ai enlevé 5000 pv"
 					return '<a target=_blank href=http://games.mountyhall.com/mountyhall/View/PJView.php?ai_IDPJ='+s+
 						' title="Troll : '+escapeForTitle(r)+' ( '+s+' )"'+
 						' class=mountyhall'+
