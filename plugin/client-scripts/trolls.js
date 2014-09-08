@@ -16896,6 +16896,13 @@ miaou(function(mountyhall){
 "Créo":108720,
 	}
 
+
+/* TODO
+- ne virer les noms que de la recherche par nom
+- 
+*/
+
+
 	// The search algorithm is right now very simple, so we'll only keep the names which
 	//  are exactly one word
 	mountyhall.trollsById = {};
@@ -16909,18 +16916,22 @@ miaou(function(mountyhall){
 		}
 	}
 	
-	[ // removing stupid names
-		'autre', "aura",
-		'chonchon',
-		"darkling", "diablotin", 'don', "dudu",
-		"gowaps", "gros",
-		"hum",
-		"invi",
+	[ // removing common names
+		"ade", "arf", 'autre', "aura",
+		"caché", 'chonchon', "cross",
+		"dark", "darkling", "désolé", "diablotin", 'don', "dudu",
+		"fan",
+		"gogo", "gowaps", "gros",
+		"hum", "hypnos", "hypnotiseur",
+		"invi", "ira",
 		"l'autre", "lourd",
-		"malus", 'max', 'merci', 'moi', "monstre", "mort",
-		"parfait", 'pas', "personne", "popo",
-		'son', "six", "sympa",
-		'test', 'troll',
+		"malus", 'max', 'merci', "miam", "mithril", 'moi', "monstre", "mort", "mumuse", "musaraigne",
+		"ninix", "nos",
+		"oups",
+		"parfait", 'pas', "pâquerette", "pépin", "phoenix", "personne", "popo",
+		"rose",
+		'son', "souris", "six", "sympa",
+		'test', 'troll', "trollinet",
 		"yop",
 		"wiki"
 	].forEach(function(k){
@@ -16955,5 +16966,7 @@ miaou(function(mountyhall){
 	alias('gogo27', 'g27');
 	alias('schtroumph_vert_pomme', 'svp');
 	alias('Gruhtzog', 'grutz');
+
+	rawDB = null;
 
 });

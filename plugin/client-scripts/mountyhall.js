@@ -58,7 +58,7 @@ miaou(function(mountyhall, md, plugins){
 				}
 				if ( r = mountyhall.trollsByName[s.toLowerCase()] ) {
 					return '<a target=_blank href=http://games.mountyhall.com/mountyhall/View/PJView.php?ai_IDPJ='+r+
-						' title="Troll : '+escapeForTitle(mountyhall.trollsById[r])+' ( '+r+' )"'+						
+						' title="Troll : '+escapeForTitle(mountyhall.trollsById[r] || s)+' ( '+r+' )"'+						
 						' class=mountyhall'+
 						'>'+s+'</a>'
 				}
