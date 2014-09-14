@@ -16911,29 +16911,35 @@ miaou(function(mountyhall){
 		var id = rawDB[name];
 		mountyhall.trollsById[id] = name;
 		// I'll do a prettier regex the day we have unicode support in js regexes...
-		if (/^['\-\d@A-Z_a-z~\xa1-\xac\xae-\xaf\xb5-\xba\xc0-\xfe]{3,}$/.test(name)) {
+		if (
+			/^['\-\d@A-Z_a-z~\xa1-\xac\xae-\xaf\xb5-\xba\xc0-\xfe]{3,}$/.test(name)
+			&& !/^\d{1,4}$/.test(name) // avoiding names like "100"
+		) {
 			tbn[name.toLowerCase()] = id;
 		}
 	}
 	
 	[ // removing common names
 		"ade", "arf", 'autre', "aura",
-		"caché", 'chonchon', "cross",
+		"bibi", "blanche", "bleu", "bof", "bol", "boom",
+		"caché", "caribou", "cat", "champion", 'chonchon', "courte", "cross",
 		"dark", "darkling", "désolé", "diablotin", 'don', "dudu",
-		"fan",
-		"gogo", "gowaps", "gros",
+		"fan", "fanatique", "fichtre",
+		"gogo", "golem", "gowaps", "gros", "guy",
 		"hum", "hypnos", "hypnotiseur",
-		"invi", "ira",
-		"l'autre", "lourd",
-		"malus", 'max', 'merci', "miam", "mithril", 'moi', "monstre", "mort", "mumuse", "musaraigne",
+		"inscription", "invi", "ira",
+		"late", "l'autre", "lourd",
+		"malus", 'max', "meuh", 'merci', "miam", "mithril", "mini", "moche", 'moi', "monstre", "mort", "mounty", "mumuse", "musaraigne",
 		"ninix", "nos",
-		"oups",
-		"parfait", 'pas', "pâquerette", "pépin", "phoenix", "personne", "popo",
-		"rose",
-		'son', "souris", "six", "sympa",
-		'test', 'troll', "trollinet",
+		"ombre", "oups",
+		"paf", "parfait", 'pas', "pâquerette", "pépin", "phoenix", "personne", "poison", "popo", "poulet", "pub",
+		"retrouver", "roc", "rose",
+		"salade", 'son', "songe", "souris", "six", "sphynx", "steack", "sympa",
+		'test', "titan", "tomawak", 'troll', "trollinet", "trou",
+		"vrille",
+		"wiki",
 		"yop",
-		"wiki"
+		"zog"
 	].forEach(function(k){
 		delete tbn[k];
 	});
@@ -16956,16 +16962,18 @@ miaou(function(mountyhall){
 	}
 	
 	// a few aliases
+	alias('100', 't100');
 	alias('canopée', 'canop');
 	alias('divadel', 'diva');
 	alias('squ@le', 'squale');
+	alias('cebolla', 'cébo', 'cebo');
 	alias('cirederf', 'cire');
-	alias('wouchy', 'wouch');
 	alias('bob-le-troll', 'blt', 'bobtroll');
 	alias('kergrog', 'kerg');
 	alias('gogo27', 'g27');
-	alias('schtroumph_vert_pomme', 'svp');
 	alias('Gruhtzog', 'grutz');
+	alias('schtroumph_vert_pomme', 'svp');
+	alias('wouchy', 'wouch');
 
 	rawDB = null;
 

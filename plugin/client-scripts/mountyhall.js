@@ -46,7 +46,13 @@ miaou(function(mountyhall, md, plugins){
 		changeText($c[0], function(s){
 			return s.replace(/['\-\d@A-Z_a-z~\xa1-\xac\xae-\xaf\xb5-\xba\xc0-\xfe]{3,}/g, function(s, i, t){
 				var r;
-				if (+s>1000) {
+				if (/^\d{7}$/.test(s)) {
+					return '<a target=_blank href=http://games.mountyhall.com/mountyhall/View/MonsterView.php?ai_IDPJ='+s+
+						' title="Monstre n° '+s+'"'+						
+						' class=mountyhall'+
+						'>'+s+'</a>'
+				}
+				if (+s>10000) {
 					r = mountyhall.trollsById[s];
 					if (!r) return s;
 					var after = t.slice(i+s.length);
@@ -59,12 +65,6 @@ miaou(function(mountyhall, md, plugins){
 				if ( r = mountyhall.trollsByName[s.toLowerCase()] ) {
 					return '<a target=_blank href=http://games.mountyhall.com/mountyhall/View/PJView.php?ai_IDPJ='+r+
 						' title="Troll : '+escapeForTitle(mountyhall.trollsById[r] || s)+' ( '+r+' )"'+						
-						' class=mountyhall'+
-						'>'+s+'</a>'
-				}
-				if (/^\d{7}$/.test(s)) {
-					return '<a target=_blank href=http://games.mountyhall.com/mountyhall/View/MonsterView.php?ai_IDPJ='+s+
-						' title="Monstre n° '+s+'"'+						
 						' class=mountyhall'+
 						'>'+s+'</a>'
 				}

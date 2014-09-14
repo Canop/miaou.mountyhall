@@ -4,9 +4,15 @@
 
 var Promise = require("bluebird"),
 	iconvlite = require('iconv-lite'),
-	http = require('http');
+	http = require('http'),
+	abstract = require('./abstract.js'),
+	bot;
 
 exports.name = "MountyHall";
+
+exports.init = function(miaou){
+	bot = miaou.bot;
+}
 
 // queries a SP ("script public")
 // returns a promise which is resolved if all goes well with an array of arrays of strings (a csv table)
@@ -53,7 +59,7 @@ function createMHProfile(user, pluginPlayerInfos, vals) {
 
 // returns the HTML of the profile
 // or undefined if there's no profile
-function renderMHProfile(ppi) {
+function renderMHProfile(ppi){
 	var html = '';
 	if (ppi && ppi.troll && ppi.troll.id && ppi.troll.race) {
 		html += '<div style="background:url(http://games.mountyhall.com/MH_Packs/packMH_parchemin/fond/fond2.jpg);padding:2px;min-height:60px;line-height:30px;">';
@@ -67,6 +73,7 @@ function renderMHProfile(ppi) {
 	return html;
 }
 
+
 exports.externalProfile = {
 	creation: {
 		fields: [
@@ -75,4 +82,23 @@ exports.externalProfile = {
 		],
 		create: createMHProfile
 	}, render: renderMHProfile
+}
+
+exports.registerCommands = function(registerCommand){
+	registerCommand(
+		'oukonenest',
+		function(cmd, shoe, m, opts){
+			var match = m.content.match(/(\d{6,})/);
+			if (match) {
+				var num = +match[1];
+				if (num>567890 && num<15178164) {
+					return abstract.onMonster(bot, shoe, num);
+				}
+			}
+			throw "Précisez le numéro du monstre (par exemple `!!"+cmd+" 12345678`)";
+			
+		},
+		"essaye de récupérer les infos disponibles dans la salle à propos d'un monstre [développement en cours, attention]",
+		function(room){ return /[MH]/i.test(room.description) }
+	);
 }
