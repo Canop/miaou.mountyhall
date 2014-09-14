@@ -98,7 +98,7 @@ exports.registerCommands = function(registerCommand){
 			throw "Précisez le numéro du monstre (par exemple `!!"+cmd+" 12345678`)";
 			
 		},
-		"essaye de récupérer les infos disponibles dans la salle à propos d'un monstre [développement en cours, attention]",
+		"synthétise les infos disponibles dans la salle à propos de l'attaque sur un monstre",
 		function(room){ return /[MH]/i.test(room.description) }
 	);
 }

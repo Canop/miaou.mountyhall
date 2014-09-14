@@ -5,13 +5,13 @@ var patterns = [
 	{re:/CONNAISSANCE DES MONSTRES sur une?\s+([^\(]+)\s+\((\d{7})\)/i, res:['nom','id'], vals:{cdm:'ok'}},
 	{re:/La Cible subit donc pleinement l'effet/i, vals:{full:true}},
 	{re:/Le sortil.ge a donc un EFFET REDUIT/i, vals:{full:false}},
-	//{re:/Le sortil.ge (.*) a eu l'effet suivant/, res:['sort']}, pb à cause des : en fin de ligne...
-	{re:/Seuil de R.sistance de la Cible\.+: (\d+) %/, res:['seuilres']},
+	{re:/Le sortil.ge (.*) a eu l'effet/, res:['sort']},
+	{re:/Seuil de R.sistance de la Cible[\._\s]*: (\d+) %/, res:['seuilres']},
 	{re:/(\d\d)\/(\d\d)\/(\d{4}) (\d\d):(\d\d):\d\d MORT .* \( (\d+) \) a débarrassé le Monde Souterrain de la présence maléfique d´une? ([^\(]+) \(\s?(\d+)\s?\)/, res:['J','M','A','h','m','killer','nom','id']},
 	{re:/Vous avez attaqu. une? ([^\(]+) \(\s?(\d+)\s?\) .* comp/, res:['nom','id'], vals:{catatt:'comp'}},
 	{re:/Vous avez attaqu. une? ([^\(]+) \(\s?(\d+)\s?\) .* sortil/, res:['nom','id'], vals:{catatt:'sort'}},
 	{re:/Vous avez attaqu. une? ([^\(]+) \(\s?(\d+)\s?\)/, res:['nom','id'], vals:{typeatt:'AN'}},
-	{re:/Le Jet d'Esquive de votre adversaire est de\.*: (\d+)/, res:['esq']},
+	{re:/Le Jet d'Esquive de votre adversaire est de[\._\s]*: (\d+)/, res:['esq']},
 	{re:/Vous avez donc RAT. votre adversair/, vals:{touché:false}},
 	{re:/Vous avez donc TOUCH. votre adversaire par un coup critique/, vals:{touché:true, critique:true}},
 	{re:/Vous avez donc TOUCH. votre adversaire/, vals:{touché:true, critique:false}}, // due to last one
@@ -19,7 +19,7 @@ var patterns = [
 	{re:/Son Armure le prot.ge et il ne perdra que (\d+) points de vie/, res:['degnet']},
 	{re:/Il était alors aux alentours de : (\d\d)\/(\d\d)\/(\d{4}) (\d\d):(\d\d):\d\d/, res:['J','M','A','h','m']},
 	{re:/Résultat du Combat : (.*)/, res:['typeatt']},
-	{re:/Votre Jet d'Attaque est de\.*: (\d+)/, res:['att']},
+	{re:/Votre Jet d'Attaque est de[\._\s]+: (\d+)/, res:['att']},
 	{re:/Le Monstre Cibl. fait partie des : \w+ \(([^\-]+) - N°\s*(\d+)\s*\)/, res:['nom','id']},
 	{re:/Niveau\s*:\s*[^>:\(\)]*\s*\([^\(]+\)/, res:['niveau']},
 	{re:/Blessure\D+(\d+)\s*%/, res:['blessure']},
@@ -30,15 +30,13 @@ var patterns = [
 	{re:/Esquive\s*:\s*[^\(]+\(([^\)]+)\)/, res:['esq']},
 	{re:/une?\s+([^\(]+)\s+\((\d{7})\) a .t. influenc. par l'effet du sort/i, res:['nom','id']},
 	{re:/Hypnotis.e jusqu'. sa prochaine Date Limite d'Action/i, res:[], vals:{sort:'Hypnotisme'}},
-	{re:/Vous l'avez TU. et avez d.barrass. le Monde Souterrain de sa pr.sence mal.fique./i, vals:{kill:true}},
+	{re:/Vous l'avez TU. et avez d.barrass. le Monde Souterrain de sa pr.sence mal.fique/i, vals:{kill:true}},
 	{re:/vous avez gagn. un total de (\d+) PX/, res:['px']},
+	{re:/Il sera, de plus, fragilis. lors des prochaines esquives/i, res:[], vals:{done:true}},
+	{re:/PV : -\d+D\d+ \(-(\d+)\)/, res:['degnet']},
+	{re:/ a .t. tu. par cet effet/, vals:{kill:true}},
 	//~ {re://, res:[]},
-	{re:/\((\d{7})\)/, res:['id']},
 ];
-
-
-// explo
-
 function cpl(){
 	var cur = arguments[0];
 	if (!cur.id || !cur.nom) return false;
@@ -68,7 +66,7 @@ function getReportItem(o, isAtEnd){
 	if (cpl(o, 'touché')) {
 		r.action = o.typeatt || o.catatt;
 		r.détails = '';
-		if (o.touché && cpl(o, 'degbrut', 'degnet') && (isAtEnd||(o.px!==undefined))) {
+		if (o.touché && cpl(o, 'degbrut', 'degnet') && (isAtEnd||o.done||(o.px!==undefined))) {
 			if (o.critique) r.action += ' critique';
 			if (o.full===false) r.action += ' résisté';
 			r.pv = '**-'+o.degnet+' PV**';
@@ -108,6 +106,11 @@ function getReportItem(o, isAtEnd){
 		return r;
 	}
 	if (cpl(o, 'sort', 'full')) {
+		if (/explosion/i.test(o.sort)) {
+			if (!cpl(o, 'degnet')) return;
+			r.pv = '**-'+o.degnet+' PV**';
+			// fixme comment déterminer s'il est mort ?
+		}
 		r.action = o.sort;
 		if (!o.full) r.action += ' réduit';
 		r.détails = '';
@@ -119,12 +122,11 @@ function getReportItem(o, isAtEnd){
 
 // returns an array of objects (cdm, sorts, frappes, etc.) found in the message
 function parse(message){
-	if (/Message\|Action/.test(message.content) || /!!oukonenest/.test(message.content)) return []; // FIXME just for tests
 	console.log('parsing message '+formatTime(message.created))
-	var cur = {}, objects = [], lines = message.content.split('\n'), item;
+	var cur = {}, objects = [], lines = message.content.replace(/\.{2,}/g,'_').split(/[\n\.]+/), item;
 	for (var l=0; l<lines.length; l++) {
 		var line = lines[l], isAtEnd = l===lines.length-1;
-		if (/:\s*$/.test(line)) line += lines[++l] || "";
+		if (/blessure.*:\s*$/i.test(line)) line += lines[++l] || "";
 		console.log(line);
 		for (var i=0; i<patterns.length; i++) {
 			var p = patterns[i], m = line.match(p.re);
