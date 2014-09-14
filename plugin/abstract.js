@@ -5,8 +5,7 @@ var patterns = [
 	{re:/CONNAISSANCE DES MONSTRES sur une?\s+([^\(]+)\s+\((\d{7})\)/i, res:['nom','id'], vals:{cdm:'ok'}},
 	{re:/La Cible subit donc pleinement l'effet/i, vals:{full:true}},
 	{re:/Le sortil.ge a donc un EFFET REDUIT/i, vals:{full:false}},
-	{re:/Le sortil.ge (.*) a eu l'effet suivant/, res:['sort']},
-	{re:/un ([^\(]+) \(\s*(\d+)\s*\) a été influencé par l'effet du sortilège/, res:['','id']},
+	//{re:/Le sortil.ge (.*) a eu l'effet suivant/, res:['sort']}, pb à cause des : en fin de ligne...
 	{re:/Seuil de R.sistance de la Cible\.+: (\d+) %/, res:['seuilres']},
 	{re:/(\d\d)\/(\d\d)\/(\d{4}) (\d\d):(\d\d):\d\d MORT .* \( (\d+) \) a débarrassé le Monde Souterrain de la présence maléfique d´une? ([^\(]+) \(\s?(\d+)\s?\)/, res:['J','M','A','h','m','killer','nom','id']},
 	{re:/Vous avez attaqu. une? ([^\(]+) \(\s?(\d+)\s?\) .* comp/, res:['nom','id'], vals:{catatt:'comp'}},
@@ -29,13 +28,16 @@ var patterns = [
 	{re:/Points de Vie\s*:\s*[^\(]+\(\s*sup.erieur\s+a\s+(\d+)\s*\)/i, res:['pvmin']},
 	{re:/Attaque\s*:\s*[^\(]+\(([^\)]+)\)/, res:['att']},
 	{re:/Esquive\s*:\s*[^\(]+\(([^\)]+)\)/, res:['esq']},
-	//{re://, res:[]},
+	{re:/une?\s+([^\(]+)\s+\((\d{7})\) a .t. influenc. par l'effet du sort/i, res:['nom','id']},
+	{re:/Hypnotis.e jusqu'. sa prochaine Date Limite d'Action/i, res:[], vals:{sort:'Hypnotisme'}},
+	{re:/Vous l'avez TU. et avez d.barrass. le Monde Souterrain de sa pr.sence mal.fique./i, vals:{kill:true}},
+	{re:/vous avez gagn. un total de (\d+) PX/, res:['px']},
+	//~ {re://, res:[]},
 	{re:/\((\d{7})\)/, res:['id']},
 ];
 
-// explo
 
-// message | action | pv | détails
+// explo
 
 function cpl(){
 	var cur = arguments[0];
@@ -45,7 +47,6 @@ function cpl(){
 	}
 	return true;
 }
-
 
 var MMM = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 function formatDateDDMMM(date){
@@ -61,26 +62,24 @@ function formatTime(t){
 	}
 	return formatDateDDMMM(date) + (Y!==now.getFullYear() ? (' '+Y) : '')  + ' ' + s;
 }
-//~ 
-//~ function tominmax(str, m){
-	//~ if (m = str.match(/entre\s+(\d+)\s+et\s+(\d+)/i)) return [+m[1],+m[2]];
-	//~ if (m = str.match(/sup.rieur\s+.\s+(\d+)/i)) return [+m[1]];
-//~ }
 
-
-function getReportItem(o){
+function getReportItem(o, isAtEnd){
 	var r = {nom:o.nom, id:o.id};
 	if (cpl(o, 'touché')) {
 		r.action = o.typeatt || o.catatt;
 		r.détails = '';
-		if (o.touché && cpl(o, 'degbrut', 'degnet')) {
+		if (o.touché && cpl(o, 'degbrut', 'degnet') && (isAtEnd||(o.px!==undefined))) {
 			if (o.critique) r.action += ' critique';
 			if (o.full===false) r.action += ' résisté';
 			r.pv = '**-'+o.degnet+' PV**';
 			if (o.degbrut) r.pv += ' (-'+o.degbrut+')';
 			if (o.att) r.détails += 'att: '+o.att+'|';
 			if (o.esq) r.détails += 'esq: '+o.esq+'|';
-			if (o.seuilres) r.détails += 'Seuil res: '+o.seuilres+' %|';
+			if (o.kill) {
+				if (o.px!==undefined) r.détails += '**'+o.px+' PX**';
+			} else {
+				if (o.seuilres) r.détails += 'Seuil res: '+o.seuilres+' %';				
+			}
 			return r;
 		} else if (!o.touché && cpl(o, 'typeatt')) {
 			r.action += ' esquivé';
@@ -88,10 +87,6 @@ function getReportItem(o){
 			if (o.esq) r.détails += 'esq: '+o.esq+'|';
 			return r;
 		}
-	}
-	if (cpl(o, 'touché', 'degbrut', 'degnet')) {
-		r.action = o.typeatt || o.catatt;
-		return r;
 	}
 	if (cpl(o, 'arm', 'pvmin', 'blessure','esq')) {
 		var pvmin = +o.pvmin, pvmax = +o.pvmax, blessure = +o.blessure;
@@ -112,27 +107,39 @@ function getReportItem(o){
 		}
 		return r;
 	}
+	if (cpl(o, 'sort', 'full')) {
+		r.action = o.sort;
+		if (!o.full) r.action += ' réduit';
+		r.détails = '';
+		if (o.seuilres) r.détails += 'Seuil res: '+o.seuilres+' %|';
+		return r;
+	}
 	
 }
 
 // returns an array of objects (cdm, sorts, frappes, etc.) found in the message
 function parse(message){
+	if (/Message\|Action/.test(message.content) || /!!oukonenest/.test(message.content)) return []; // FIXME just for tests
+	console.log('parsing message '+formatTime(message.created))
 	var cur = {}, objects = [], lines = message.content.split('\n'), item;
 	for (var l=0; l<lines.length; l++) {
-		var line = lines[l];
+		var line = lines[l], isAtEnd = l===lines.length-1;
 		if (/:\s*$/.test(line)) line += lines[++l] || "";
 		console.log(line);
 		for (var i=0; i<patterns.length; i++) {
 			var p = patterns[i], m = line.match(p.re);
 			if (!m) continue;
 			for (var j=1; j<m.length; j++) {
-				cur[p.res[j-1]] = m[j].toLowerCase();
-				console.log(p.res[j-1], m[j].toLowerCase());
+				cur[p.res[j-1]] = m[j].trim();
+				console.log(' -> ', p.res[j-1], ' = ', m[j]);
 			}
 			if (p.vals) {
-				for (var k in p.vals) cur[k] = p.vals[k];
+				for (var k in p.vals) {
+					cur[k] = p.vals[k];
+					console.log(' -> ', k, ' = ', p.vals[k]);
+				}
 			}
-			if (item = getReportItem(cur)) {
+			if (item = getReportItem(cur, isAtEnd)) {
 				item.message = '['+message.authorname+' '+formatTime(message.created)+'](#'+message.id+')';
 				objects.push(item);
 				cur = {};
@@ -143,10 +150,11 @@ function parse(message){
 	return objects;
 }
 
-exports.onMonster = function(bot, shoe, id){	
+exports.onMonster = function(bot, shoe, id){
+	console.log("==================================\noukonenest "+id);
 	var db = shoe.db;
-	db.on([shoe.room.id, id, 'english', 50])
-	.spread(db.search)
+	db.on([shoe.room.id, id+'&!oukonenest', 'english', 50])
+	.spread(db.search_tsquery)
 	.map(parse)
 	.then(function(bananas){
 		var r, nom, items = [].concat.apply([], bananas.reverse()).filter(function(item){
@@ -155,7 +163,7 @@ exports.onMonster = function(bot, shoe, id){
 			return true;
 		});
 		if (items.length) {
-			r = nom + ' ('+id+')\n'+
+			r = "*oukonenest* : " + nom + ' ('+id+')\n'+
 				"Message|Action|PV|Détails\n"+
 				":-----|:----:|:-:|-------\n"+
 				items.map(function(i){
@@ -163,7 +171,12 @@ exports.onMonster = function(bot, shoe, id){
 				}).join('\n')+
 				"";
 		} else {
-			r = "Rien d'intéressant trouvé dans cette salle pour le monstre "+id;
+			r = "*oukonenest* : Rien d'intéressant trouvé dans cette salle pour le monstre "+id+" (";
+			switch (bananas.length) {
+				case 0:  r += "aucun message ne semble le mentionner)."; break;
+				case 1:  r += "un seul message le mentionne)."; break;
+				default: r += bananas.length+" messages)."; 
+			}
 		}
 		//~ r += JSON.stringify(objects, null, '\t');
 		shoe.botMessage(bot, r);
