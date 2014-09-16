@@ -23,11 +23,13 @@ var patterns = [
 	{re:/Le Monstre Cibl. fait partie des : \w+ \(([^\-]+) - N°\s*(\d+)\s*\)/, res:['nom','id']},
 	{re:/Niveau\s*:\s*[^>:\(\)]*\s*\([^\(]+\)/, res:['niveau']},
 	{re:/Blessure\D+(\d+)\s*%/, res:['blessure']},
-	{re:/Armure\s*:\s*[^\(]+\(([^\)]+)\)/, res:['arm']},
+	{re:/Armure\s*:\s*[^\(]+\(\s*entre\s+(\d+)\s+et\s+(\d+)\s*\)/i, res:['armuremin','armuremax']},
+	{re:/Armure\s*:\s*[^\(]+\(\s*sup.erieur\s+a\s+(\d+)\s*\)/i, res:['armuremin']},
+	{re:/Esquive\s*:\s*[^\(]+\(\s*entre\s+(\d+)\s+et\s+(\d+)\s*\)/i, res:['esquivemin','esquivemax']},
+	{re:/Esquive\s*:\s*[^\(]+\(\s*sup.erieur\s+a\s+(\d+)\s*\)/i, res:['esquivemin']},
 	{re:/Points de Vie\s*:\s*[^\(]+\(\s*entre\s+(\d+)\s+et\s+(\d+)\s*\)/i, res:['pvmin','pvmax']},
 	{re:/Points de Vie\s*:\s*[^\(]+\(\s*sup.erieur\s+a\s+(\d+)\s*\)/i, res:['pvmin']},
 	{re:/Attaque\s*:\s*[^\(]+\(([^\)]+)\)/, res:['att']},
-	{re:/Esquive\s*:\s*[^\(]+\(([^\)]+)\)/, res:['esq']},
 	{re:/une?\s+([^\(]+)\s+\((\d{7})\) a .t. influenc. par l'effet du sort/i, res:['nom','id']},
 	{re:/Hypnotis.e jusqu'. sa prochaine Date Limite d'Action/i, res:[], vals:{sort:'Hypnotisme'}},
 	{re:/Vous l'avez TU. et avez d.barrass. le Monde Souterrain de sa pr.sence mal.fique/i, vals:{kill:true}},
@@ -37,14 +39,7 @@ var patterns = [
 	{re:/ a .t. tu. par cet effet/, vals:{kill:true}},
 	//~ {re://, res:[]},
 ];
-function cpl(){
-	var cur = arguments[0];
-	if (!cur.id || !cur.nom) return false;
-	for (var i=1; i<arguments.length; i++) {
-		if (cur[arguments[i]]===undefined) return false;
-	}
-	return true;
-}
+
 
 var MMM = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 function formatDateDDMMM(date){
@@ -61,10 +56,61 @@ function formatTime(t){
 	return formatDateDDMMM(date) + (Y!==now.getFullYear() ? (' '+Y) : '')  + ' ' + s;
 }
 
-function getReportItem(o, isAtEnd){
+function cpl(){
+	var cur = arguments[0];
+	for (var i=1; i<arguments.length; i++) {
+		if (cur[arguments[i]]===undefined) return false;
+	}
+	return true;
+}
+
+function Monster(id){
+	this.id = id;
+	this.items = [];
+	this.nbMessages = 0;
+}
+Monster.prototype.addItem = function(item, message){
+	this.items.push(item);
+	this.nom = item.nom;
+	item.message = '['+message.authorname+' '+formatTime(message.created)+'](#'+message.id+')';
+}
+// returns a (shared) {min,max} object
+Monster.prototype.reduce = function(name, min, max){
+	var o = this[name.toLowerCase()];
+	if (name==='pv') {
+		if (min && min%10) min += 5;
+		if (max && max%10) max -= 5;
+	}
+	if (!o) return this[name]={min:min,max:max};
+	if (!(o.min>min)) o.min=min;
+	if (!(o.max<max)) o.max=max;
+	return o;
+}
+Monster.prototype.rangeCell = function(name, range){
+	var o = range || this[name.toLowerCase()];
+	if (!o) return '';
+	if (o.min==o.max) return name+': '+o.min;
+	if (!o.min) return name+' < '+o.max;
+	if (!o.max) return name+' > '+o.min;
+	return name+': '+o.min+' à '+o.max;
+}
+Monster.prototype.dicesCell = function(name, nbsides){
+	var o = this[name.toLowerCase()];
+	if (!o) return '';
+	var m = o.max ? (o.min+o.max)/2 : o.min;
+	return name+': '+Math.round(m*(nbsides+1)/2);
+}
+
+// prend en entrée un accumulateur des propriétés trouvées via les patterns dans les lignes de message
+// et renvoie un "item" (équivalent {Message|Action|PV|Détails} d'une ligne de rapport)
+Monster.prototype.getReportItem = function(o, isAtEnd){
+	if (o.id!=this.id || !o.nom) return;
 	var r = {nom:o.nom, id:o.id};
 	if (cpl(o, 'touché')) {
-		r.action = o.typeatt || o.catatt;
+		r.action = (o.typeatt || o.catatt)
+			.replace(/vampirisme/i,'vampi');
+			.replace(/coub de butoir/i,'CDB');
+			.replace(/botte secrète/i,'BS');
 		r.détails = '';
 		if (o.touché && cpl(o, 'degbrut', 'degnet') && (isAtEnd||o.done||(o.px!==undefined))) {
 			if (o.critique) r.action += ' critique';
@@ -86,23 +132,24 @@ function getReportItem(o, isAtEnd){
 			return r;
 		}
 	}
-	if (cpl(o, 'arm', 'pvmin', 'blessure','esq')) {
-		var pvmin = +o.pvmin, pvmax = +o.pvmax, blessure = +o.blessure;
+	if (cpl(o, 'armuremin', 'esquivemin', 'pvmin', 'blessure')) {
+		var pv = this.reduce('pv', +o.pvmin, +o.pvmax),
+			blessure = +o.blessure;
+		this.reduce('armure', +o.armuremin, +o.armuremax);
+		this.reduce('esq', +o.esquivemin, +o.esquivemax);
 		r.action = 'CDM';
-		r.détails = 'Armure: '+o.arm + '|PV: '+pvmin;
-		if (pvmax) r.détails += ' à '+pvmax;
-		r.détails += '|blessure: '+o.blessure+'%';
-		if (pvmin && pvmin%10===5) pvmin += 5;
-		if (pvmax && pvmax%10===5) pvmax -= 5;
-		if (pvmin && pvmax) {
-			if (!blessure) r.pv = Math.floor(0.95*pvmin)+' à '+Math.floor(pvmax);
-			else if (blessure===95) r.pv = '< '+Math.ceil(0.075*pvmax);
-			else r.pv = Math.floor((100-(blessure+5))*pvmin/100)+' à '+Math.floor((100-(blessure-5))*pvmax/100);
-		} else if (pvmin) {
-			if (!blessure) r.pv = '> '+Math.floor(0.95*pvmin);
+		r.détails = '*' + this.rangeCell('Armure') + '*|*' + this.dicesCell('Esq',6) + '*|*' + this.rangeCell('PV') + '*|';
+		r.détails += '*blessure: '+o.blessure+'%*';
+		if (pv.min && pv.max) {
+			if (!blessure) r.pv = Math.floor(0.95*pv.min)+' à '+Math.floor(pv.max);
+			else if (blessure===95) r.pv = '< '+Math.ceil(0.075*pv.max);
+			else r.pv = Math.floor((100-(blessure+5))*pv.min/100)+' à '+Math.floor((100-(blessure-5))*pv.max/100);
+		} else if (pv.min) {
+			if (!blessure) r.pv = '> '+Math.floor(0.95*pv.min);
 			else if (blessure===95) r.pv = 'pas grand chose';
-			else r.pv = '> '+Math.floor((100-(blessure+5))*pvmin/100);
+			else r.pv = '> '+Math.floor((100-(blessure+5))*pv.min/100);
 		}
+		r.pv = '*'+r.pv+'*';
 		return r;
 	}
 	if (cpl(o, 'sort', 'full')) {
@@ -111,77 +158,78 @@ function getReportItem(o, isAtEnd){
 			r.pv = '**-'+o.degnet+' PV**';
 			// fixme comment déterminer s'il est mort ?
 		}
-		r.action = o.sort;
+		r.action = o.sort
+			.replace(/hypnotisme/i,'hypno');
+			.replace(/faiblesse pasagère/i,'FP');
 		if (!o.full) r.action += ' réduit';
 		r.détails = '';
 		if (o.seuilres) r.détails += 'Seuil res: '+o.seuilres+' %|';
 		return r;
 	}
-	
 }
-
-// returns an array of objects (cdm, sorts, frappes, etc.) found in the message
-function parse(message){
-	console.log('parsing message '+formatTime(message.created))
-	var cur = {}, objects = [], lines = message.content.replace(/\.{2,}/g,'_').split(/[\n\.]+/), item;
+// receives a message and adds to the array of displayable objects {Message|Action|PV|Détails}
+Monster.prototype.parse = function(message){
+	var cur = {}, lines = message.content.replace(/\.{2,}/g,'_').split(/[\n\.]+/), item;
+	this.nbMessages++;
 	for (var l=0; l<lines.length; l++) {
-		var line = lines[l], isAtEnd = l===lines.length-1;
+		var line = lines[l];
 		if (/blessure.*:\s*$/i.test(line)) line += lines[++l] || "";
-		console.log(line);
+		//~ console.log(line);
 		for (var i=0; i<patterns.length; i++) {
 			var p = patterns[i], m = line.match(p.re);
 			if (!m) continue;
 			for (var j=1; j<m.length; j++) {
 				cur[p.res[j-1]] = m[j].trim();
-				console.log(' -> ', p.res[j-1], ' = ', m[j]);
+				//~ console.log(' -> ', p.res[j-1], ' = ', m[j]);
 			}
 			if (p.vals) {
 				for (var k in p.vals) {
 					cur[k] = p.vals[k];
-					console.log(' -> ', k, ' = ', p.vals[k]);
+					//~ console.log(' -> ', k, ' = ', p.vals[k]);
 				}
 			}
-			if (item = getReportItem(cur, isAtEnd)) {
-				item.message = '['+message.authorname+' '+formatTime(message.created)+'](#'+message.id+')';
-				objects.push(item);
+			if (item = this.getReportItem(cur, false)) {
+				this.addItem(item, message);
 				cur = {};
 			}
 			break;
 		}
 	}
-	return objects;
+	if (item = this.getReportItem(cur, true)) {
+		this.addItem(item, message);
+	}	
+}
+// construit le markdown envoyé à l'utilisateur
+Monster.prototype.mdReport = function(){
+	if (this.items.length) {
+		return (
+			"*oukonenest* : " + this.nom + ' ('+this.id+')\n'+
+			"Message|Action|PV|Détails\n"+
+			":-----|:----:|:-:|-------\n"+
+			this.items.map(function(i){
+				return (i.message||' ')+'|'+(i.action||' ')+'|'+(i.pv||' ')+'|'+(i.détails||' ')
+			}).join('\n')
+		);
+	} else {
+		var r = "*oukonenest* : Rien d'intéressant trouvé dans cette salle pour le monstre "+this.id+" (";
+		switch (this.nbMessages) {
+			case 0:  r += "aucun message ne semble le mentionner)."; break;
+			case 1:  r += "un seul message le mentionne)."; break;
+			default: r += this.nbMessages+" messages)."; 
+		}
+		return r;
+	}
 }
 
 exports.onMonster = function(bot, shoe, id){
-	console.log("==================================\noukonenest "+id);
+	//~ console.log("==================================\noukonenest "+id);
 	var db = shoe.db;
 	db.on([shoe.room.id, id+'&!oukonenest', 'english', 50])
 	.spread(db.search_tsquery)
-	.map(parse)
-	.then(function(bananas){
-		var r, nom, items = [].concat.apply([], bananas.reverse()).filter(function(item){
-			if (item.id != id) return false;
-			nom = nom || item.nom;
-			return true;
-		});
-		if (items.length) {
-			r = "*oukonenest* : " + nom + ' ('+id+')\n'+
-				"Message|Action|PV|Détails\n"+
-				":-----|:----:|:-:|-------\n"+
-				items.map(function(i){
-					return (i.message||' ')+'|'+(i.action||' ')+'|'+(i.pv||' ')+'|'+(i.détails||' ')
-				}).join('\n')+
-				"";
-		} else {
-			r = "*oukonenest* : Rien d'intéressant trouvé dans cette salle pour le monstre "+id+" (";
-			switch (bananas.length) {
-				case 0:  r += "aucun message ne semble le mentionner)."; break;
-				case 1:  r += "un seul message le mentionne)."; break;
-				default: r += bananas.length+" messages)."; 
-			}
-		}
-		//~ r += JSON.stringify(objects, null, '\t');
-		shoe.botMessage(bot, r);
+	.then(function(messages){
+		var monster = new Monster(id);
+		for (var i=messages.length; i--;) monster.parse(messages[i]);
+		shoe.botMessage(bot, monster.mdReport());
 	})
 	.catch(function(e){
 		shoe.botMessage(bot, 'A pas marché :(');

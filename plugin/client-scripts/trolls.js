@@ -16896,13 +16896,6 @@ miaou(function(mountyhall){
 "Créo":108720,
 	}
 
-
-/* TODO
-- ne virer les noms que de la recherche par nom
-- 
-*/
-
-
 	// The search algorithm is right now very simple, so we'll only keep the names which
 	//  are exactly one word
 	mountyhall.trollsById = {};
@@ -16921,18 +16914,19 @@ miaou(function(mountyhall){
 	
 	[ // removing common names
 		"ade", "arf", 'autre', "aura",
-		"bibi", "blanche", "bleu", "bof", "bol", "boom",
-		"caché", "caribou", "cat", "champion", 'chonchon', "courte", "cross",
+		"balrog", "beurk", "belle", "bibi", "blanche", "bleu", "bof", "bol", "boom", "boss",
+		"caché", "caribou", "cat", "champion", 'chonchon', "courte", "crash", "cross",
 		"dark", "darkling", "désolé", "diablotin", 'don', "dudu",
 		"fan", "fanatique", "fichtre",
 		"gogo", "golem", "gowaps", "gros", "guy",
 		"hum", "hypnos", "hypnotiseur",
-		"inscription", "invi", "ira",
+		"imagine", "inscription", "invi", "ira",
+		"kaboum",
 		"late", "l'autre", "lourd",
 		"malus", 'max', "meuh", 'merci', "miam", "mithril", "mini", "moche", 'moi', "monstre", "mort", "mounty", "mumuse", "musaraigne",
 		"ninix", "nos",
 		"ombre", "oups",
-		"paf", "parfait", 'pas', "pâquerette", "pépin", "phoenix", "personne", "poison", "popo", "poulet", "pub",
+		"paf", "parfait", 'pas', "pâquerette", "pépin", "phoenix", "personne", "poil", "poison", "popo", "poulet", "pub",
 		"retrouver", "roc", "rose",
 		"salade", 'son', "songe", "souris", "six", "sphynx", "steack", "sympa",
 		'test', "titan", "tomawak", 'troll', "trollinet", "trou",
