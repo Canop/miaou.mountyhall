@@ -24,11 +24,11 @@ var patterns = [
 	{re:/Niveau\s*:\s*[^>:\(\)]*\s*\([^\(]+\)/, res:['niveau']},
 	{re:/Blessure\D+(\d+)\s*%/, res:['blessure']},
 	{re:/Armure\s*:\s*[^\(]+\(\s*entre\s+(\d+)\s+et\s+(\d+)\s*\)/i, res:['armuremin','armuremax']},
-	{re:/Armure\s*:\s*[^\(]+\(\s*sup.erieur\s+a\s+(\d+)\s*\)/i, res:['armuremin']},
+	{re:/Armure\s*:\s*[^\(]+\(\s*sup.rieur\s+.\s+(\d+)\s*\)/i, res:['armuremin']},
 	{re:/Esquive\s*:\s*[^\(]+\(\s*entre\s+(\d+)\s+et\s+(\d+)\s*\)/i, res:['esquivemin','esquivemax']},
-	{re:/Esquive\s*:\s*[^\(]+\(\s*sup.erieur\s+a\s+(\d+)\s*\)/i, res:['esquivemin']},
+	{re:/Esquive\s*:\s*[^\(]+\(\s*sup.rieur\s+.\s+(\d+)\s*\)/i, res:['esquivemin']},
 	{re:/Points de Vie\s*:\s*[^\(]+\(\s*entre\s+(\d+)\s+et\s+(\d+)\s*\)/i, res:['pvmin','pvmax']},
-	{re:/Points de Vie\s*:\s*[^\(]+\(\s*sup.erieur\s+a\s+(\d+)\s*\)/i, res:['pvmin']},
+	{re:/Points de Vie\s*:\s*[^\(]+\(\s*sup.rieur\s+.\s+(\d+)\s*\)/i, res:['pvmin']},
 	{re:/Attaque\s*:\s*[^\(]+\(([^\)]+)\)/, res:['att']},
 	{re:/une?\s+([^\(]+)\s+\((\d{7})\) a .t. influenc. par l'effet du sort/i, res:['nom','id']},
 	{re:/Hypnotis.e jusqu'. sa prochaine Date Limite d'Action/i, res:[], vals:{sort:'Hypnotisme'}},
@@ -106,10 +106,10 @@ Monster.prototype.dicesCell = function(name, nbsides){
 Monster.prototype.getReportItem = function(o, isAtEnd){
 	if (o.id!=this.id || !o.nom) return;
 	var r = {nom:o.nom, id:o.id};
-	if (cpl(o, 'touché')) {
+	if (cpl(o, 'touché') && (o.typeatt || o.catatt)) {
 		r.action = (o.typeatt || o.catatt)
-			.replace(/vampirisme/i,'vampi');
-			.replace(/coub de butoir/i,'CDB');
+			.replace(/vampirisme/i,'vampi')
+			.replace(/coub de butoir/i,'CDB')
 			.replace(/botte secrète/i,'BS');
 		r.détails = '';
 		if (o.touché && cpl(o, 'degbrut', 'degnet') && (isAtEnd||o.done||(o.px!==undefined))) {
@@ -159,7 +159,7 @@ Monster.prototype.getReportItem = function(o, isAtEnd){
 			// fixme comment déterminer s'il est mort ?
 		}
 		r.action = o.sort
-			.replace(/hypnotisme/i,'hypno');
+			.replace(/hypnotisme/i,'hypno')
 			.replace(/faiblesse pasagère/i,'FP');
 		if (!o.full) r.action += ' réduit';
 		r.détails = '';
@@ -173,19 +173,26 @@ Monster.prototype.parse = function(message){
 	this.nbMessages++;
 	for (var l=0; l<lines.length; l++) {
 		var line = lines[l];
-		if (/blessure.*:\s*$/i.test(line)) line += lines[++l] || "";
-		//~ console.log(line);
+		if (l<lines.length-1) {
+			if (
+				/blessure.*:\s*$/i.test(line) ||
+				(/CONNAISSANCE DES MONSTRES sur\D*$/i.test(line) && /^\D*\(\d{7}\)\s*/.test(lines[l+1]))
+			) {
+				line += lines[++l];
+			}
+		}
+		console.log(line);
 		for (var i=0; i<patterns.length; i++) {
 			var p = patterns[i], m = line.match(p.re);
 			if (!m) continue;
 			for (var j=1; j<m.length; j++) {
 				cur[p.res[j-1]] = m[j].trim();
-				//~ console.log(' -> ', p.res[j-1], ' = ', m[j]);
+				console.log(' -> ', p.res[j-1], ' = ', m[j]);
 			}
 			if (p.vals) {
 				for (var k in p.vals) {
 					cur[k] = p.vals[k];
-					//~ console.log(' -> ', k, ' = ', p.vals[k]);
+					console.log(' -> ', k, ' = ', p.vals[k]);
 				}
 			}
 			if (item = this.getReportItem(cur, false)) {
