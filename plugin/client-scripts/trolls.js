@@ -16912,9 +16912,9 @@ miaou(function(mountyhall){
 		}
 	}
 	
-	[ // removing common names
+	[ // removing common names (yes, it looks like they're common on miaou...)
 		"ade", "arf", 'autre', "aura",
-		"balrog", "beurk", "belle", "bibi", "blanche", "bleu", "bof", "bol", "boom", "boum", "boss",
+		"balrog", "beurk", "belle", "bibi", "blanche", "bleu", "bof", "bol", "boom", "boum", "boss", "bouarf",
 		"caché", "caribou", "cat", "champion", 'chonchon', "courte", "crash", "cross",
 		"dark", "darkling", "désolé", "diablotin", "dodo", 'don', "dragon", "dudu",
 		"fan", "fanatique", "fichtre",

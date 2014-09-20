@@ -23,6 +23,10 @@ var patterns = [
 	{re:/Le Monstre Cibl. fait partie des : \w+ \(([^\-]+) - N°\s*(\d+)\s*\)/, res:['nom','id']},
 	{re:/Niveau\s*:\s*[^>:\(\)]*\s*\([^\(]+\)/, res:['niveau']},
 	{re:/Blessure\D+(\d+)\s*%/, res:['blessure']},
+	{re:/Armure Physique\s*:\s*[^\(]+\(\s*entre\s+(\d+)\s+et\s+(\d+)\s*\)/i, res:['armurephysmin','armurephysmax']},
+	{re:/Armure Physique\s*:\s*[^\(]+\(\s*sup.rieur\s+.\s+(\d+)\s*\)/i, res:['armurephysmin']},
+	{re:/Armure Magique\s*:\s*[^\(]+\(\s*entre\s+(\d+)\s+et\s+(\d+)\s*\)/i, res:['armuremagmin','armuremagmax']},
+	{re:/Armure Magique\s*:\s*[^\(]+\(\s*sup.rieur\s+.\s+(\d+)\s*\)/i, res:['armuremagmin']},
 	{re:/Armure\s*:\s*[^\(]+\(\s*entre\s+(\d+)\s+et\s+(\d+)\s*\)/i, res:['armuremin','armuremax']},
 	{re:/Armure\s*:\s*[^\(]+\(\s*sup.rieur\s+.\s+(\d+)\s*\)/i, res:['armuremin']},
 	{re:/Esquive\s*:\s*[^\(]+\(\s*entre\s+(\d+)\s+et\s+(\d+)\s*\)/i, res:['esquivemin','esquivemax']},
@@ -112,11 +116,15 @@ Monster.prototype.getReportItem = function(o, isAtEnd){
 			.replace(/coub de butoir/i,'CDB')
 			.replace(/botte secrète/i,'BS');
 		r.détails = '';
-		if (o.touché && cpl(o, 'degbrut', 'degnet') && (isAtEnd||o.done||(o.px!==undefined))) {
+		if (o.touché && cpl(o, 'degbrut') && (isAtEnd||o.done||(o.px!==undefined))) {
 			if (o.critique) r.action += ' critique';
 			if (o.full===false) r.action += ' résisté';
-			r.pv = '**-'+o.degnet+' PV**';
-			if (o.degbrut) r.pv += ' (-'+o.degbrut+')';
+			if (o.degnet) {
+				r.pv = '**-'+o.degnet+' PV**';
+				if (o.degbrut) r.pv += ' (-'+o.degbrut+')';
+			} else {
+				r.pv = '**-'+o.degbrut+' PV**';				
+			}
 			if (o.att) r.détails += 'att: '+o.att+'|';
 			if (o.esq) r.détails += 'esq: '+o.esq+'|';
 			if (o.kill) {
@@ -132,10 +140,16 @@ Monster.prototype.getReportItem = function(o, isAtEnd){
 			return r;
 		}
 	}
-	if (cpl(o, 'armuremin', 'esquivemin', 'pvmin', 'blessure')) {
+	if (cpl(o, 'esquivemin', 'pvmin', 'blessure') && (o.armuremin!==undefined || (o.armuremagmin!=undefined && o.armurephysmin!==undefined)) ) {
 		var pv = this.reduce('pv', +o.pvmin, +o.pvmax),
 			blessure = +o.blessure;
-		this.reduce('armure', +o.armuremin, +o.armuremax);
+		if (o.armuremin!==undefined) this.reduce('armure', +o.armuremin, +o.armuremax);
+		if (o.armuremagmin!==undefined) {
+			this.reduce('armuremag', +o.armuremagmin, +o.armuremagmax);
+			this.reduce('armurephys', +o.armurephysmin, +o.armurephysmax);
+			console.log(this);
+			this.reduce('armure', this.armuremag.min+this.armurephys.min, this.armuremag.max+this.armurephys.max);
+		}
 		this.reduce('esq', +o.esquivemin, +o.esquivemax);
 		r.action = 'CDM';
 		r.détails = '*' + this.rangeCell('Armure') + '*|*' + this.dicesCell('Esq',6) + '*|*' + this.rangeCell('PV') + '*|';
