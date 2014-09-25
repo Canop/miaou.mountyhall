@@ -16914,8 +16914,8 @@ miaou(function(mountyhall){
 	
 	[ // removing common names (yes, it looks like they're common on miaou...)
 		"ade", "arf", 'autre', "aura",
-		"balrog", "beurk", "belle", "bibi", "blanche", "bleu", "bof", "bol", "boom", "boum", "boss", "bouarf",
-		"caché", "caribou", "cat", "champion", 'chonchon', "courte", "crash", "cross",
+		"balrog", "beurk", "belle", "bibi", "blabla", "blanche", "bleu", "bof", "bol", "boom", "boum", "boss", "bouarf",
+		"caché", "caribou", "cat", "cerne", "champion", 'chonchon', "courte", "crash", "cross",
 		"dark", "darkling", "désolé", "diablotin", "dodo", 'don', "dragon", "dudu",
 		"fan", "fanatique", "fichtre",
 		"glop", "gogo", "golem", "gowaps", "gros", "guy",
@@ -16924,7 +16924,7 @@ miaou(function(mountyhall){
 		"kaboum",
 		"late", "l'autre", "lourd",
 		"malus", 'max', "meuh", 'merci', "miam", "mithril", "mini", "moche", 'moi', "monstre", "mort", "mounty", "mumuse", "musaraigne",
-		"ninix", "nos",
+		"ninix", "noob", "nos",
 		"ombre", "ouille", "oups",
 		"paf", "parfait", 'pas', "pâquerette", "pépin", "phoenix", "personne", "poil", "poison", "popo", "poulet", "pub",
 		"retrouver", "roc", "rose",

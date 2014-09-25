@@ -99,6 +99,6 @@ exports.registerCommands = function(registerCommand){
 			
 		},
 		"synthétise les infos disponibles dans la salle à propos de l'attaque sur un monstre",
-		function(room){ return /[MH]/i.test(room.description) }
+		function(room){ return /\[MH\]/i.test(room.description) }
 	);
 }

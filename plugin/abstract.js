@@ -1,4 +1,7 @@
-	
+// Analyse des messages concernant un monstre afin d'en tirer les infos nécessaires
+//  pour la chasse (pv, esquive, résultats frappes précédentes, etc.).
+// Ce code est encore exploratoire, il sera peut-être optimisé plus tard.
+
 var patterns = [
 	{re:/Vous avez utilis. le Sortil.ge : (\w+)/i, res:['sort']},
 	{re:/Le Monstre Cibl. fait partie des :[^\(\)]+\(\s*([^\(]+)\s*-\s*N°(\d+)\)/i, res:['nom','id'], vals:{cdm:'ok'}},
@@ -25,14 +28,19 @@ var patterns = [
 	{re:/Blessure\D+(\d+)\s*%/, res:['blessure']},
 	{re:/Armure Physique\s*:\s*[^\(]+\(\s*entre\s+(\d+)\s+et\s+(\d+)\s*\)/i, res:['armurephysmin','armurephysmax']},
 	{re:/Armure Physique\s*:\s*[^\(]+\(\s*sup.rieur\s+.\s+(\d+)\s*\)/i, res:['armurephysmin']},
-	{re:/Armure Magique\s*:\s*[^\(]+\(\s*entre\s+(\d+)\s+et\s+(\d+)\s*\)/i, res:['armuremagmin','armuremagmax']},
-	{re:/Armure Magique\s*:\s*[^\(]+\(\s*sup.rieur\s+.\s+(\d+)\s*\)/i, res:['armuremagmin']},
-	{re:/Armure\s*:\s*[^\(]+\(\s*entre\s+(\d+)\s+et\s+(\d+)\s*\)/i, res:['armuremin','armuremax']},
-	{re:/Armure\s*:\s*[^\(]+\(\s*sup.rieur\s+.\s+(\d+)\s*\)/i, res:['armuremin']},
-	{re:/Esquive\s*:\s*[^\(]+\(\s*entre\s+(\d+)\s+et\s+(\d+)\s*\)/i, res:['esquivemin','esquivemax']},
-	{re:/Esquive\s*:\s*[^\(]+\(\s*sup.rieur\s+.\s+(\d+)\s*\)/i, res:['esquivemin']},
-	{re:/Points de Vie\s*:\s*[^\(]+\(\s*entre\s+(\d+)\s+et\s+(\d+)\s*\)/i, res:['pvmin','pvmax']},
-	{re:/Points de Vie\s*:\s*[^\(]+\(\s*sup.rieur\s+.\s+(\d+)\s*\)/i, res:['pvmin']},
+	{re:/Armure Physique\s*:\s*[^\(]+\(\s*inf.rieur\s+.\s+(\d+)\s*\)/i, res:['armurephysmax'], vals:{armurephysmin:0}},
+	{re:/Armure Magique\s*:\s*[^\(]+\(\s*entre\s+(\d+)\s+et\s+(\d+)\s*\)/i, res:['armuremagmin','armuremagmax'], vals:{aArmure:true}},
+	{re:/Armure Magique\s*:\s*[^\(]+\(\s*sup.rieur\s+.\s+(\d+)\s*\)/i, res:['armuremagmin'], vals:{aArmure:true}},
+	{re:/Armure Magique\s*:\s*[^\(]+\(\s*inf.rieur\s+.\s+(\d+)\s*\)/i, res:['armuremagmax'], vals:{armuremagmin:0, aArmure:true}},
+	{re:/Armure\s*:\s*[^\(]+\(\s*entre\s+(\d+)\s+et\s+(\d+)\s*\)/i, res:['armuremin','armuremax'], vals:{aArmure:true}},
+	{re:/Armure\s*:\s*[^\(]+\(\s*sup.rieur\s+.\s+(\d+)\s*\)/i, res:['armuremin'], vals:{aArmure:true}},
+	{re:/Armure\s*:\s*[^\(]+\(\s*inf.rieur\s+.\s+(\d+)\s*\)/i, res:['armurepmax'], vals:{armuremin:0, aArmure:true}},
+	{re:/Esquive\s*:\s*[^\(]+\(\s*entre\s+(\d+)\s+et\s+(\d+)\s*\)/i, res:['esquivemin','esquivemax'], vals:{aEsquive:true}},
+	{re:/Esquive\s*:\s*[^\(]+\(\s*sup.rieur\s+.\s+(\d+)\s*\)/i, res:['esquivemin'], vals:{aEsquive:true}},
+	{re:/Esquive\s*:\s*[^\(]+\(\s*inf.rieur\s+.\s+(\d+)\s*\)/i, res:['esquivemax'], vals:{esquivemin:0, aEsquive:true}},
+	{re:/Points de Vie\s*:\s*[^\(]+\(\s*entre\s+(\d+)\s+et\s+(\d+)\s*\)/i, res:['pvmin','pvmax'], vals:{aPV:true}},
+	{re:/Points de Vie\s*:\s*[^\(]+\(\s*sup.rieur\s+.\s+(\d+)\s*\)/i, res:['pvmin'], vals:{aPV:true}},
+	{re:/Points de Vie\s*:\s*[^\(]+\(\s*inf.rieur\s+.\s+(\d+)\s*\)/i, res:['pvmax'], vals:{pvmin:0, aPV:true}},
 	{re:/Attaque\s*:\s*[^\(]+\(([^\)]+)\)/, res:['att']},
 	{re:/une?\s+([^\(]+)\s+\((\d{7})\) a .t. influenc. par l'effet du sort/i, res:['nom','id']},
 	{re:/Hypnotis.e jusqu'. sa prochaine Date Limite d'Action/i, res:[], vals:{sort:'Hypnotisme'}},
@@ -63,7 +71,7 @@ function formatTime(t){
 function cpl(){
 	var cur = arguments[0];
 	for (var i=1; i<arguments.length; i++) {
-		if (cur[arguments[i]]===undefined) return false;
+		if (cur[arguments[i]]===undefined) return false;	
 	}
 	return true;
 }
@@ -110,10 +118,10 @@ Monster.prototype.dicesCell = function(name, nbsides){
 Monster.prototype.getReportItem = function(o, isAtEnd){
 	if (o.id!=this.id || !o.nom) return;
 	var r = {nom:o.nom, id:o.id};
-	if (cpl(o, 'touché') && (o.typeatt || o.catatt)) {
+	if (cpl(o, 'touché') && (o.typeatt||o.catatt)) {
 		r.action = (o.typeatt || o.catatt)
 			.replace(/vampirisme/i,'vampi')
-			.replace(/coub de butoir/i,'CDB')
+			.replace(/coup de butoir/i,'CDB')
 			.replace(/botte secrète/i,'BS');
 		r.détails = '';
 		if (o.touché && cpl(o, 'degbrut') && (isAtEnd||o.done||(o.px!==undefined))) {
@@ -140,14 +148,13 @@ Monster.prototype.getReportItem = function(o, isAtEnd){
 			return r;
 		}
 	}
-	if (cpl(o, 'esquivemin', 'pvmin', 'blessure') && (o.armuremin!==undefined || (o.armuremagmin!=undefined && o.armurephysmin!==undefined)) ) {
+	if (o.aArmure && o.blessure!==undefined && o.aPV) {
 		var pv = this.reduce('pv', +o.pvmin, +o.pvmax),
 			blessure = +o.blessure;
-		if (o.armuremin!==undefined) this.reduce('armure', +o.armuremin, +o.armuremax);
-		if (o.armuremagmin!==undefined) {
+		if (o.armuremin||o.armuremax) this.reduce('armure', +o.armuremin, +o.armuremax);
+		if (o.armuremagmin||o.armuremagmax) {
 			this.reduce('armuremag', +o.armuremagmin, +o.armuremagmax);
 			this.reduce('armurephys', +o.armurephysmin, +o.armurephysmax);
-			console.log(this);
 			this.reduce('armure', this.armuremag.min+this.armurephys.min, this.armuremag.max+this.armurephys.max);
 		}
 		this.reduce('esq', +o.esquivemin, +o.esquivemax);
