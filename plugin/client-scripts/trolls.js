@@ -16962,6 +16962,7 @@ alias('kergrog', 'kerg');
 alias('gogo27', 'g27');
 alias('Gruhtzog', 'grutz');
 alias('schtroumph_vert_pomme', 'svp');
+alias('Valfëan', 'Valfean');
 alias('wouchy', 'wouch');
 
 rawDB = null; // this is useless as long as there's no closure pointer but they can come unexpectedly...

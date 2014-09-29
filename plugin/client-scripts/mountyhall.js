@@ -17,14 +17,14 @@ miaou(function(mountyhall, md, plugins){
 	
 	// this function is called on messages after they've been already rendered
 	function renderMessage($c){
-		mountyhall.trollNamesReplacer.replace($c[0], function(name, id){
+		mountyhall.trollNamesReplacer.replaceTextWithHTMLInHTML($c[0], function(name, id){
 			// replacing troll names
 			return '<a target=_blank href=http://games.mountyhall.com/mountyhall/View/PJView.php?ai_IDPJ='+id+
 				' title="Troll : '+escapeForTitle(mountyhall.trollsById[id] || name)+' ( '+id+' )"'+						
 				' class=mountyhall'+
 				'>'+name+'</a>';
 		});
-		numReplacer.replace($c[0], /\d{5,7}/g, function(s, i, t){
+		numReplacer.replaceTextWithHTMLInHTMLUsingRegex($c[0], /\b\d{5,7}\b/g, function(s, i, t){
 			var id = +s;
 			if (id>1000000) { // monstre
 				return '<a target=_blank href=http://games.mountyhall.com/mountyhall/View/MonsterView.php?ai_IDPJ='+id+
@@ -34,7 +34,7 @@ miaou(function(mountyhall, md, plugins){
 			} else {
 				var name = mountyhall.trollsById[+id];
 				if (!name) return id;
-				var after = t.slice(i+id.length);
+				var after = t.slice(i+s.length);
 				if (/^\s*(pv|%|points)/i.test(after)) return id; // let's not replace "5000" in "j'ai enlevé 5000 pv"
 				return '<a target=_blank href=http://games.mountyhall.com/mountyhall/View/PJView.php?ai_IDPJ='+id+
 					' title="Troll : '+escapeForTitle(name)+' ( '+id+' )"'+
