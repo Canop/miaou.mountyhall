@@ -40,6 +40,29 @@ function fetchSP(sp, num, mdpr){
 	req.end();
 	return p.promise;
 }
+//~ // queries a SP ("script public")
+//~ // returns a promise which is resolved if all goes well with an array of arrays of strings (a csv table)
+//~ function fetchSP(sp, num, mdpr){
+	//~ var p = Promise.defer(),
+		//~ url = "http://sp.mountyhall.com/SP_"+sp+".php?Numero="+num+"&Motdepasse="+encodeURIComponent(mdpr);
+	//~ request(url, function(error, res, body){
+		//~ if (!error && res.statusCode===200) {
+			//~ var lines = body.split('\n').map(function(s){
+				//~ return s.split(';');
+			//~ });
+			//~ if (lines.length>0 && lines[0].length>1) {
+				//~ p.resolve(lines);
+			//~ } else {
+				//~ console.log('Error : ' + JSON.stringify(lines));
+				//~ p.reject('Error : ' + JSON.stringify(lines));
+			//~ }
+		//~ } else {
+			//~ console.log("Error in querying "+url);
+			//~ p.reject(new Error('Error in querying sp.mountyhall.com'));
+		//~ }
+	//~ });
+	//~ return p.promise;
+//~ }
 
 // returns a promise
 // updates and provides in resolution the pluginPlayerInfos if successful, else throws an error 
@@ -52,8 +75,6 @@ function createMHProfile(user, pluginPlayerInfos, vals) {
 		pluginPlayerInfos.troll = troll;
 		pluginPlayerInfos.mdpr = vals.mh_mdpr;
 		return pluginPlayerInfos;
-	}).catch(function(err){ // FIXME : check but I don't think there should be a catch here...
-		console.log('Error in fetching SP', err);
 	});
 }
 
@@ -78,7 +99,7 @@ exports.externalProfile = {
 	creation: {
 		fields: [
 			{ name:'mh_num', label:'Numéro', type:'Number' },
-			{ name:'mh_mdpr', label:'Mot de passe restreint'}
+			{ name:'mh_mdpr', label:'Mot de passe restreint', notice:"Vous pouvez créer un mot de passe restreint (également appelé code d'accès spécifique) dans Options / Options Tröll"}
 		],
 		create: createMHProfile
 	}, render: renderMHProfile
