@@ -40,29 +40,6 @@ function fetchSP(sp, num, mdpr){
 	req.end();
 	return p.promise;
 }
-//~ // queries a SP ("script public")
-//~ // returns a promise which is resolved if all goes well with an array of arrays of strings (a csv table)
-//~ function fetchSP(sp, num, mdpr){
-	//~ var p = Promise.defer(),
-		//~ url = "http://sp.mountyhall.com/SP_"+sp+".php?Numero="+num+"&Motdepasse="+encodeURIComponent(mdpr);
-	//~ request(url, function(error, res, body){
-		//~ if (!error && res.statusCode===200) {
-			//~ var lines = body.split('\n').map(function(s){
-				//~ return s.split(';');
-			//~ });
-			//~ if (lines.length>0 && lines[0].length>1) {
-				//~ p.resolve(lines);
-			//~ } else {
-				//~ console.log('Error : ' + JSON.stringify(lines));
-				//~ p.reject('Error : ' + JSON.stringify(lines));
-			//~ }
-		//~ } else {
-			//~ console.log("Error in querying "+url);
-			//~ p.reject(new Error('Error in querying sp.mountyhall.com'));
-		//~ }
-	//~ });
-	//~ return p.promise;
-//~ }
 
 // returns a promise
 // updates and provides in resolution the pluginPlayerInfos if successful, else throws an error 
@@ -106,9 +83,9 @@ exports.externalProfile = {
 }
 
 exports.registerCommands = function(registerCommand){
-	registerCommand(
-		'oukonenest',
-		function(cmd, shoe, m, opts){
+	registerCommand({
+		name:'oukonenest',
+		fun:function(cmd, shoe, m, opts){
 			var match = m.content.match(/(\d{6,})/);
 			if (match) {
 				var num = +match[1];
@@ -119,7 +96,8 @@ exports.registerCommands = function(registerCommand){
 			throw "Précisez le numéro du monstre (par exemple `!!"+cmd+" 12345678`)";
 			
 		},
-		"synthétise les infos disponibles dans la salle à propos de l'attaque sur un monstre",
-		function(room){ return /\[MH\]/i.test(room.description) }
-	);
+		help:"synthétise les infos disponibles dans la salle à propos de l'attaque sur un monstre",
+		detailedHelp:"Cette commande n'est disponible que dans les salles dont la description contient `[MH]`",
+		filter:function(room){ return /\[MH\]/i.test(room.description) }	
+	});
 }
