@@ -1,6 +1,6 @@
 miaou(function(mountyhall){
 
-	if (!room || !/\[MH\]/i.test(room.description)) return;
+	if ((typeof room ==="undefined") || !/\[MH\]/i.test(room.description)) return;
 
 	// this map is built from the public file Public_Trolls.txt, using a regular expression
 	//		"                    =>   
@@ -16916,7 +16916,7 @@ miaou(function(mountyhall){
 		"paf", "parfait", 'pas', "pâquerette", "pépin", "phoenix", "personne", "poil", "poison", "popo", "poulet", "pub",
 		"refait", "retrouver", "roc", "rose",
 		"salade", "silence", 'son', "songe", "sorcière", "souris", "six", "sphynx", "steack", "sushi", "sympa",
-		'test', "titan", "tomawak", 'troll', "trollinet", "trou",
+		'test', "titan", "tomawak", 'trolette', 'troll', "trollinet", "trou",
 		"vrille",
 		"wiki",
 		"yop",
