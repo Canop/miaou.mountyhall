@@ -3,17 +3,17 @@
 // Ce code est encore exploratoire, il sera peut-être optimisé plus tard.
 
 var patterns = [
-	{re:/ous avez utilis. le Sortil.ge : (\w+)/i, res:['sort']},
+	{re:/ous avez utilis. le Sortil.ge : (\w+)/i, clear:true, res:['sort']},
 	{re:/e Monstre Cibl. fait partie des :[^\(\)]+\(\s*([^\(]+)\s*-\s*N°(\d+)\)/i, res:['nom','id'], vals:{cdm:'ok'}},
-	{re:/ONNAISSANCE DES MONSTRES sur une?\s+([^\(]+)\s+\((\d{7})\)/i, res:['nom','id'], vals:{cdm:'ok'}},
+	{re:/ONNAISSANCE DES MONSTRES sur une?\s+([^\(]+)\s+\((\d{7})\)/i, clear:true, res:['nom','id'], vals:{cdm:'ok'}},
 	{re:/a Cible subit donc pleinement l'effet/i, vals:{full:true}},
 	{re:/e sortil.ge a donc un EFFET REDUIT/i, vals:{full:false}},
 	{re:/e sortil.ge (.*) a eu l'effet/, res:['sort']},
 	{re:/euil de R.sistance de la Cible[\._\s]*: (\d+) %/, res:['seuilres']},
 	{re:/(\d\d)\/(\d\d)\/(\d{4}) (\d\d):(\d\d):\d\d MORT .* \( (\d+) \) a débarrassé le Monde Souterrain de la présence maléfique d´une? ([^\(]+) \(\s?(\d+)\s?\)/, res:['J','M','A','h','m','killer','nom','id']},
-	{re:/ous avez attaqu. une? ([^\(]+) \(\s?(\d+)\s?\) .* comp/, res:['nom','id'], vals:{catatt:'comp'}},
-	{re:/ous avez attaqu. une? ([^\(]+) \(\s?(\d+)\s?\) .* sortil/, res:['nom','id'], vals:{catatt:'sort'}},
-	{re:/ous avez attaqu. une? ([^\(]+) \(\s?(\d+)\s?\)/, res:['nom','id'], vals:{typeatt:'AN'}},
+	{re:/ous avez attaqu. une? ([^\(]+) \(\s?(\d+)\s?\) .* comp/, clear:true, res:['nom','id'], vals:{catatt:'comp'}},
+	{re:/ous avez attaqu. une? ([^\(]+) \(\s?(\d+)\s?\) .* sortil/, clear:true, res:['nom','id'], vals:{catatt:'sort'}},
+	{re:/ous avez attaqu. une? ([^\(]+) \(\s?(\d+)\s?\)/, clear:true, res:['nom','id'], vals:{typeatt:'AN'}},
 	{re:/e Jet d'Esquive de votre adversaire est de[\._\s]*: (\d+)/, res:['esq']},
 	{re:/ous avez donc RAT. votre adversair/, vals:{touché:false}},
 	{re:/ous avez donc TOUCH. votre adversaire par un coup critique/, vals:{touché:true, critique:true}},
@@ -192,6 +192,14 @@ Monster.prototype.getReportItem = function(o, isAtEnd){
 		return r;
 	}
 }
+
+Monster.prototype.lookForReportItem = function(cur, isAtEnd, message){
+	var item = this.getReportItem(cur, isAtEnd);
+	if (!item) return cur;
+	this.addItem(item, message);
+	return {};
+}
+
 // receives a message and adds to the array of displayable objects {Message|Action|PV|Détails}
 Monster.prototype.parse = function(message){
 	var cur = {}, lines = message.content.replace(/\.{2,}/g,'_').split(/[\n\.]+/), item;
@@ -210,6 +218,11 @@ Monster.prototype.parse = function(message){
 		for (var i=0; i<patterns.length; i++) {
 			var p = patterns[i], m = line.match(p.re);
 			if (!m) continue;
+			if (p.clear) {
+				console.log("--- clear ---");
+				this.lookForReportItem(cur, false, message);
+				cur = {};
+			}
 			for (var j=1; j<m.length; j++) {
 				cur[p.res[j-1]] = m[j].trim();
 				console.log(' -> ', p.res[j-1], ' = ', m[j]);
@@ -220,22 +233,17 @@ Monster.prototype.parse = function(message){
 					console.log(' -> ', k, ' = ', p.vals[k]);
 				}
 			}
-			if (item = this.getReportItem(cur, false)) {
-				this.addItem(item, message);
-				cur = {};
-			}
+			cur = this.lookForReportItem(cur, false, message);
 			break;
 		}
 	}
-	if (item = this.getReportItem(cur, true)) {
-		this.addItem(item, message);
-	}	
+	this.lookForReportItem(cur, true, message);
 }
 
 Monster.prototype.table = function(){
 	return (
 		"Message|Action|PV|Détails\n"+
-		":-----|:----:|:-:|-------\n"+
+		"-|:-:|:-:|-\n"+
 		this.items.map(function(i){
 			return (i.message||' ')+'|'+(i.action||' ')+'|'+(i.pv||' ')+'|'+(i.détails||' ')
 		}).join('\n')
@@ -275,19 +283,13 @@ Monster.prototype.mdReport = function(){
 	return r;
 }
 
-exports.onMonster = function(bot, shoe, id){
+// called with connection as context
+exports.onMonster = function(ct, id){
 	//~ console.log("==================================\noukonenest "+id);
-	var db = shoe.db;
-	db.on([shoe.room.id, id+'&!oukonenest', 'english', 50])
-	.spread(db.search_tsquery)
+	return this.search_tsquery(ct.shoe.room.id, id+'&!oukonenest', 'english', 50)
 	.then(function(messages){
 		var monster = new Monster(id);
 		for (var i=messages.length; i--;) monster.parse(messages[i]);
-		shoe.botMessage(bot, monster.mdReport());
-	})
-	.catch(function(e){
-		shoe.botMessage(bot, 'A pas marché :(');
-		console.log(e);		
-	})
-	.finally(db.off);	
+		ct.reply(monster.mdReport());
+	});
 }

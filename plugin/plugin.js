@@ -85,19 +85,22 @@ exports.externalProfile = {
 exports.registerCommands = function(registerCommand){
 	registerCommand({
 		name:'oukonenest',
-		fun:function(cmd, shoe, m, opts){
-			var match = m.content.match(/(\d{6,})/);
+		fun:function(ct){
+			var match = ct.args.match(/(\d{6,})/);
 			if (match) {
 				var num = +match[1];
 				if (num>567890 && num<15178164) {
-					return abstract.onMonster(bot, shoe, num);
+					return abstract.onMonster.call(this, ct, num);
 				}
 			}
-			throw "Précisez le numéro du monstre (par exemple `!!"+cmd+" 12345678`)";
+			throw "Précisez le numéro du monstre (par exemple `!!"+ct.cmd.name+" 12345678`)";
 			
 		},
 		help:"synthétise les infos disponibles dans la salle à propos de l'attaque sur un monstre",
-		detailedHelp:"Cette commande n'est disponible que dans les salles dont la description contient `[MH]`",
+		detailedHelp:
+			"Utilisez `!!oukonenest numero_du_monstre`."+
+			"Cette commande n'est disponible que dans les salles dont la description contient `[MH]`."
+		,
 		filter:function(room){ return /\[MH\]/i.test(room.description) }	
 	});
 }
