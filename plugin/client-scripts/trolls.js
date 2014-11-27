@@ -16909,11 +16909,11 @@ miaou(function(mountyhall){
 		"hein ?", "hum", "hypnos", "hypnotiseur",
 		"imagine", "inscription", "invi", "ira",
 		"kaboum",
-		"late", "l'autre", "lourd",
+		"late", "l'autre", "le troll", "lourd",
 		"malus", 'max', "meuh", 'merci', "miam", "mithril", "mini", "moche", 'moi', "monstre", "mort", "mounty", "mumuse", "musaraigne",
 		"ninix", "noob", "nos",
 		"ombre", "ouille", "oups",
-		"paf", "parfait", 'pas', "pâquerette", "pépin", "phoenix", "personne", "poil", "poison", "popo", "poulet", "pub",
+		"paf", "parfait", 'pas', "pâquerette", "pépin", "phoenix", "personne", "poil", "poison", "popo", "poulet", "pourri", "pub",
 		"refait", "retrouver", "roc", "rose",
 		"salade", "silence", 'son', "songe", "sorcière", "souris", "six", "sphynx", "steack", "sushi", "sympa",
 		'test', "titan", "tomawak", 'trolette', 'troll', "trollinet", "trou",
@@ -16962,8 +16962,10 @@ miaou(function(mountyhall){
 	alias('bob-le-troll', 'blt', 'bobtroll');
 	alias('kergrog', 'kerg');
 	alias('gogo27', 'g27');
+	alias('Gnu Sauvage [Chef de Harde]', 'gnu');
 	alias('Gruhtzog', 'grutz');
 	alias('schtroumph_vert_pomme', 'svp');
+	alias('Shaksgärt', 'Shaks');
 	alias('Valfëan', 'Valfean');
 	alias('wouchy', 'wouch');
 
