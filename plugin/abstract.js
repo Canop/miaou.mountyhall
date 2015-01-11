@@ -1,19 +1,22 @@
 // Analyse des messages concernant un monstre afin d'en tirer les infos nécessaires
 //  pour la chasse (pv, esquive, résultats frappes précédentes, etc.).
-// Ce code est encore exploratoire, il sera peut-être optimisé plus tard.
-
+// TODO kill à la rune
 var patterns = [
+	{re:/ONNAISSANCE DES MONSTRES sur une?\s+([^\(]+)\s+\((\d+)\)/i, clear:true, res:['nom','id'], vals:{cdm:'ok'}},
+	{re:/NALYSE ANATOMIQUE sur ([^\(]+)\s+\((\d+)\)/i, clear:true, res:['nom','id'], vals:{aa:'ok'}},
 	{re:/ous avez utilis. le Sortil.ge : (\w+)/i, clear:true, res:['sort']},
 	{re:/e Monstre Cibl. fait partie des :[^\(\)]+\(\s*([^\(]+)\s*-\s*N°(\d+)\)/i, res:['nom','id'], vals:{cdm:'ok'}},
-	{re:/ONNAISSANCE DES MONSTRES sur une?\s+([^\(]+)\s+\((\d{7})\)/i, clear:true, res:['nom','id'], vals:{cdm:'ok'}},
+	{re:/(.*)\s+\((\d+)\) a les caract.ristiques suivantes/i, clear:true, res:['nom','id'], vals:{aa:'ok'}}, // faut espérer qu'il n'y ait pas de bordel au début de la ligne...
+	{re:/(.*)\s+\((\d+)\) a .t. influenc. par l'effet du sort/i, res:['nom','id']},
 	{re:/a Cible subit donc pleinement l'effet/i, vals:{full:true}},
 	{re:/e sortil.ge a donc un EFFET REDUIT/i, vals:{full:false}},
 	{re:/e sortil.ge (.*) a eu l'effet/, res:['sort']},
 	{re:/euil de R.sistance de la Cible[\._\s]*: (\d+) %/, res:['seuilres']},
 	{re:/(\d\d)\/(\d\d)\/(\d{4}) (\d\d):(\d\d):\d\d MORT .* \( (\d+) \) a débarrassé le Monde Souterrain de la présence maléfique d´une? ([^\(]+) \(\s?(\d+)\s?\)/, res:['J','M','A','h','m','killer','nom','id']},
-	{re:/ous avez attaqu. une? ([^\(]+) \(\s?(\d+)\s?\) .* comp/, clear:true, res:['nom','id'], vals:{catatt:'comp'}},
-	{re:/ous avez attaqu. une? ([^\(]+) \(\s?(\d+)\s?\) .* sortil/, clear:true, res:['nom','id'], vals:{catatt:'sort'}},
-	{re:/ous avez attaqu. une? ([^\(]+) \(\s?(\d+)\s?\)/, clear:true, res:['nom','id'], vals:{typeatt:'AN'}},
+	{re:/ous avez attaqu. ([^\(]+) \(\s?(\d+)\s?\) .* comp/, clear:true, res:['nom','id'], vals:{catatt:'comp'}},
+	{re:/ous avez attaqu. ([^\(]+) \(\s?(\d+)\s?\) .* sortil/, clear:true, res:['nom','id'], vals:{catatt:'sort'}},
+	{re:/ous avez attaqu. ([^\(]+) \(\s?(\d+)\s?\)/, clear:true, res:['nom','id'], vals:{typeatt:'AN'}},
+	{re:/le Tr.ll (.*)\s+\((\d+)\) s'est interpos. avec bravoure/, clear:true, res:['nom','id'], vals:{typeatt:'interpo'}},
 	{re:/e Jet d'Esquive de votre adversaire est de[\._\s]*: (\d+)/, res:['esq']},
 	{re:/ous avez donc RAT. votre adversair/, vals:{touché:false}},
 	{re:/ous avez donc TOUCH. votre adversaire par un coup critique/, vals:{touché:true, critique:true}},
@@ -34,7 +37,7 @@ var patterns = [
 	{re:/rmure Magique\s*:\s*[^\(]+\(\s*inf.rieur\s+.\s+(\d+)\s*\)/i, res:['armuremagmax'], vals:{armuremagmin:0, aArmure:true}},
 	{re:/rmure\s*:\s*[^\(]+\(\s*entre\s+(\d+)\s+et\s+(\d+)\s*\)/i, res:['armuremin','armuremax'], vals:{aArmure:true}},
 	{re:/rmure\s*:\s*[^\(]+\(\s*sup.rieur\s+.\s+(\d+)\s*\)/i, res:['armuremin'], vals:{aArmure:true}},
-	{re:/rmure\s*:\s*[^\(]+\(\s*inf.rieur\s+.\s+(\d+)\s*\)/i, res:['armurepmax'], vals:{armuremin:0, aArmure:true}},
+	{re:/rmure\s*:\s*[^\(]+\(\s*inf.rieur\s+.\s+(\d+)\s*\)/i, res:['armuremax'], vals:{armuremin:0, aArmure:true}},
 	{re:/squive\s*:\s*[^\(]+\(\s*entre\s+(\d+)\s+et\s+(\d+)\s*\)/i, res:['esquivemin','esquivemax'], vals:{aEsquive:true}},
 	{re:/squive\s*:\s*[^\(]+\(\s*sup.rieur\s+.\s+(\d+)\s*\)/i, res:['esquivemin'], vals:{aEsquive:true}},
 	{re:/squive\s*:\s*[^\(]+\(\s*inf.rieur\s+.\s+(\d+)\s*\)/i, res:['esquivemax'], vals:{esquivemin:0, aEsquive:true}},
@@ -44,12 +47,12 @@ var patterns = [
 	{re:/ttaque\s*:\s*[^\(]+\(([^\)]+)\)/, res:['att']},
 	{re:/ne?\s+([^\(]+)\s+\((\d{7})\) a .t. influenc. par l'effet du sort/i, res:['nom','id']},
 	{re:/ypnotis.e jusqu'. sa prochaine Date Limite d'Action/i, res:[], vals:{sort:'Hypnotisme'}},
-	{re:/ous l'avez TU. et avez d.barrass. le Monde Souterrain de sa pr.sence mal.fique/i, vals:{kill:true}},
+	{re:/ous l'avez TU.\s/i, vals:{kill:true}},
 	{re:/ous avez gagn. un total de (\d+) PX/, res:['px']},
+	{re:/ous n..?avez gagn. aucun PX/, vals:{px:0}},
 	{re:/l sera, de plus, fragilis. lors des prochaines esquives/i, res:[], vals:{done:true}},
 	{re:/PV : -\d+D\d+ \(-(\d+)\)/, res:['degnet']},
 	{re:/ a .t. tu. par cet effet/, vals:{kill:true}},
-	//~ {re://, res:[]},
 ];
 
 
@@ -76,19 +79,23 @@ function cpl(){
 	return true;
 }
 
-function Monster(id){
+var Animal = exports.Animal = function(id){
 	this.id = id;
-	this.items = [];
-	this.nbMessages = 0;
 }
-Monster.prototype.addItem = function(item, message){
+
+Animal.prototype.init = function(){
+	this.items = [];
+	this.nbMessages = 0;	
+}
+
+Animal.prototype.addItem = function(item, message){
 	this.items.push(item);
 	this.nom = item.nom;
 	item.message = '['+message.authorname+' '+formatTime(message.created)+'](#'+message.id+')';
 	item.time = message.created;
 }
 // returns a (shared) {min,max} object
-Monster.prototype.reduce = function(name, min, max){
+Animal.prototype.reduce = function(name, min, max){
 	var o = this[name.toLowerCase()];
 	if (name==='pv') {
 		if (min && min%10) min += 5;
@@ -99,7 +106,7 @@ Monster.prototype.reduce = function(name, min, max){
 	if (!(o.max<max)) o.max=max;
 	return o;
 }
-Monster.prototype.rangeCell = function(name, range){
+Animal.prototype.rangeCell = function(name, range){
 	var o = range || this[name.toLowerCase()];
 	if (!o) return '';
 	if (o.min==o.max) return name+': '+o.min;
@@ -107,7 +114,7 @@ Monster.prototype.rangeCell = function(name, range){
 	if (!o.max) return name+' > '+o.min;
 	return name+': '+o.min+' à '+o.max;
 }
-Monster.prototype.dicesCell = function(name, nbsides){
+Animal.prototype.dicesCell = function(name, nbsides){
 	var o = this[name.toLowerCase()];
 	if (!o) return '';
 	var m = o.max ? (o.min+o.max)/2 : o.min;
@@ -116,7 +123,7 @@ Monster.prototype.dicesCell = function(name, nbsides){
 
 // prend en entrée un accumulateur des propriétés trouvées via les patterns dans les lignes de message
 // et renvoie un "item" (équivalent {Message|Action|PV|Détails} d'une ligne de rapport)
-Monster.prototype.getReportItem = function(o, isAtEnd){
+Animal.prototype.getReportItem = function(o, isAtEnd){
 	if (o.id!=this.id || !o.nom) return;
 	var r = {nom:o.nom, id:o.id};
 	if (cpl(o, 'touché') && (o.typeatt||o.catatt)) {
@@ -161,7 +168,7 @@ Monster.prototype.getReportItem = function(o, isAtEnd){
 			this.reduce('armure', this.armuremag.min+this.armurephys.min, this.armuremag.max+this.armurephys.max);
 		}
 		this.reduce('esq', +o.esquivemin, +o.esquivemax);
-		r.action = 'CDM';
+		r.action = o.aa ? 'AA' : 'CDM';
 		r.détails = '*' + this.rangeCell('Armure') + '*|*' + this.dicesCell('Esq',6) + '*|*' + this.rangeCell('PV') + '*|';
 		r.détails += '*blessure: '+o.blessure+'%*';
 		if (pv.min && pv.max) {
@@ -193,7 +200,7 @@ Monster.prototype.getReportItem = function(o, isAtEnd){
 	}
 }
 
-Monster.prototype.lookForReportItem = function(cur, isAtEnd, message){
+Animal.prototype.lookForReportItem = function(cur, isAtEnd, message){
 	var item = this.getReportItem(cur, isAtEnd);
 	if (!item) return cur;
 	this.addItem(item, message);
@@ -201,7 +208,7 @@ Monster.prototype.lookForReportItem = function(cur, isAtEnd, message){
 }
 
 // receives a message and adds to the array of displayable objects {Message|Action|PV|Détails}
-Monster.prototype.parse = function(message){
+Animal.prototype.parse = function(message){
 	var cur = {}, lines = message.content.replace(/\.{2,}/g,'_').split(/[\n\.]+/), item;
 	this.nbMessages++;
 	for (var l=0; l<lines.length; l++) {
@@ -240,7 +247,7 @@ Monster.prototype.parse = function(message){
 	this.lookForReportItem(cur, true, message);
 }
 
-Monster.prototype.table = function(){
+Animal.prototype.table = function(){
 	return (
 		"Message|Action|PV|Détails\n"+
 		"-|:-:|:-:|-\n"+
@@ -251,7 +258,7 @@ Monster.prototype.table = function(){
 }
 
 // if there's an interesting abstracted conclusion, returns it
-Monster.prototype.abstract = function(){
+Animal.prototype.abstract = function(){
 	var sum = 0, nb = 0, t = 0;
 	for (var i=this.items.length; i--;) {
 		var item = this.items[i];
@@ -267,13 +274,13 @@ Monster.prototype.abstract = function(){
 }
 
 // construit le markdown envoyé à l'utilisateur
-Monster.prototype.mdReport = function(){
+Animal.prototype.mdReport = function(){
 	var r = "*oukonenest* : ";
 	if (this.items.length) {
 		r += this.nom + ' ('+this.id+')\n';
 		r += this.table() + this.abstract();
 	} else {
-		r += "Rien d'intéressant trouvé dans cette salle pour le monstre " + this.id + " (";
+		r += "Rien d'intéressant trouvé dans cette salle pour " + this.id + " (";
 		switch (this.nbMessages) {
 			case 0:  r += "aucun message ne semble le mentionner)."; break;
 			case 1:  r += "un seul message le mentionne)."; break;
@@ -283,13 +290,15 @@ Monster.prototype.mdReport = function(){
 	return r;
 }
 
-// called with connection as context
-exports.onMonster = function(ct, id){
+// query the DB, parse the found messages, build the markdown of the answer
+//  and send it to the room
+// Returns a promise.
+Animal.prototype.reply = function(db, ct){
 	//~ console.log("==================================\noukonenest "+id);
-	return this.search_tsquery(ct.shoe.room.id, id+'&!oukonenest', 'english', 50)
+	var animal = this;
+	return db.search_tsquery.call(db, ct.shoe.room.id, this.id+'&!oukonenest', 'english', 50)
 	.then(function(messages){
-		var monster = new Monster(id);
-		for (var i=messages.length; i--;) monster.parse(messages[i]);
-		ct.reply(monster.mdReport());
-	});
+		for (var i=messages.length; i--;) animal.parse(messages[i]);
+		ct.reply(animal.mdReport());
+	});	
 }

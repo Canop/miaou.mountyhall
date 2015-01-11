@@ -1,4 +1,4 @@
-miaou(function(mountyhall, md, plugins){
+miaou(function(mountyhall, locals, md, plugins){
 	
 	var numReplacer = new Groumf();
 	numReplacer.skipTags('a');
@@ -47,7 +47,7 @@ miaou(function(mountyhall, md, plugins){
 
 	plugins.mountyhall = {
 		start: function(){
-			if (/\[MH\]/i.test(room.description)) {
+			if (/\[MH\]/i.test(locals.room.description)) {
 				md.registerRenderer(renderMessage, true);
 			}
 		}

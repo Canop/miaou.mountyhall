@@ -1,6 +1,6 @@
-miaou(function(mountyhall){
+miaou(function(mountyhall, locals){
 
-	if ((typeof room ==="undefined") || !/\[MH\]/i.test(room.description)) return;
+	if ((!locals.room) || !/\[MH\]/i.test(locals.room.description)) return;
 
 	// this map is built from the public file Public_Trolls.txt, using a regular expression
 	//		"                    =>   
@@ -16905,12 +16905,12 @@ miaou(function(mountyhall){
 		"caché", "caribou", "cat", "cerne", "champion", 'chonchon', "courte", "crash", "cross",
 		"dark", "darkling", "désolé", "diablotin", "dodo", 'don', "dragon", "dudu",
 		"fan", "fanatique", "fichtre",
-		"glop", "gogo", "golem", "gowaps", "gros", "guy",
+		"glop", "gniark", "gogo", "golem", "gowaps", "gros", "guy",
 		"hein ?", "hum", "hypnos", "hypnotiseur",
 		"imagine", "inscription", "invi", "ira",
 		"kaboum",
 		"late", "l'autre", "le troll", "lourd",
-		"malus", 'max', "meuh", 'merci', "miam", "mithril", "mini", "moche", 'moi', "monstre", "mort", "mounty", "mumuse", "musaraigne",
+		"malus", "mauvais", 'max', "meuh", 'merci', "miam", "mithril", "mini", "moche", 'moi', "monstre", "mort", "mounty", "mumuse", "musaraigne",
 		"ninix", "noob", "nos",
 		"ombre", "ouille", "oups",
 		"paf", "parfait", 'pas', "pâquerette", "pépin", "phoenix", "personne", "poil", "poison", "popo", "poulet", "pourri", "pub",

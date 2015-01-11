@@ -5,7 +5,8 @@
 var Promise = require("bluebird"),
 	iconvlite = require('iconv-lite'),
 	http = require('http'),
-	abstract = require('./abstract.js'),
+	Monster = require('./Monster.js'),
+	Troll = require('./Troll.js'),
 	bot;
 
 exports.name = "MountyHall";
@@ -86,14 +87,17 @@ exports.registerCommands = function(registerCommand){
 	registerCommand({
 		name:'oukonenest',
 		fun:function(ct){
-			var match = ct.args.match(/(\d{6,})/);
+			var match = ct.args.match(/(\d+)/);
 			if (match) {
 				var num = +match[1];
+				console.log("num:", num);
 				if (num>567890 && num<15178164) {
-					return abstract.onMonster.call(this, ct, num);
+					return (new Monster(num)).reply(this, ct);
+				} else if (num<567891) {
+					return (new Troll(num)).reply(this, ct);					
 				}
 			}
-			throw "Précisez le numéro du monstre (par exemple `!!"+ct.cmd.name+" 12345678`)";
+			throw "Précisez le numéro du troll ou monstre (par exemple `!!"+ct.cmd.name+" 12345678`)";
 			
 		},
 		help:"synthétise les infos disponibles dans la salle à propos de l'attaque sur un monstre",
