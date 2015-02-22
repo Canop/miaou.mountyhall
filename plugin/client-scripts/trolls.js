@@ -11,19 +11,19 @@ miaou(function(mountyhall, locals){
 	[ 
 		"ade", "arf", 'autre', "aura",
 		"balrog", "beurk", "belle", "bibi", "blabla", "blanche", "bleu", "bof", "bol", "boom", "boum", "boss", "bouarf",
-		"caché", "caribou", "cat", "cerne", "champion", 'chonchon', "courte", "crash", "cross",
+		"ca va chier", "caché", "caribou", "cat", "cerne", "champion", 'chonchon', "courte", "crash", "cross",
 		"dark", "darkling", "désolé", "diablotin", "dodo", 'don', "dragon", "dudu",
 		"fan", "fanatique", "fichtre",
-		"glop", "gniark", "gogo", "golem", "gowaps", "gros", "guy",
+		"glop", "gné", "gniark", "gogo", "golem", "gowaps", "gros", "guy",
 		"hein ?", "hum", "hypnos", "hypnotiseur",
 		"imagine", "inscription", "invi", "ira",
 		"kaboum",
-		"late", "l'autre", "le troll", "lourd",
+		"la montagne", "late", "l'autre", "le troll", "lourd",
 		"malus", "mauvais", 'max', "meuh", 'merci', "miam", "mithril", "mini", "moche", 'moi', "monstre", "mort", "mounty", "mumuse", "musaraigne",
 		"ninix", "noob", "nos",
 		"ombre", "ouille", "oups",
 		"paf", "parfait", 'pas', "pâquerette", "pépin", "phoenix", "personne", "poil", "poison", "popo", "poulet", "pourri", "pub",
-		"refait", "retrouver", "roc", "rose",
+		"raaaaah", "refait", "retrouver", "roc", "rose",
 		"salade", "silence", 'son', "songe", "sorcière", "souris", "six", "sphynx", "steack", "sushi", "sympa",
 		'test', "titan", "tomawak", 'trolette', 'troll', "trollinet", "trou",
 		"vrille",
@@ -77,6 +77,7 @@ miaou(function(mountyhall, locals){
 	alias('Shaksgärt', 'Shaks');
 	alias('Valfëan', 'Valfean');
 	alias('wouchy', 'wouch');
+	alias('TuttiRikikiMaoussKosTroll', 'Raistlin');
 
 	mh_trolls = null;
 });

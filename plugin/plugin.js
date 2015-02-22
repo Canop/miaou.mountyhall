@@ -72,7 +72,6 @@ function renderMHProfile(ppi){
 	return html;
 }
 
-
 exports.externalProfile = {
 	creation: {
 		fields: [
@@ -80,7 +79,11 @@ exports.externalProfile = {
 			{ name:'mh_mdpr', label:'Mot de passe restreint', notice:"Vous pouvez créer un mot de passe restreint (également appelé code d'accès spécifique) dans Options / Options Tröll"}
 		],
 		create: createMHProfile
-	}, render: renderMHProfile
+	},
+	render: renderMHProfile,
+	avatarUrl: function(ppi){
+		return ppi.troll.blason;
+	}
 }
 
 exports.registerCommands = function(registerCommand){
