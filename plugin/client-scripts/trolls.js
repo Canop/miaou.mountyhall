@@ -30,7 +30,7 @@ miaou(function(mountyhall, locals){
 		"wiki",
 		"yop",
 		"zog",
-		"..."
+		"...", "\\o/"
 	].forEach(function(k){
 		excludeMap[k] = true;
 	});
@@ -43,7 +43,7 @@ miaou(function(mountyhall, locals){
 		if (name==+name) name = 'T'+name;
 		if (name.length>2) replacer.add(name, id);
 	}
-	replacer.skipTags('a', 'code');
+	replacer.skipTags('a', 'pre', 'code');
 	mountyhall.trollNamesReplacer = replacer;
 
 	function alias(){

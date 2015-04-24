@@ -1,7 +1,7 @@
 miaou(function(mountyhall, locals, md, plugins){
 	
 	var numReplacer = new Groumf();
-	numReplacer.skipTags('a');
+	numReplacer.skipTags('a', 'pre', 'code');
 
 	var charmap = {
 		'"': '&quot;',
