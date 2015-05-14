@@ -16,7 +16,10 @@ miaou(function(mountyhall, locals, md, plugins){
 	}
 	
 	// this function is called on messages after they've been already rendered
-	function renderMessage($c){
+	function renderMessage($c, message){
+		if (message.room != locals.room.id) {
+			return;
+		}
 		mountyhall.trollNamesReplacer.replaceTextWithHTMLInHTML($c[0], function(name, id){
 			// replacing troll names
 			return '<a target=_blank href=http://games.mountyhall.com/mountyhall/View/PJView.php?ai_IDPJ='+id+
