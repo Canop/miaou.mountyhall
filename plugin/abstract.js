@@ -8,6 +8,7 @@ var patterns = [
 	{re:/e Monstre Cibl. fait partie des :[^\(\)]+\(\s*([^\(]+)\s*-\s*N°(\d+)\)/i, res:['nom','id'], vals:{cdm:'ok'}},
 	{re:/(.*)\s+\((\d+)\) a les caract.ristiques suivantes/i, clear:true, res:['nom','id'], vals:{aa:'ok'}}, // faut espérer qu'il n'y ait pas de bordel au début de la ligne...
 	{re:/(.*)\s+\((\d+)\) a .t. influenc. par l'effet du sort/i, res:['nom','id']},
+	{re:/Le Monstre une? (.*)\s+\((\d+)\) a .t. victime du pi.ge/i, clear:true, res:['nom','id'], vals:{piege:true}},
 	{re:/a Cible subit donc pleinement l'effet/i, vals:{full:true}},
 	{re:/e sortil.ge a donc un EFFET REDUIT/i, vals:{full:false}},
 	{re:/e sortil.ge (.*) a eu l'effet/, res:['sort']},
@@ -52,6 +53,7 @@ var patterns = [
 	{re:/ous n..?avez gagn. aucun PX/, vals:{px:0}},
 	{re:/l sera, de plus, fragilis. lors des prochaines esquives/i, res:[], vals:{done:true}},
 	{re:/PV : -\d+D\d+ \(-(\d+)\)/, res:['degnet']},
+	{re:/a subi (\d+) points de d.g.ts/i, res:['degnet']},
 	{re:/ a .t. tu. par cet effet/, vals:{kill:true}},
 ];
 
@@ -198,6 +200,15 @@ Animal.prototype.getReportItem = function(o, isAtEnd){
 		if (o.seuilres) r.détails += 'Seuil res: '+o.seuilres+' %|';
 		return r;
 	}
+	if (o.piege && isAtEnd) {
+		console.dir(o);
+		r.action = "Piège";
+		r.deg = o.degnet;
+		r.pv = "**-"+o.degnet+" PV**";
+		if (o.kill) r.action += " mortel";
+		console.log('r:',r);
+		return r;
+	}
 }
 
 Animal.prototype.lookForReportItem = function(cur, isAtEnd, message){
@@ -227,7 +238,7 @@ Animal.prototype.parse = function(message){
 			if (!m) continue;
 			if (p.clear) {
 				console.log("--- clear ---");
-				this.lookForReportItem(cur, false, message);
+				this.lookForReportItem(cur, true, message);
 				cur = {};
 			}
 			for (var j=1; j<m.length; j++) {
