@@ -61,7 +61,7 @@ function createMHProfile(user, pluginPlayerInfos, vals) {
 function renderMHProfile(ppi){
 	var html = '';
 	if (ppi && ppi.troll && ppi.troll.id && ppi.troll.race) {
-		html += '<div style="background:url(http://games.mountyhall.com/MH_Packs/packMH_parchemin/fond/fond2.jpg);padding:2px;min-height:60px;line-height:30px;color:black;">';
+		html += '<div style="background:url(static/plugins/mountyhall/rsc/fond-parchemin.jpg);padding:2px;min-height:60px;line-height:30px;color:black;">';
 		if (ppi.troll.blason) html += '<img align=left style="max-width:60px;max-height:60px; margin-right:10px;" src="'+ppi.troll.blason+'">';
 		html += '<a target=_blank style="color:black" href=http://games.mountyhall.com/mountyhall/View/PJView.php?ai_IDPJ='+ppi.troll.id+'>'+ppi.troll.nom+'</a>';
 		html += '<br>'+ppi.troll.race;
