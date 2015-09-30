@@ -64,7 +64,7 @@ function formatDateDDMMM(date){
 	return (d<10 ? '0' : '') + d + ' ' + MMM[date.getMonth()];
 }
 function formatTime(t){
-	var date = new Date(t*1000), now = new Date,
+	var	date = new Date(t*1000), now = new Date,
 		m = date.getMinutes(), h = date.getHours(), Y = date.getFullYear();
 		s = s = (h<10?'0':'')+h+':'+(m<10?'0':'')+m;
 	if (now.getFullYear()===Y && now.getMonth()===date.getMonth() && now.getDate()===date.getDate()) {
@@ -161,7 +161,7 @@ Animal.prototype.getReportItem = function(o, isAtEnd){
 		}
 	}
 	if (o.aArmure && o.blessure!==undefined && o.aPV) {
-		var pv = this.reduce('pv', +o.pvmin, +o.pvmax),
+		var	pv = this.reduce('pv', +o.pvmin, +o.pvmax),
 			blessure = +o.blessure;
 		if (o.armuremin||o.armuremax) this.reduce('armure', +o.armuremin, +o.armuremax);
 		if (o.armuremagmin||o.armuremagmax) {
