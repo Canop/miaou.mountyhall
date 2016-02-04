@@ -65,7 +65,7 @@ function formatDateDDMMM(date){
 }
 function formatTime(t){
 	var	date = new Date(t*1000), now = new Date,
-		m = date.getMinutes(), h = date.getHours(), Y = date.getFullYear();
+		m = date.getMinutes(), h = date.getHours(), Y = date.getFullYear(),
 		s = s = (h<10?'0':'')+h+':'+(m<10?'0':'')+m;
 	if (now.getFullYear()===Y && now.getMonth()===date.getMonth() && now.getDate()===date.getDate()) {
 		return s;
