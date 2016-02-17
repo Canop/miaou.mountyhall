@@ -6,13 +6,11 @@ var Promise = require("bluebird"),
 	iconvlite = require('iconv-lite'),
 	http = require('http'),
 	Monster = require('./Monster.js'),
-	Troll = require('./Troll.js'),
-	bot;
+	Troll = require('./Troll.js');
 
 exports.name = "MountyHall";
 
 exports.init = function(miaou){
-	bot = miaou.bot;
 }
 
 // queries a SP ("script public")
@@ -47,7 +45,8 @@ function fetchSP(sp, num, mdpr){
 function createMHProfile(user, pluginPlayerInfos, vals) {
 	return fetchSP('ProfilPublic2', vals.mh_num, vals.mh_mdpr)
 	.then(function(lines){
-		var l = lines[0], troll = {
+		var	l = lines[0];
+		var	troll = {
 			id:l[0], nom:l[1], race:l[2], blason:l[6]
 		};
 		pluginPlayerInfos.troll = troll;
@@ -88,8 +87,8 @@ exports.externalProfile = {
 
 exports.registerCommands = function(registerCommand){
 	registerCommand({
-		name:'oukonenest',
-		fun:function(ct){
+		name: 'oukonenest',
+		fun: function(ct){
 			var match = ct.args.match(/(\d+)/);
 			if (match) {
 				var num = +match[1];
@@ -103,11 +102,11 @@ exports.registerCommands = function(registerCommand){
 			throw "Précisez le numéro du troll ou monstre (par exemple `!!"+ct.cmd.name+" 12345678`)";
 			
 		},
-		help:"synthétise les infos disponibles dans la salle à propos de l'attaque sur un monstre",
+		help: "synthétise les infos disponibles dans la salle à propos de l'attaque sur un monstre",
 		detailedHelp:
 			"Utilisez `!!oukonenest numero_du_monstre`. "+
 			"Cette commande n'est disponible que dans les salles dont la description contient `[MH]`."
 		,
-		filter:function(room){ return /\[MH\]/i.test(room.description) }	
+		filter: room => /\[MH\]/i.test(room.description) 	
 	});
 }

@@ -149,8 +149,8 @@ Animal.prototype.getReportItem = function(o, isAtEnd){
 			if (o.esq) r.détails += 'esq: '+o.esq+'|';
 			if (o.kill) {
 				if (o.px!==undefined) r.détails += '**'+o.px+' PX**';
-			} else {
-				if (o.seuilres) r.détails += 'Seuil res: '+o.seuilres+' %';				
+			} else if (o.seuilres) {
+				r.détails += 'Seuil res: '+o.seuilres+' %';				
 			}
 			return r;
 		} else if (!o.touché && cpl(o, 'typeatt')) {
@@ -220,7 +220,8 @@ Animal.prototype.lookForReportItem = function(cur, isAtEnd, message){
 
 // receives a message and adds to the array of displayable objects {Message|Action|PV|Détails}
 Animal.prototype.parse = function(message){
-	var cur = {}, lines = message.content.replace(/\.{2,}/g,'_').split(/[\n\.]+/), item;
+	var	cur = {},
+		lines = message.content.replace(/\.{2,}/g,'_').split(/[\n\.]+/);
 	this.nbMessages++;
 	for (var l=0; l<lines.length; l++) {
 		var line = lines[l];
@@ -293,9 +294,14 @@ Animal.prototype.mdReport = function(){
 	} else {
 		r += "Rien d'intéressant trouvé dans cette salle pour " + this.id + " (";
 		switch (this.nbMessages) {
-			case 0:  r += "aucun message ne semble le mentionner)."; break;
-			case 1:  r += "un seul message le mentionne)."; break;
-			default: r += this.nbMessages+" messages)."; 
+		case 0:
+			r += "aucun message ne semble le mentionner).";
+			break;
+		case 1:
+			r += "un seul message le mentionne).";
+			break;
+		default:
+			r += this.nbMessages+" messages)."; 
 		}
 	}
 	return r;
