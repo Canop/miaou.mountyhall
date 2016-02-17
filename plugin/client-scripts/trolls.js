@@ -23,7 +23,7 @@ miaou(function(mountyhall, locals){
 		"ninix", "noob", "nos",
 		"ombre", "ouille", "oups",
 		"paf", "parfait", 'pas', "pâquerette", "pépin", "phoenix", "personne", "poil", "poison", "popo", "poulet", "pourri", "pub",
-		"raaaaah", "refait", "retrouver", "roc", "rose",
+		"raaaaah", "refait", "retrouver", "roc", "rose", "roulette",
 		"salade", "silence", 'son', "songe", "sorcière", "souris", "six", "sphynx", "steack", "sushi", "sympa",
 		'test', "titan", "tomawak", 'trolette', 'troll', "trollinet", "trou",
 		"vrille",
