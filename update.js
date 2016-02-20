@@ -19,5 +19,5 @@ fs.readFile("Public_Trolls.txt", function(err, data){
 		trolls[name] = id;
 	});
 	console.log(Object.keys(trolls).length);
-	fs.writeFile("plugin/client-scripts/trollsdb.js", ";window.mh_trolls="+JSON.stringify(trolls)+";");
+	fs.writeFile("plugin/client-scripts/trollsdb.js", "window.mh_trolls="+JSON.stringify(trolls)+";");
 });

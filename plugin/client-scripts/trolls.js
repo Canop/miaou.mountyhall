@@ -1,7 +1,7 @@
 miaou(function(mountyhall, locals){
 
 	if ((!locals.room) || !/\[MH\]/i.test(locals.room.description)) {
-		mh_trolls = null;
+		window.mh_trolls = null;
 		return;
 	}
 
@@ -36,8 +36,8 @@ miaou(function(mountyhall, locals){
 	});
 	mountyhall.trollsById = {};
 	var replacer = new Groumf();
-	for (var name in mh_trolls) {
-		var id = mh_trolls[name];
+	for (var name in window.mh_trolls) {
+		var id = window.mh_trolls[name];
 		mountyhall.trollsById[id] = name;
 		if (excludeMap[name.toLowerCase()]) continue;
 		if (name==+name) name = 'T'+name;
@@ -79,5 +79,5 @@ miaou(function(mountyhall, locals){
 	alias('wouchy', 'wouch');
 	alias('TuttiRikikiMaoussKosTroll', 'Raistlin');
 
-	mh_trolls = null;
+	window.mh_trolls = null;
 });
