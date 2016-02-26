@@ -2,51 +2,51 @@
 //  pour la chasse (pv, esquive, résultats frappes précédentes, etc.).
 // TODO kill à la rune
 var patterns = [
-	{re:/ONNAISSANCE DES MONSTRES sur une?\s+([^\(]+)\s+\((\d+)\)/i, clear:true, res:['nom','id'], vals:{cdm:'ok'}},
-	{re:/NALYSE ANATOMIQUE sur ([^\(]+)\s+\((\d+)\)/i, clear:true, res:['nom','id'], vals:{aa:'ok'}},
+	{re:/ONNAISSANCE DES MONSTRES sur une?\s+([^\(]+)\s+\((\d+)\)/i, clear:true, res:['nom', 'id'], vals:{cdm:'ok'}},
+	{re:/NALYSE ANATOMIQUE sur ([^\(]+)\s+\((\d+)\)/i, clear:true, res:['nom', 'id'], vals:{aa:'ok'}},
 	{re:/ous avez utilis. le Sortil.ge : (\w+)/i, clear:true, res:['sort']},
-	{re:/e Monstre Cibl. fait partie des :[^\(\)]+\(\s*([^\(]+)\s*-\s*N°(\d+)\)/i, res:['nom','id'], vals:{cdm:'ok'}},
-	{re:/(.*)\s+\((\d+)\) a les caract.ristiques suivantes/i, clear:true, res:['nom','id'], vals:{aa:'ok'}}, // faut espérer qu'il n'y ait pas de bordel au début de la ligne...
-	{re:/(.*)\s+\((\d+)\) a .t. influenc. par l'effet du sort/i, res:['nom','id']},
-	{re:/Le Monstre une? (.*)\s+\((\d+)\) a .t. victime du pi.ge/i, clear:true, res:['nom','id'], vals:{piege:true}},
+	{re:/e Monstre Cibl. fait partie des :[^\(\)]+\(\s*([^\(]+)\s*-\s*N°(\d+)\)/i, res:['nom', 'id'], vals:{cdm:'ok'}},
+	{re:/(.*)\s+\((\d+)\) a les caract.ristiques suivantes/i, clear:true, res:['nom', 'id'], vals:{aa:'ok'}}, // faut espérer qu'il n'y ait pas de bordel au début de la ligne...
+	{re:/(.*)\s+\((\d+)\) a .t. influenc. par l'effet du sort/i, res:['nom', 'id']},
+	{re:/Le Monstre une? (.*)\s+\((\d+)\) a .t. victime du pi.ge/i, clear:true, res:['nom', 'id'], vals:{piege:true}},
 	{re:/a Cible subit donc pleinement l'effet/i, vals:{full:true}},
 	{re:/e sortil.ge a donc un EFFET REDUIT/i, vals:{full:false}},
 	{re:/e sortil.ge (.*) a eu l'effet/, res:['sort']},
 	{re:/euil de R.sistance de la Cible[\._\s]*: (\d+) %/, res:['seuilres']},
-	{re:/(\d\d)\/(\d\d)\/(\d{4}) (\d\d):(\d\d):\d\d MORT .* \( (\d+) \) a débarrassé le Monde Souterrain de la présence maléfique d´une? ([^\(]+) \(\s?(\d+)\s?\)/, res:['J','M','A','h','m','killer','nom','id']},
-	{re:/ous avez attaqu. ([^\(]+) \(\s?(\d+)\s?\) .* comp/, clear:true, res:['nom','id'], vals:{catatt:'comp'}},
-	{re:/ous avez attaqu. ([^\(]+) \(\s?(\d+)\s?\) .* sortil/, clear:true, res:['nom','id'], vals:{catatt:'sort'}},
-	{re:/ous avez attaqu. ([^\(]+) \(\s?(\d+)\s?\)/, clear:true, res:['nom','id'], vals:{typeatt:'AN'}},
-	{re:/le Tr.ll (.*)\s+\((\d+)\) s'est interpos. avec bravoure/, clear:true, res:['nom','id'], vals:{typeatt:'interpo'}},
+	{re:/(\d\d)\/(\d\d)\/(\d{4}) (\d\d):(\d\d):\d\d MORT .* \( (\d+) \) a débarrassé le Monde Souterrain de la présence maléfique d´une? ([^\(]+) \(\s?(\d+)\s?\)/, res:['J', 'M', 'A', 'h', 'm', 'killer', 'nom', 'id']},
+	{re:/ous avez attaqu. ([^\(]+) \(\s?(\d+)\s?\) .* comp/, clear:true, res:['nom', 'id'], vals:{catatt:'comp'}},
+	{re:/ous avez attaqu. ([^\(]+) \(\s?(\d+)\s?\) .* sortil/, clear:true, res:['nom', 'id'], vals:{catatt:'sort'}},
+	{re:/ous avez attaqu. ([^\(]+) \(\s?(\d+)\s?\)/, clear:true, res:['nom', 'id'], vals:{typeatt:'AN'}},
+	{re:/le Tr.ll (.*)\s+\((\d+)\) s'est interpos. avec bravoure/, clear:true, res:['nom', 'id'], vals:{typeatt:'interpo'}},
 	{re:/e Jet d'Esquive de votre adversaire est de[\._\s]*: (\d+)/, res:['esq']},
 	{re:/ous avez donc RAT. votre adversair/, vals:{touché:false}},
 	{re:/ous avez donc TOUCH. votre adversaire par un coup critique/, vals:{touché:true, critique:true}},
 	{re:/ous avez donc TOUCH. votre adversaire/, vals:{touché:true, critique:false}}, // due to last one
 	{re:/ous lui avez infligé (\d+) points de dég/, res:['degbrut']},
 	{re:/on Armure le prot.ge et il ne perdra que (\d+) points de vie/, res:['degnet']},
-	{re:/l était alors aux alentours de : (\d\d)\/(\d\d)\/(\d{4}) (\d\d):(\d\d):\d\d/, res:['J','M','A','h','m']},
+	{re:/l était alors aux alentours de : (\d\d)\/(\d\d)\/(\d{4}) (\d\d):(\d\d):\d\d/, res:['J', 'M', 'A', 'h', 'm']},
 	{re:/ésultat du Combat : (.*)/, res:['typeatt']},
 	{re:/otre Jet d'Attaque est de[\._\s]+: (\d+)/, res:['att']},
-	{re:/e Monstre Cibl. fait partie des : \w+ \(([^\-]+) - N°\s*(\d+)\s*\)/, res:['nom','id']},
+	{re:/e Monstre Cibl. fait partie des : \w+ \(([^\-]+) - N°\s*(\d+)\s*\)/, res:['nom', 'id']},
 	{re:/iveau\s*:\s*[^>:\(\)]*\s*\([^\(]+\)/, res:['niveau']},
 	{re:/lessure\D+(\d+)\s*%/, res:['blessure']},
-	{re:/rmure Physique\s*:\s*[^\(]+\(\s*entre\s+(\d+)\s+et\s+(\d+)\s*\)/i, res:['armurephysmin','armurephysmax']},
+	{re:/rmure Physique\s*:\s*[^\(]+\(\s*entre\s+(\d+)\s+et\s+(\d+)\s*\)/i, res:['armurephysmin', 'armurephysmax']},
 	{re:/rmure Physique\s*:\s*[^\(]+\(\s*sup.rieur\s+.\s+(\d+)\s*\)/i, res:['armurephysmin']},
 	{re:/rmure Physique\s*:\s*[^\(]+\(\s*inf.rieur\s+.\s+(\d+)\s*\)/i, res:['armurephysmax'], vals:{armurephysmin:0}},
-	{re:/rmure Magique\s*:\s*[^\(]+\(\s*entre\s+(\d+)\s+et\s+(\d+)\s*\)/i, res:['armuremagmin','armuremagmax'], vals:{aArmure:true}},
+	{re:/rmure Magique\s*:\s*[^\(]+\(\s*entre\s+(\d+)\s+et\s+(\d+)\s*\)/i, res:['armuremagmin', 'armuremagmax'], vals:{aArmure:true}},
 	{re:/rmure Magique\s*:\s*[^\(]+\(\s*sup.rieur\s+.\s+(\d+)\s*\)/i, res:['armuremagmin'], vals:{aArmure:true}},
 	{re:/rmure Magique\s*:\s*[^\(]+\(\s*inf.rieur\s+.\s+(\d+)\s*\)/i, res:['armuremagmax'], vals:{armuremagmin:0, aArmure:true}},
-	{re:/rmure\s*:\s*[^\(]+\(\s*entre\s+(\d+)\s+et\s+(\d+)\s*\)/i, res:['armuremin','armuremax'], vals:{aArmure:true}},
+	{re:/rmure\s*:\s*[^\(]+\(\s*entre\s+(\d+)\s+et\s+(\d+)\s*\)/i, res:['armuremin', 'armuremax'], vals:{aArmure:true}},
 	{re:/rmure\s*:\s*[^\(]+\(\s*sup.rieur\s+.\s+(\d+)\s*\)/i, res:['armuremin'], vals:{aArmure:true}},
 	{re:/rmure\s*:\s*[^\(]+\(\s*inf.rieur\s+.\s+(\d+)\s*\)/i, res:['armuremax'], vals:{armuremin:0, aArmure:true}},
-	{re:/squive\s*:\s*[^\(]+\(\s*entre\s+(\d+)\s+et\s+(\d+)\s*\)/i, res:['esquivemin','esquivemax'], vals:{aEsquive:true}},
+	{re:/squive\s*:\s*[^\(]+\(\s*entre\s+(\d+)\s+et\s+(\d+)\s*\)/i, res:['esquivemin', 'esquivemax'], vals:{aEsquive:true}},
 	{re:/squive\s*:\s*[^\(]+\(\s*sup.rieur\s+.\s+(\d+)\s*\)/i, res:['esquivemin'], vals:{aEsquive:true}},
 	{re:/squive\s*:\s*[^\(]+\(\s*inf.rieur\s+.\s+(\d+)\s*\)/i, res:['esquivemax'], vals:{esquivemin:0, aEsquive:true}},
-	{re:/oints de Vie\s*:\s*[^\(]+\(\s*entre\s+(\d+)\s+et\s+(\d+)\s*\)/i, res:['pvmin','pvmax'], vals:{aPV:true}},
+	{re:/oints de Vie\s*:\s*[^\(]+\(\s*entre\s+(\d+)\s+et\s+(\d+)\s*\)/i, res:['pvmin', 'pvmax'], vals:{aPV:true}},
 	{re:/oints de Vie\s*:\s*[^\(]+\(\s*sup.rieur\s+.\s+(\d+)\s*\)/i, res:['pvmin'], vals:{aPV:true}},
 	{re:/oints de Vie\s*:\s*[^\(]+\(\s*inf.rieur\s+.\s+(\d+)\s*\)/i, res:['pvmax'], vals:{pvmin:0, aPV:true}},
 	{re:/ttaque\s*:\s*[^\(]+\(([^\)]+)\)/, res:['att']},
-	{re:/ne?\s+([^\(]+)\s+\((\d{7})\) a .t. influenc. par l'effet du sort/i, res:['nom','id']},
+	{re:/ne?\s+([^\(]+)\s+\((\d{7})\) a .t. influenc. par l'effet du sort/i, res:['nom', 'id']},
 	{re:/ypnotis.e jusqu'. sa prochaine Date Limite d'Action/i, res:[], vals:{sort:'Hypnotisme'}},
 	{re:/ous l'avez TU.\s/i, vals:{kill:true}},
 	{re:/ous avez gagn. un total de (\d+) PX/, res:['px']},
@@ -58,7 +58,7 @@ var patterns = [
 ];
 
 
-var MMM = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+var MMM = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 function formatDateDDMMM(date){
 	var d = date.getDate();
 	return (d<10 ? '0' : '') + d + ' ' + MMM[date.getMonth()];
@@ -103,7 +103,7 @@ Animal.prototype.reduce = function(name, min, max){
 		if (min && min%10) min += 5;
 		if (max && max%10) max -= 5;
 	}
-	if (!o) return this[name]={min:min,max:max};
+	if (!o) return this[name]={min:min, max:max};
 	if (!(o.min>min)) o.min=min;
 	if (!(o.max<max)) o.max=max;
 	return o;
@@ -130,9 +130,9 @@ Animal.prototype.getReportItem = function(o, isAtEnd){
 	var r = {nom:o.nom, id:o.id};
 	if (cpl(o, 'touché') && (o.typeatt||o.catatt)) {
 		r.action = (o.typeatt || o.catatt)
-			.replace(/vampirisme/i,'vampi')
-			.replace(/coup de butoir/i,'CDB')
-			.replace(/botte secrète/i,'BS');
+			.replace(/vampirisme/i, 'vampi')
+			.replace(/coup de butoir/i, 'CDB')
+			.replace(/botte secrète/i, 'BS');
 		r.détails = '';
 		if (o.touché && cpl(o, 'degbrut') && (isAtEnd||o.done||(o.px!==undefined))) {
 			if (o.critique) r.action += ' critique';
@@ -171,7 +171,7 @@ Animal.prototype.getReportItem = function(o, isAtEnd){
 		}
 		this.reduce('esq', +o.esquivemin, +o.esquivemax);
 		r.action = o.aa ? 'AA' : 'CDM';
-		r.détails = '*' + this.rangeCell('Armure') + '*|*' + this.dicesCell('Esq',6) + '*|*' + this.rangeCell('PV') + '*|';
+		r.détails = '*' + this.rangeCell('Armure') + '*|*' + this.dicesCell('Esq', 6) + '*|*' + this.rangeCell('PV') + '*|';
 		r.détails += '*blessure: '+o.blessure+'%*';
 		if (pv.min && pv.max) {
 			if (!blessure) r.pv = Math.floor(0.95*pv.min)+' à '+Math.floor(pv.max);
@@ -193,8 +193,8 @@ Animal.prototype.getReportItem = function(o, isAtEnd){
 			// fixme comment déterminer s'il est mort ?
 		}
 		r.action = o.sort
-			.replace(/hypnotisme/i,'hypno')
-			.replace(/faiblesse pasagère/i,'FP');
+			.replace(/hypnotisme/i, 'hypno')
+			.replace(/faiblesse pasagère/i, 'FP');
 		if (!o.full) r.action += ' réduit';
 		r.détails = '';
 		if (o.seuilres) r.détails += 'Seuil res: '+o.seuilres+' %|';
@@ -206,7 +206,7 @@ Animal.prototype.getReportItem = function(o, isAtEnd){
 		r.deg = o.degnet;
 		r.pv = "**-"+o.degnet+" PV**";
 		if (o.kill) r.action += " mortel";
-		console.log('r:',r);
+		console.log('r:', r);
 		return r;
 	}
 }
@@ -221,7 +221,7 @@ Animal.prototype.lookForReportItem = function(cur, isAtEnd, message){
 // receives a message and adds to the array of displayable objects {Message|Action|PV|Détails}
 Animal.prototype.parse = function(message){
 	var	cur = {},
-		lines = message.content.replace(/\.{2,}/g,'_').split(/[\n\.]+/);
+		lines = message.content.replace(/\.{2,}/g, '_').split(/[\n\.]+/);
 	this.nbMessages++;
 	for (var l=0; l<lines.length; l++) {
 		var line = lines[l];
@@ -313,7 +313,7 @@ Animal.prototype.mdReport = function(){
 Animal.prototype.reply = function(db, ct){
 	//~ console.log("==================================\noukonenest "+id);
 	var animal = this;
-	return db.search_tsquery.call(db, ct.shoe.room.id, this.id+'&!oukonenest', 'english', 50)
+	return db.search_tsquery(ct.shoe.room.id, this.id+'&!oukonenest', 'english', 50)
 	.then(function(messages){
 		for (var i=messages.length; i--;) animal.parse(messages[i]);
 		ct.reply(animal.mdReport());

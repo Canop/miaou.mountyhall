@@ -23,7 +23,7 @@ function fetchSP(sp, num, mdpr){
 		method: "GET"
 	}, function(res){
 		var lines = [];
-		res.on('data', function (chunk) {
+		res.on('data', function(chunk){
 			lines.push(iconvlite.decode(chunk, 'ISO-8859-1').toString().split(';'));
 		}).on('end', function(){
 			if (lines.length>0 && lines[0].length>1) {
@@ -33,7 +33,7 @@ function fetchSP(sp, num, mdpr){
 			}
 		});
 	});
-	req.on('error', function(e) {
+	req.on('error', function(e){
 		p.reject('request error');
 	});
 	req.end();
@@ -42,7 +42,7 @@ function fetchSP(sp, num, mdpr){
 
 // returns a promise
 // updates and provides in resolution the pluginPlayerInfos if successful, else throws an error 
-function createMHProfile(user, pluginPlayerInfos, vals) {
+function createMHProfile(user, pluginPlayerInfos, vals){
 	return fetchSP('ProfilPublic2', vals.mh_num, vals.mh_mdpr)
 	.then(function(lines){
 		var	l = lines[0];
@@ -105,8 +105,7 @@ exports.registerCommands = function(registerCommand){
 		help: "synthétise les infos disponibles dans la salle à propos de l'attaque sur un monstre",
 		detailedHelp:
 			"Utilisez `!!oukonenest numero_du_monstre`. "+
-			"Cette commande n'est disponible que dans les salles dont la description contient `[MH]`."
-		,
+			"Cette commande n'est disponible que dans les salles dont la description contient `[MH]`.",
 		filter: room => /\[MH\]/i.test(room.description) 	
 	});
 }
