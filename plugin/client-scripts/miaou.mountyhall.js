@@ -1,5 +1,5 @@
 miaou(function(mountyhall, locals, md, plugins){
-	
+
 	var numReplacer = new Groumf();
 	numReplacer.skipTags('a', 'pre', 'code');
 
@@ -10,11 +10,11 @@ miaou(function(mountyhall, locals, md, plugins){
 		'>': '&gt;'
 	};
 	function escapeForTitle(s){
-		return s.replace(/[&<>"]/g, function(c) {
+		return s.replace(/[&<>"]/g, function(c){
 			return charmap[c];
 		});
 	}
-	
+
 	// this function is called on messages after they've been already rendered
 	function renderMessage($c, message){
 		if (message.room != locals.room.id) {
@@ -23,7 +23,7 @@ miaou(function(mountyhall, locals, md, plugins){
 		mountyhall.trollNamesReplacer.replaceTextWithHTMLInHTML($c[0], function(name, id){
 			// replacing troll names
 			return '<a target=_blank href=http://games.mountyhall.com/mountyhall/View/PJView.php?ai_IDPJ='+id+
-				' title="Troll : '+escapeForTitle(mountyhall.trollsById[id] || name)+' ( '+id+' )"'+						
+				' title="Troll : '+escapeForTitle(mountyhall.trollsById[id] || name)+' ( '+id+' )"'+
 				' class=mountyhall'+
 				'>'+name+'</a>';
 		});
@@ -33,7 +33,7 @@ miaou(function(mountyhall, locals, md, plugins){
 				return '<a target=_blank href=http://games.mountyhall.com/mountyhall/View/MonsterView.php?ai_IDPJ='+id+
 					' title="Monstre n° '+id+'"'+
 					' class=mountyhall'+
-					'>'+id+'</a>';			
+					'>'+id+'</a>';
 			} else {
 				var name = mountyhall.trollsById[+id];
 				if (!name) return id;
@@ -43,8 +43,8 @@ miaou(function(mountyhall, locals, md, plugins){
 					' title="Troll : '+escapeForTitle(name)+' ( '+id+' )"'+
 					' class=mountyhall'+
 					'>'+id+'</a>';
-			} 
-			
+			}
+
 		});
 	}
 

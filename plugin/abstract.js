@@ -1,12 +1,13 @@
 // Analyse des messages concernant un monstre afin d'en tirer les infos nécessaires
 //  pour la chasse (pv, esquive, résultats frappes précédentes, etc.).
 // TODO kill à la rune
+/*eslint-disable max-len*/
 var patterns = [
 	{re:/ONNAISSANCE DES MONSTRES sur une?\s+([^\(]+)\s+\((\d+)\)/i, clear:true, res:['nom', 'id'], vals:{cdm:'ok'}},
 	{re:/NALYSE ANATOMIQUE sur ([^\(]+)\s+\((\d+)\)/i, clear:true, res:['nom', 'id'], vals:{aa:'ok'}},
 	{re:/ous avez utilis. le Sortil.ge : (\w+)/i, clear:true, res:['sort']},
 	{re:/e Monstre Cibl. fait partie des :[^\(\)]+\(\s*([^\(]+)\s*-\s*N°(\d+)\)/i, res:['nom', 'id'], vals:{cdm:'ok'}},
-	{re:/(.*)\s+\((\d+)\) a les caract.ristiques suivantes/i, clear:true, res:['nom', 'id'], vals:{aa:'ok'}}, // faut espérer qu'il n'y ait pas de bordel au début de la ligne...
+	{re:/(.*)\s+\((\d+)\) a les caract.ristiques suivantes/i, clear:true, res:['nom', 'id'], vals:{aa:'ok'}},
 	{re:/(.*)\s+\((\d+)\) a .t. influenc. par l'effet du sort/i, res:['nom', 'id']},
 	{re:/Le Monstre une? (.*)\s+\((\d+)\) a .t. victime du pi.ge/i, clear:true, res:['nom', 'id'], vals:{piege:true}},
 	{re:/a Cible subit donc pleinement l'effet/i, vals:{full:true}},
@@ -56,7 +57,7 @@ var patterns = [
 	{re:/a subi (\d+) points de d.g.ts/i, res:['degnet']},
 	{re:/ a .t. tu. par cet effet/, vals:{kill:true}},
 ];
-
+/*eslint-enable max-len*/
 
 var MMM = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 function formatDateDDMMM(date){
@@ -76,7 +77,7 @@ function formatTime(t){
 function cpl(){
 	var cur = arguments[0];
 	for (var i=1; i<arguments.length; i++) {
-		if (cur[arguments[i]]===undefined) return false;	
+		if (cur[arguments[i]]===undefined) return false;
 	}
 	return true;
 }
@@ -87,7 +88,7 @@ var Animal = exports.Animal = function(id){
 
 Animal.prototype.init = function(){
 	this.items = [];
-	this.nbMessages = 0;	
+	this.nbMessages = 0;
 }
 
 Animal.prototype.addItem = function(item, message){
@@ -142,7 +143,7 @@ Animal.prototype.getReportItem = function(o, isAtEnd){
 				if (o.degbrut) r.pv += ' (-'+o.degbrut+')';
 				r.deg = o.degnet;
 			} else {
-				r.pv = '**-'+o.degbrut+' PV**';				
+				r.pv = '**-'+o.degbrut+' PV**';
 				r.deg = o.degbrut;
 			}
 			if (o.att) r.détails += 'att: '+o.att+'|';
@@ -150,7 +151,7 @@ Animal.prototype.getReportItem = function(o, isAtEnd){
 			if (o.kill) {
 				if (o.px!==undefined) r.détails += '**'+o.px+' PX**';
 			} else if (o.seuilres) {
-				r.détails += 'Seuil res: '+o.seuilres+' %';				
+				r.détails += 'Seuil res: '+o.seuilres+' %';
 			}
 			return r;
 		} else if (!o.touché && cpl(o, 'typeatt')) {
@@ -171,7 +172,8 @@ Animal.prototype.getReportItem = function(o, isAtEnd){
 		}
 		this.reduce('esq', +o.esquivemin, +o.esquivemax);
 		r.action = o.aa ? 'AA' : 'CDM';
-		r.détails = '*' + this.rangeCell('Armure') + '*|*' + this.dicesCell('Esq', 6) + '*|*' + this.rangeCell('PV') + '*|';
+		r.détails = '*' + this.rangeCell('Armure') + '*|';
+		r.détails += '*' + this.dicesCell('Esq', 6) + '*|*' + this.rangeCell('PV') + '*|';
 		r.détails += '*blessure: '+o.blessure+'%*';
 		if (pv.min && pv.max) {
 			if (!blessure) r.pv = Math.floor(0.95*pv.min)+' à '+Math.floor(pv.max);
@@ -301,7 +303,7 @@ Animal.prototype.mdReport = function(){
 			r += "un seul message le mentionne).";
 			break;
 		default:
-			r += this.nbMessages+" messages)."; 
+			r += this.nbMessages+" messages).";
 		}
 	}
 	return r;
@@ -317,5 +319,5 @@ Animal.prototype.reply = function(db, ct){
 	.then(function(messages){
 		for (var i=messages.length; i--;) animal.parse(messages[i]);
 		ct.reply(animal.mdReport());
-	});	
+	});
 }

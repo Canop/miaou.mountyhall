@@ -8,7 +8,7 @@ miaou(function(mountyhall, locals){
 	var excludeMap = {};
 	// removing common names (yes, it looks like they're common on miaou...)
 	// but they're still used when searching by number
-	[ 
+	[
 		"ade", "arf", 'autre', "aura",
 		"balrog", "beurk", "belle", "bibi", "blabla", "blanche", "bleu", "bof", "bol", "boom", "boum", "boss", "bouarf",
 		"ca va chier", "caché", "caribou", "cat", "cerne", "champion", 'chonchon', "courte", "crash", "cross",
@@ -61,7 +61,7 @@ miaou(function(mountyhall, locals){
 			replacer.add(a, id);
 		}
 	}
-		
+
 	// a few aliases
 	alias('canopée', 'canop');
 	alias('divadel', 'diva');

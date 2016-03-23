@@ -41,7 +41,7 @@ function fetchSP(sp, num, mdpr){
 }
 
 // returns a promise
-// updates and provides in resolution the pluginPlayerInfos if successful, else throws an error 
+// updates and provides in resolution the pluginPlayerInfos if successful, else throws an error
 function createMHProfile(user, pluginPlayerInfos, vals){
 	return fetchSP('ProfilPublic2', vals.mh_num, vals.mh_mdpr)
 	.then(function(lines){
@@ -60,9 +60,15 @@ function createMHProfile(user, pluginPlayerInfos, vals){
 function renderMHProfile(ppi){
 	var html = '';
 	if (ppi && ppi.troll && ppi.troll.id && ppi.troll.race) {
-		html += '<div style="background:url(static/plugins/mountyhall/rsc/fond-parchemin.jpg);padding:2px;min-height:60px;line-height:30px;color:black;">';
-		if (ppi.troll.blason) html += '<img align=left style="max-width:60px;max-height:60px; margin-right:10px;" src="'+ppi.troll.blason+'">';
-		html += '<a target=_blank style="color:black" href=http://games.mountyhall.com/mountyhall/View/PJView.php?ai_IDPJ='+ppi.troll.id+'>'+ppi.troll.nom+'</a>';
+		html += '<div style="background:url(static/plugins/mountyhall/rsc/fond-parchemin.jpg);'
+			+ 'padding:2px;min-height:60px;line-height:30px;color:black;">';
+		if (ppi.troll.blason) {
+			html += '<img align=left style="max-width:60px;max-height:60px; margin-right:10px;"'
+				+ ' src="'+ppi.troll.blason+'">';
+		}
+		html += '<a target=_blank style="color:black"'
+			+' href=http://games.mountyhall.com/mountyhall/View/PJView.php?ai_IDPJ='+ppi.troll.id
+			+'>'+ppi.troll.nom+'</a>';
 		html += '<br>'+ppi.troll.race;
 		html += '</div>';
 	} else {
@@ -74,8 +80,17 @@ function renderMHProfile(ppi){
 exports.externalProfile = {
 	creation: {
 		fields: [
-			{ name:'mh_num', label:'Numéro', type:'Number' },
-			{ name:'mh_mdpr', label:'Mot de passe restreint', notice:"Vous pouvez créer un mot de passe restreint (également appelé code d'accès spécifique) dans Options / Options Tröll"}
+			{
+				name:'mh_num',
+				label:'Numéro',
+				type:'Number'
+			},
+			{
+				name:'mh_mdpr',
+				label:'Mot de passe restreint',
+				notice:"Vous pouvez créer un mot de passe restreint"
+					+ " (également appelé code d'accès spécifique) dans Options / Options Tröll"
+			}
 		],
 		create: createMHProfile
 	},
@@ -96,16 +111,16 @@ exports.registerCommands = function(registerCommand){
 				if (num>567890 && num<15178164) {
 					return (new Monster(num)).reply(this, ct);
 				} else if (num<567891) {
-					return (new Troll(num)).reply(this, ct);					
+					return (new Troll(num)).reply(this, ct);
 				}
 			}
 			throw "Précisez le numéro du troll ou monstre (par exemple `!!"+ct.cmd.name+" 12345678`)";
-			
+
 		},
 		help: "synthétise les infos disponibles dans la salle à propos de l'attaque sur un monstre",
 		detailedHelp:
 			"Utilisez `!!oukonenest numero_du_monstre`. "+
 			"Cette commande n'est disponible que dans les salles dont la description contient `[MH]`.",
-		filter: room => /\[MH\]/i.test(room.description) 	
+		filter: room => /\[MH\]/i.test(room.description)
 	});
 }
