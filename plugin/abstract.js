@@ -1,12 +1,15 @@
 // Analyse des messages concernant un monstre afin d'en tirer les infos nécessaires
 //  pour la chasse (pv, esquive, résultats frappes précédentes, etc.).
 // TODO kill à la rune
+
+var	bench = require("../../libs/bench.js");
+
 /*eslint-disable max-len*/
 var patterns = [
 	{re:/ONNAISSANCE DES MONSTRES sur une?\s+([^\(]+)\s+\((\d+)\)/i, clear:true, res:['nom', 'id'], vals:{cdm:'ok'}},
 	{re:/NALYSE ANATOMIQUE sur ([^\(]+)\s+\((\d+)\)/i, clear:true, res:['nom', 'id'], vals:{aa:'ok'}},
 	{re:/ous avez utilis. le Sortil.ge : (\w+)/i, clear:true, res:['sort']},
-	{re:/e Monstre Cibl. fait partie des :[^\(\)]+\(\s*([^\(]+)\s*-\s*N°(\d+)\)/i, res:['nom', 'id'], vals:{cdm:'ok'}},
+	{re:/Cibl. fait partie des :[^\(\)]+\(\s*([^\(]+)\s*-\s*N°(\d+)\)/i, res:['nom', 'id'], vals:{cdm:'ok'}},
 	{re:/(.*)\s+\((\d+)\) a les caract.ristiques suivantes/i, clear:true, res:['nom', 'id'], vals:{aa:'ok'}},
 	{re:/(.*)\s+\((\d+)\) a .t. influenc. par l'effet du sort/i, res:['nom', 'id']},
 	{re:/Le Monstre une? (.*)\s+\((\d+)\) a .t. victime du pi.ge/i, clear:true, res:['nom', 'id'], vals:{piege:true}},
@@ -314,10 +317,13 @@ Animal.prototype.mdReport = function(){
 // Returns a promise.
 Animal.prototype.reply = function(db, ct){
 	//~ console.log("==================================\noukonenest "+id);
-	var animal = this;
+	var	benchOperation = bench.start("Mounty Hall / !!oukonenest"),
+		animal = this;
 	return db.search_tsquery(ct.shoe.room.id, this.id+'&!oukonenest', 'english', 50)
 	.then(function(messages){
 		for (var i=messages.length; i--;) animal.parse(messages[i]);
-		ct.reply(animal.mdReport());
+		var md = animal.mdReport();
+		benchOperation.end();
+		ct.reply(md);
 	});
 }

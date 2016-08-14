@@ -10,22 +10,26 @@ miaou(function(mountyhall, locals){
 	// but they're still used when searching by number
 	[
 		"ade", "arf", 'autre', "aura",
-		"balrog", "beurk", "belle", "bibi", "blabla", "blanche", "bleu", "bof", "bol", "boom", "boum", "boss", "bouarf",
-		"ca va chier", "caché", "caribou", "cat", "cerne", "champion", 'chonchon', "courte", "crash", "cross",
+		"balrog", "beurk", "belle", "bibi", "bidouille", "blabla", "blanche", "bleu", "bof", "bol", "boom", "boum", "boss", "bouarf",
+		"boulette",
+		"ca va chier", "caché", "caribou", "cat", "cerne", "champion", 'chonchon', "claire", "clic", "courte", "crash", "cross",
 		"dark", "darkling", "désolé", "diablotin", "dodo", 'don', "dragon", "dudu",
-		"fan", "fanatique", "fichtre",
+		"espace",
+		"fan", "fanatique", "fichtre", "folie",
 		"glop", "gné", "gniark", "gogo", "golem", "gowaps", "gros", "guy",
 		"hein ?", "hum", "hypnos", "hypnotiseur",
 		"imagine", "inscription", "invi", "ira",
-		"kaboum",
-		"la montagne", "late", "l'autre", "le troll", "lourd",
-		"malus", "mauvais", 'max', "meuh", 'merci', "miam", "mithril", "mini", "moche", 'moi', "monstre", "mort", "mounty", "mumuse", "musaraigne",
+		"kaboum", "kastar", "kill",
+		"la montagne", "late", "l'autre", "le troll", "link", "lourd",
+		"malus", "maman", "mauvais", 'max', "meuh", 'merci', "miam", "minuscule", "mithril", "mini", "moche",
+		'moi', "monstre", "mort", "mounty", "mumuse", "musaraigne",
 		"ninix", "noob", "nos",
-		"ombre", "ouille", "oups",
-		"paf", "parfait", 'pas', "pâquerette", "pépin", "phoenix", "personne", "poil", "poison", "popo", "poulet", "pourri", "pub",
+		"ombre", "origine", "ouille", "oups",
+		"paf", "parfait", 'pas', "pâquerette", "pépin", "phoenix", "personne", "poil",
+		"poison", "popo", "poulet", "pourri", "pub",
 		"raaaaah", "refait", "retrouver", "roc", "rose", "roulette",
 		"salade", "silence", 'son', "songe", "sorcière", "souris", "six", "sphynx", "steack", "sushi", "sympa",
-		'test', "titan", "tomawak", 'trolette', 'troll', "trollinet", "trou",
+		'test', "titan", "tomawak", 'trolette', 'troll', "trollinet", "trou", "truc",
 		"vrille",
 		"wiki",
 		"yop",
@@ -63,7 +67,6 @@ miaou(function(mountyhall, locals){
 	}
 
 	// a few aliases
-	alias('canopée', 'canop');
 	alias('divadel', 'diva');
 	alias('squ@le', 'squale');
 	alias('cebolla', 'cébo', 'cebo');
