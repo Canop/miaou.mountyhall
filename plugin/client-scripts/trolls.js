@@ -10,9 +10,10 @@ miaou(function(mountyhall, locals){
 	// but they're still used when searching by number
 	[
 		"ade", "arf", 'autre', "aura",
-		"balrog", "beurk", "belle", "bibi", "bidouille", "blabla", "blanche", "bleu", "bof", "bol", "boom", "boum", "boss", "bouarf",
-		"boulette",
-		"ca va chier", "caché", "caribou", "cat", "cerne", "champion", 'chonchon', "claire", "clic", "courte", "crash", "cross",
+		"balrog", "beurk", "belle", "bibi", "bidouille", "blabla", "blanche", "bleu", "bof",
+		"bol", "boom", "boum", "boss", "bouarf", "boulette",
+		"ca va chier", "caché", "caribou", "cat", "cerne", "champion", 'chonchon', "claire",
+		"clic", "courte", "crash", "cross",
 		"dark", "darkling", "désolé", "diablotin", "dodo", 'don', "dragon", "dudu",
 		"espace",
 		"fan", "fanatique", "fichtre", "folie",
@@ -22,7 +23,7 @@ miaou(function(mountyhall, locals){
 		"kaboum", "kastar", "kill",
 		"la montagne", "late", "l'autre", "le troll", "link", "lourd",
 		"malus", "maman", "mauvais", 'max', "meuh", 'merci', "miam", "minuscule", "mithril", "mini", "moche",
-		'moi', "monstre", "mort", "mounty", "mumuse", "musaraigne",
+		'moi', "monsieur", "monstre", "mort", "mounty", "mumuse", "musaraigne",
 		"ninix", "noob", "nos",
 		"ombre", "origine", "ouille", "oups",
 		"paf", "parfait", 'pas', "pâquerette", "pépin", "phoenix", "personne", "poil",
