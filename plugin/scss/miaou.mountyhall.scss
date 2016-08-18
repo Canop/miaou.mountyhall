@@ -1,0 +1,31 @@
+.message a.mountyhall {
+	background: rgba(242, 222, 203, 0.15);
+	padding: 2px;
+	border-radius: 2px;
+}
+
+.mh-troll-id-card {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	background: url(../../plugins/mountyhall/rsc/fond-parchemin.jpg);
+	padding: 2px;
+	img {
+		max-width: 60px;
+		max-height: 60px;
+	}
+	p, a {
+		color: black;
+		margin: 4px;
+		white-space: nowrap;
+		max-width: 135px;
+		overflow: hidden;
+		display: block;
+		text-overflow: ellipsis;
+	}
+	&>div {
+		display: flex;
+		flex-direction: column;
+		justify-content: space-around;
+	}
+}

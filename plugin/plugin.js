@@ -58,22 +58,19 @@ function createMHProfile(user, pluginPlayerInfos, vals){
 // returns the HTML of the profile
 // or undefined if there's no profile
 function renderMHProfile(ppi){
-	var html = '';
-	if (ppi && ppi.troll && ppi.troll.id && ppi.troll.race) {
-		html += '<div style="background:url(static/plugins/mountyhall/rsc/fond-parchemin.jpg);'
-			+ 'padding:2px;min-height:60px;line-height:30px;color:black;">';
-		if (ppi.troll.blason) {
-			html += '<img align=left style="max-width:60px;max-height:60px; margin-right:10px;"'
-				+ ' src="'+ppi.troll.blason+'">';
-		}
-		html += '<a target=_blank style="color:black"'
-			+' href=http://games.mountyhall.com/mountyhall/View/PJView.php?ai_IDPJ='+ppi.troll.id
-			+'>'+ppi.troll.nom+'</a>';
-		html += '<br>'+ppi.troll.race;
-		html += '</div>';
-	} else {
-		html += '<i class=error>profil invalide</i>'
+	if (!ppi || !ppi.troll || !ppi.troll.id || !ppi.troll.race) {
+		return '<i class=error>profil invalide</i>';
 	}
+	var html = '<div class=mh-troll-id-card>';
+	if (ppi.troll.blason) {
+		html += '<img src="' + ppi.troll.blason + '">';
+	}
+	html += '<div>';
+	var href = 'http://games.mountyhall.com/mountyhall/View/PJView.php?ai_IDPJ=' + ppi.troll.id;
+	html += '<a target=_blank href=' + href + '>' + ppi.troll.nom + '</a>';
+	html += '<p>' + ppi.troll.race + '</p>';
+	html += '</div>';
+	html += '</div>';
 	return html;
 }
 
