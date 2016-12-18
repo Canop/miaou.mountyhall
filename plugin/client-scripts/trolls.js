@@ -25,7 +25,7 @@ miaou(function(mountyhall, locals){
 		"malus", "maman", "mauvais", 'max', "meuh", 'merci', "miam", "minuscule", "mithril", "mini", "moche",
 		'moi', "monsieur", "monstre", "mort", "mounty", "mumuse", "musaraigne",
 		"ninix", "noob", "nos",
-		"ombre", "origine", "ouille", "oups",
+		"okey", "ombre", "origine", "ouille", "oups",
 		"paf", "parfait", 'pas', "pâquerette", "pépin", "phoenix", "personne", "poil",
 		"poison", "popo", "poulet", "pourri", "pub",
 		"raaaaah", "refait", "retrouver", "roc", "rose", "roulette",

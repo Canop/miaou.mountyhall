@@ -63,11 +63,11 @@ function renderMHProfile(ppi){
 	}
 	var html = '<div class=mh-troll-id-card>';
 	if (ppi.troll.blason) {
-		html += '<img src="' + ppi.troll.blason + '">';
+		html += '<img src="' + ppi.troll.blason + '">'; // fixme possible injection
 	}
 	html += '<div>';
-	var href = 'http://games.mountyhall.com/mountyhall/View/PJView.php?ai_IDPJ=' + ppi.troll.id;
-	html += '<a target=_blank href=' + href + '>' + ppi.troll.nom + '</a>';
+	var href = 'https://games.mountyhall.com/mountyhall/View/PJView.php?ai_IDPJ=' + ppi.troll.id;
+	html += '<a target=_blank href=' + href + '>' + ppi.troll.nom + '</a>'; // fixme possible injection
 	html += '<p>' + ppi.troll.race + '</p>';
 	html += '</div>';
 	html += '</div>';
