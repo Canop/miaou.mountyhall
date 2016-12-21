@@ -114,8 +114,9 @@ exports.registerCommands = function(registerCommand){
 					ct.reply("Aucun message trouvé");
 					return;
 				}
-				console.log("CCC:", messages[messages.length-1].content);
-				if (/cachette.*carte/i.test(messages[messages.length-1].content)) {
+				var text = messages[0].content;
+				console.log('text:', text);
+				if (/cachette/i.test(text) && /carte/i.test(text)) {
 					return (new Cachette(num)).reply(messages, ct);
 				} else if (num>567890 && num<15178164) {
 					return (new Monster(num)).reply(messages, ct);
