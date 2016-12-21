@@ -116,6 +116,8 @@ exports.registerCommands = function(registerCommand){
 				}
 				var text = messages[0].content;
 				console.log('text:', text);
+				// ici on essaye de deviner si le numéro correspond à une cachette,
+				//  à un monstre ou à un troll
 				if (/cachette/i.test(text) && /carte/i.test(text)) {
 					return (new Cachette(num)).reply(messages, ct);
 				} else if (num>567890 && num<15178164) {

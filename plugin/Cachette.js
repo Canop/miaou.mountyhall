@@ -31,13 +31,10 @@ fn.parse = function(message){
 	var search = {
 		message: '['+message.authorname+' '+utils.formatTime(message.created)+'](#'+message.id+')',
 		digits: [+m[2]||0, +m[3], +m[5]||0, +m[6], +m[8]||0, +m[9]],
-		xcoin: !!m[11],
-		ycoin: !!m[12],
 		nbDigits: +m[13]
 	};
 	var key = search.digits.join("");
 	if (this.searchesSet.has(key)) {
-		console.log("Search", key, "already present");
 		return;
 	}
 	this.searchesSet.add(key);
@@ -52,14 +49,12 @@ function nbEquals(arr1, arr2){
 	return equals;
 }
 
-
 fn.findPossibleLocations = function(){
 	if (!this.digits || !this.searches.length) return;
 	var	digits = this.digits.slice(),
 		locations = this.possibleLocations = [],
 		set = new Set,
 		searches = this.searches;
-	// http://stackoverflow.com/questions/2920315/permutation-of-array
 	function swap(i, j){
 		var t = digits[i];
 		digits[i] = digits[j];
@@ -82,7 +77,6 @@ fn.findPossibleLocations = function(){
 		locations.push(digits.slice());
 	}
 	permute(0);
-	console.log("locations:", locations.length);
 }
 
 fn.mdDigits = function(){
