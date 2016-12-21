@@ -21,7 +21,7 @@ miaou(function(mountyhall, locals){
 		"hein ?", "hum", "hypnos", "hypnotiseur",
 		"imagine", "inscription", "invi", "ira",
 		"kaboum", "kastar", "kill",
-		"la montagne", "late", "l'autre", "le troll", "link", "lourd",
+		"la montagne", "lagavulin", "late", "l'autre", "le troll", "link", "lourd",
 		"malus", "maman", "mauvais", 'max', "meuh", 'merci', "miam", "minuscule", "mithril", "mini", "moche",
 		'moi', "monsieur", "monstre", "mort", "mounty", "mumuse", "musaraigne",
 		"ninix", "noob", "nos",
