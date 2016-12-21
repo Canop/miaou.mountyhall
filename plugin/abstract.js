@@ -2,7 +2,8 @@
 //  pour la chasse (pv, esquive, résultats frappes précédentes, etc.).
 // TODO kill à la rune
 
-var	bench = require("../../libs/bench.js");
+var	bench = require("../../libs/bench.js"),
+	utils = require("./utils.js");
 
 /*eslint-disable max-len*/
 var patterns = [
@@ -62,21 +63,6 @@ var patterns = [
 ];
 /*eslint-enable max-len*/
 
-var MMM = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-function formatDateDDMMM(date){
-	var d = date.getDate();
-	return (d<10 ? '0' : '') + d + ' ' + MMM[date.getMonth()];
-}
-function formatTime(t){
-	var	date = new Date(t*1000), now = new Date,
-		m = date.getMinutes(), h = date.getHours(), Y = date.getFullYear(),
-		s = s = (h<10?'0':'')+h+':'+(m<10?'0':'')+m;
-	if (now.getFullYear()===Y && now.getMonth()===date.getMonth() && now.getDate()===date.getDate()) {
-		return s;
-	}
-	return formatDateDDMMM(date) + (Y!==now.getFullYear() ? (' '+Y) : '')  + ' ' + s;
-}
-
 function cpl(){
 	var cur = arguments[0];
 	for (var i=1; i<arguments.length; i++) {
@@ -97,7 +83,7 @@ Animal.prototype.init = function(){
 Animal.prototype.addItem = function(item, message){
 	this.items.push(item);
 	this.nom = item.nom;
-	item.message = '['+message.authorname+' '+formatTime(message.created)+'](#'+message.id+')';
+	item.message = '['+message.authorname+' '+utils.formatTime(message.created)+'](#'+message.id+')';
 	item.time = message.created;
 }
 // returns a (shared) {min,max} object
@@ -315,15 +301,10 @@ Animal.prototype.mdReport = function(){
 // query the DB, parse the found messages, build the markdown of the answer
 //  and send it to the room
 // Returns a promise.
-Animal.prototype.reply = function(db, ct){
-	//~ console.log("==================================\noukonenest "+id);
-	var	benchOperation = bench.start("Mounty Hall / !!oukonenest"),
-		animal = this;
-	return db.search_tsquery(ct.shoe.room.id, this.id+'&!oukonenest', 'english', 50)
-	.then(function(messages){
-		for (var i=messages.length; i--;) animal.parse(messages[i]);
-		var md = animal.mdReport();
-		benchOperation.end();
-		ct.reply(md);
-	});
+Animal.prototype.reply = function(messages, ct){
+	var benchOperation = bench.start("Mounty Hall / !!oukonenest / Animal");
+	for (var i=messages.length; i--;) this.parse(messages[i]);
+	var md = this.mdReport();
+	benchOperation.end();
+	ct.reply(md);
 }

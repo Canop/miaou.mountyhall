@@ -2,9 +2,10 @@
 //   http://sp.mountyhall.com/
 //   http://sp.mountyhall.com/SP_WebService.php
 
-var Promise = require("bluebird"),
+var	Promise = require("bluebird"),
 	iconvlite = require('iconv-lite'),
 	http = require('http'),
+	Cachette = require('./Cachette.js'),
 	Monster = require('./Monster.js'),
 	Troll = require('./Troll.js');
 
@@ -102,21 +103,32 @@ exports.registerCommands = function(registerCommand){
 		name: 'oukonenest',
 		fun: function(ct){
 			var match = ct.args.match(/(\d+)/);
-			if (match) {
-				var num = +match[1];
-				console.log("num:", num);
-				if (num>567890 && num<15178164) {
-					return (new Monster(num)).reply(this, ct);
-				} else if (num<567891) {
-					return (new Troll(num)).reply(this, ct);
-				}
+			if (!match) {
+				throw "Précisez le numéro (par exemple `!!"+ct.cmd.name+" 12345678`)";
 			}
-			throw "Précisez le numéro du troll ou monstre (par exemple `!!"+ct.cmd.name+" 12345678`)";
-
+			var num = +match[1];
+			console.log("num:", num);
+			return this.search_tsquery(ct.shoe.room.id, num+'&!oukonenest', 'english', 50)
+			.then(messages => {
+				if (!messages.length) {
+					ct.reply("Aucun message trouvé");
+					return;
+				}
+				console.log("CCC:", messages[messages.length-1].content);
+				if (/cachette.*carte/i.test(messages[messages.length-1].content)) {
+					return (new Cachette(num)).reply(messages, ct);
+				} else if (num>567890 && num<15178164) {
+					return (new Monster(num)).reply(messages, ct);
+				} else if (num<567891) {
+					return (new Troll(num)).reply(messages, ct);
+				}
+			});
 		},
-		help: "synthétise les infos disponibles dans la salle à propos de l'attaque sur un monstre",
+		help:
+			"synthétise les infos disponibles dans la salle à propos"+
+			" d'un monstre, d'un troll, ou d'une cachette de Capitan",
 		detailedHelp:
-			"Utilisez `!!oukonenest numero_du_monstre`. "+
+			"Utilisez `!!oukonenest numero`. "+
 			"Cette commande n'est disponible que dans les salles dont la description contient `[MH]`.",
 		filter: room => /\[MH\]/i.test(room.description)
 	});
