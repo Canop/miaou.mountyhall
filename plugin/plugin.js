@@ -3,6 +3,7 @@
 //   http://sp.mountyhall.com/SP_WebService.php
 
 var	Promise = require("bluebird"),
+	db,
 	iconvlite = require('iconv-lite'),
 	http = require('http'),
 	Cachette = require('./Cachette.js'),
@@ -12,6 +13,7 @@ var	Promise = require("bluebird"),
 exports.name = "MountyHall";
 
 exports.init = function(miaou){
+	db = miaou.db;
 }
 
 // queries a SP ("script public")
@@ -135,4 +137,22 @@ exports.registerCommands = function(registerCommand){
 			"Cette commande n'est disponible que dans les salles dont la description contient `[MH]`.",
 		filter: room => /\[MH\]/i.test(room.description)
 	});
+}
+
+const MH_AUTH_NEEDED = "L'entrée dans cette salle privée est réservée aux joueurs de Mounty Hall authentifiés.\n"+
+	"Pour authentifier votre compte, allez dans [les préférences](http://dystroy.org/miaou/prefs#Identities)";
+
+exports.beforeAccessRequest = function(args, user){
+	var room = args.vars.room;
+	if (!/\[MH\]/i.test(room.description)) return args;
+	return db.on([exports.name, user.id])
+	.spread(db.getPlayerPluginInfo)
+	.then(ppi=>{
+		if (!ppi) {
+			args.canQueryAccess = false;
+			args.specificMessage = MH_AUTH_NEEDED;
+		}
+		return args;
+	})
+	.finally(db.off);
 }
