@@ -1,6 +1,6 @@
 miaou(function(mountyhall, locals){
 
-	if ((!locals.room) || !/\[MH\]/i.test(locals.room.description)) {
+	if ((!locals.room) || !locals.room.tags.includes("Mounty-Hall")) {
 		window.mh_trolls = null;
 		return;
 	}
@@ -68,7 +68,6 @@ miaou(function(mountyhall, locals){
 	}
 
 	// a few aliases
-	alias('divadel', 'diva');
 	alias('squ@le', 'squale');
 	alias('cebolla', 'cébo', 'cebo');
 	alias('cirederf', 'cire');
