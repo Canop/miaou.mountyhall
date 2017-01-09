@@ -1,6 +1,7 @@
-miaou(function(mountyhall, locals, md, plugins){
+miaou(function(mountyhall, gui, locals, md, plugins){
 
-	var numReplacer = new Groumf();
+	var	SHOW_TROLL_BUBBLES = false,
+		numReplacer = new Groumf();
 	numReplacer.skipTags('a', 'pre', 'code');
 
 	var charmap = {
@@ -54,5 +55,14 @@ miaou(function(mountyhall, locals, md, plugins){
 				md.registerRenderer(renderMessage, true);
 			}
 		}
+	}
+
+	if (SHOW_TROLL_BUBBLES && !gui.mobile) {
+		$("#messages").bubbleOn("a.mountyhall", {
+			blower: function($c){
+				$c.load(this.attr("href"));
+			},
+			classes: "mountyhall-bubble",
+		});
 	}
 });
