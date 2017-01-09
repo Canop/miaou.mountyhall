@@ -51,7 +51,7 @@ miaou(function(mountyhall, gui, locals, md, plugins){
 
 	plugins.mountyhall = {
 		start: function(){
-			if (locals.room.tags.includes("Mounty-Hall")) {
+			if (locals.room.tags.includes("MountyHall")) {
 				md.registerRenderer(renderMessage, true);
 			}
 		}

@@ -15,14 +15,14 @@ exports.name = "MountyHall";
 exports.init = function(miaou){
 	db = miaou.db;
 	return miaou.requestTag({
-		name: "Mounty-Hall",
+		name: "MountyHall",
 		description:
 			"http://games.mountyhall.com/mountyhall/Images/Troll_accueil_1.jpg\n"+
 			"*[MountyHall](https://www.mountyhall.com) est un jeu de rôles et d'aventures"+
 			" en ligne permettant aux participants d'incarner un Troll en quête d'aventures. "+
 			"Le jeu se déroule en tour-par-tour d'une durée de 12 heures durant lesquelles"+
 			" les joueurs peuvent faire agir leur Troll en dépensant jusqu'à 6 Points d'Actions.*\n"+
-			"Donner ce tag à une salle Miaou apporte de nombreuses fonctions liées au jeu Mounty-Hall."
+			"Donner ce tag à une salle Miaou apporte de nombreuses fonctions liées au jeu MountyHall."
 	});
 }
 
@@ -144,8 +144,8 @@ exports.registerCommands = function(registerCommand){
 			" d'un monstre, d'un troll, ou d'une cachette de Capitan",
 		detailedHelp:
 			"Utilisez `!!oukonenest numero`. "+
-			"Cette commande n'est disponible que dans les salles portant le tag [tag:Mounty-Hall]",
-		filter: room => room.tags.includes("Mounty-Hall")
+			"Cette commande n'est disponible que dans les salles portant le tag [tag:MountyHall]",
+		filter: room => room.tags.includes("MountyHall")
 	});
 }
 
@@ -154,7 +154,7 @@ const MH_AUTH_NEEDED = "L'entrée dans cette salle privée est réservée aux jo
 
 exports.beforeAccessRequest = function(args, user){
 	var room = args.vars.room;
-	if (!room.tags.includes("Mounty-Hall")) return args;
+	if (!room.tags.includes("MountyHall")) return args;
 	return db.on([exports.name, user.id])
 	.spread(db.getPlayerPluginInfo)
 	.then(ppi=>{

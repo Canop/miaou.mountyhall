@@ -1,6 +1,6 @@
 miaou(function(mountyhall, locals){
 
-	if ((!locals.room) || !locals.room.tags.includes("Mounty-Hall")) {
+	if ((!locals.room) || !locals.room.tags.includes("MountyHall")) {
 		window.mh_trolls = null;
 		return;
 	}
