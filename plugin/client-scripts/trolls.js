@@ -39,48 +39,61 @@ miaou(function(mountyhall, locals){
 	].forEach(function(k){
 		excludeMap[k] = true;
 	});
+
+	var lowerCasedTrollNames = {};
+	for (var name in window.mh_trolls) {
+		lowerCasedTrollNames[name.toLowerCase()] = name;
+	}
+
+	// alias
+	[
+		['squ@le', 'squale'],
+		['cebolla', 'cébo'],
+		['cebolla', 'cebo'],
+		['cirederf', 'cire'],
+		['bob-le-troll', 'bobtroll'],
+		['bob-le-troll', 'blt'],
+		['kergrog', 'kerg'],
+		['gogo27', 'g27'],
+		['Gnu Sauvage [Chef de Harde]', 'gnu'],
+		['Gruhtzog', 'grutz'],
+		['schtroumph_vert_pomme', 'svp'],
+		['Shaksgärt', 'Shaks'],
+		['Valfëan', 'Valfean'],
+		['wouchy', 'wouch'],
+		['TuttiRikikiMaoussKosTroll', 'Raistlin'],
+		['lulu vroumette', 'lulu', true],
+	].forEach(function(e){
+		var	name = lowerCasedTrollNames[e[0].toLowerCase()],
+			alias = e[1].toLowerCase(),
+			force = e[2],
+			existing = lowerCasedTrollNames[alias];
+		if (!name) {
+			console.log("troll introuvable:", e[0]);
+			return;
+		}
+		if (existing) {
+			console.log("conflit:", alias, "->", name, " existing:", existing);
+			if (force) console.log("(conflit résolu par la force)");
+			else return;
+		}
+		lowerCasedTrollNames[alias] = name;
+	});
+
 	mountyhall.trollsById = {};
 	var replacer = new Groumf();
-	for (var name in window.mh_trolls) {
-		var id = window.mh_trolls[name];
+	for (var lcname in lowerCasedTrollNames) {
+		if (excludeMap[lcname]) continue;
+		var	name = lowerCasedTrollNames[lcname],
+			id = window.mh_trolls[name];
 		mountyhall.trollsById[id] = name;
-		if (excludeMap[name.toLowerCase()]) continue;
-		if (name==+name) name = 'T'+name;
-		if (name.length>2) replacer.add(name, id);
+		if (lcname==+lcname) lcname = 'T'+lcname;
+
+		//if (lclcname=="g27" || lclcname=="lulu"
+		if (lcname.length>2) replacer.add(lcname, id);
 	}
 	replacer.skipTags('a', 'pre', 'code');
 	mountyhall.trollNamesReplacer = replacer;
-
-	function alias(){
-		var o = arguments[0],
-			id = replacer.get(o);
-		if (!id) {
-			console.log("original for alias not found :", o);
-		}
-		for (var i=1; i<arguments.length; i++) {
-			var a = arguments[i];
-			if (replacer.get(a)) {
-				console.log('alias prevented :', a);
-				continue;
-			}
-			replacer.add(a, id);
-		}
-	}
-
-	// a few aliases
-	alias('squ@le', 'squale');
-	alias('cebolla', 'cébo', 'cebo');
-	alias('cirederf', 'cire');
-	alias('bob-le-troll', 'blt', 'bobtroll');
-	alias('kergrog', 'kerg');
-	alias('gogo27', 'g27');
-	alias('Gnu Sauvage [Chef de Harde]', 'gnu');
-	alias('Gruhtzog', 'grutz');
-	alias('schtroumph_vert_pomme', 'svp');
-	alias('Shaksgärt', 'Shaks');
-	alias('Valfëan', 'Valfean');
-	alias('wouchy', 'wouch');
-	alias('TuttiRikikiMaoussKosTroll', 'Raistlin');
 
 	window.mh_trolls = null;
 });
