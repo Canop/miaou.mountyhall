@@ -88,8 +88,6 @@ miaou(function(mountyhall, locals){
 			id = window.mh_trolls[name];
 		mountyhall.trollsById[id] = name;
 		if (lcname==+lcname) lcname = 'T'+lcname;
-
-		//if (lclcname=="g27" || lclcname=="lulu"
 		if (lcname.length>2) replacer.add(lcname, id);
 	}
 	replacer.skipTags('a', 'pre', 'code');

@@ -121,6 +121,7 @@ exports.registerCommands = function(registerCommand){
 			var num = +match[1];
 			console.log("num:", num);
 			return this.search_tsquery(ct.shoe.room.id, num+'&!oukonenest', 'english', 50)
+			.filter(m => !/^!!deleted/.test(m.content))
 			.then(messages => {
 				if (!messages.length) {
 					ct.reply("Aucun message trouvé");
