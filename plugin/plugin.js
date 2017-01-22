@@ -8,6 +8,7 @@ var	Promise = require("bluebird"),
 	http = require('http'),
 	Cachette = require('./Cachette.js'),
 	Monster = require('./Monster.js'),
+	onTrollCommand = require('./troll-command.js').onTrollCommand,
 	Troll = require('./Troll.js');
 
 exports.name = "MountyHall";
@@ -110,36 +111,48 @@ exports.externalProfile = {
 	}
 }
 
+function onOukonenestCommand(ct){
+	var match = ct.args.match(/(\d+)/);
+	if (!match) {
+		throw "Précisez le numéro (par exemple `!!"+ct.cmd.name+" 12345678`)";
+	}
+	var num = +match[1];
+	console.log("num:", num);
+	return this.search_tsquery(ct.shoe.room.id, num+'&!oukonenest', 'english', 50)
+	.filter(m => !/^!!deleted/.test(m.content))
+	.then(messages => {
+		if (!messages.length) {
+			ct.reply("Aucun message trouvé");
+			return;
+		}
+		var text = messages[0].content;
+		console.log('text:', text);
+		// ici on essaye de deviner si le numéro correspond à une cachette,
+		//  à un monstre ou à un troll
+		if (/cachette/i.test(text) && /carte/i.test(text)) {
+			return (new Cachette(num)).reply(messages, ct);
+		} else if (num>567890 && num<15178164) {
+			return (new Monster(num)).reply(messages, ct);
+		} else if (num<567891) {
+			return (new Troll(num)).reply(messages, ct);
+		}
+	});
+}
+
 exports.registerCommands = function(registerCommand){
 	registerCommand({
+		name: 'troll',
+		fun: onTrollCommand,
+		help:
+			"Trouve l'éventuel compte Miaou lié à un troll",
+		detailedHelp:
+			"Utilisez `!!troll nom-du-troll`. "+
+			"Cette commande n'est disponible que dans les salles portant le tag [tag:MountyHall]",
+		filter: room => room.tags.includes("MountyHall")
+	});
+	registerCommand({
 		name: 'oukonenest',
-		fun: function(ct){
-			var match = ct.args.match(/(\d+)/);
-			if (!match) {
-				throw "Précisez le numéro (par exemple `!!"+ct.cmd.name+" 12345678`)";
-			}
-			var num = +match[1];
-			console.log("num:", num);
-			return this.search_tsquery(ct.shoe.room.id, num+'&!oukonenest', 'english', 50)
-			.filter(m => !/^!!deleted/.test(m.content))
-			.then(messages => {
-				if (!messages.length) {
-					ct.reply("Aucun message trouvé");
-					return;
-				}
-				var text = messages[0].content;
-				console.log('text:', text);
-				// ici on essaye de deviner si le numéro correspond à une cachette,
-				//  à un monstre ou à un troll
-				if (/cachette/i.test(text) && /carte/i.test(text)) {
-					return (new Cachette(num)).reply(messages, ct);
-				} else if (num>567890 && num<15178164) {
-					return (new Monster(num)).reply(messages, ct);
-				} else if (num<567891) {
-					return (new Troll(num)).reply(messages, ct);
-				}
-			});
-		},
+		fun: onOukonenestCommand,
 		help:
 			"synthétise les infos disponibles dans la salle à propos"+
 			" d'un monstre, d'un troll, ou d'une cachette de Capitan",

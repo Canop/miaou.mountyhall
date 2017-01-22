@@ -133,7 +133,7 @@ fn.mdReport = function(){
 }
 
 fn.reply = function(messages, ct){
-	var benchOperation = bench.start("Mounty Hall / !!oukonenest / Cachette");
+	var benchOperation = bench.start("MountyHall / !!oukonenest / Cachette");
 	for (var i=messages.length; i--;) this.parse(messages[i]);
 	this.findPossibleLocations();
 	var md = this.mdReport();

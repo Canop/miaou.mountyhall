@@ -302,7 +302,7 @@ Animal.prototype.mdReport = function(){
 //  and send it to the room
 // Returns a promise.
 Animal.prototype.reply = function(messages, ct){
-	var benchOperation = bench.start("Mounty Hall / !!oukonenest / Animal");
+	var benchOperation = bench.start("MountyHall / !!oukonenest / Animal");
 	for (var i=messages.length; i--;) this.parse(messages[i]);
 	var md = this.mdReport();
 	benchOperation.end();

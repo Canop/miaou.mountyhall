@@ -40,9 +40,9 @@ miaou(function(mountyhall, locals){
 		excludeMap[k] = true;
 	});
 
-	var lowerCasedTrollNames = {};
+	mountyhall.lowerCasedTrollNames = {};
 	for (var name in window.mh_trolls) {
-		lowerCasedTrollNames[name.toLowerCase()] = name;
+		mountyhall.lowerCasedTrollNames[name.toLowerCase()] = name;
 	}
 
 	// alias
@@ -64,10 +64,10 @@ miaou(function(mountyhall, locals){
 		['TuttiRikikiMaoussKosTroll', 'Raistlin'],
 		['lulu vroumette', 'lulu', true],
 	].forEach(function(e){
-		var	name = lowerCasedTrollNames[e[0].toLowerCase()],
+		var	name = mountyhall.lowerCasedTrollNames[e[0].toLowerCase()],
 			alias = e[1].toLowerCase(),
 			force = e[2],
-			existing = lowerCasedTrollNames[alias];
+			existing = mountyhall.lowerCasedTrollNames[alias];
 		if (!name) {
 			console.log("troll introuvable:", e[0]);
 			return;
@@ -77,14 +77,14 @@ miaou(function(mountyhall, locals){
 			if (force) console.log("(conflit résolu par la force)");
 			else return;
 		}
-		lowerCasedTrollNames[alias] = name;
+		mountyhall.lowerCasedTrollNames[alias] = name;
 	});
 
 	mountyhall.trollsById = {};
 	var replacer = new Groumf();
-	for (var lcname in lowerCasedTrollNames) {
+	for (var lcname in mountyhall.lowerCasedTrollNames) {
 		if (excludeMap[lcname]) continue;
-		var	name = lowerCasedTrollNames[lcname],
+		var	name = mountyhall.lowerCasedTrollNames[lcname],
 			id = window.mh_trolls[name];
 		mountyhall.trollsById[id] = name;
 		if (lcname==+lcname) lcname = 'T'+lcname;

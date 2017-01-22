@@ -1,4 +1,4 @@
-miaou(function(mountyhall, gui, locals, md, plugins){
+miaou(function(mountyhall, ed, gui, locals, md, plugins){
 
 	var	SHOW_TROLL_BUBBLES = false,
 		numReplacer = new Groumf();
@@ -53,6 +53,7 @@ miaou(function(mountyhall, gui, locals, md, plugins){
 		start: function(){
 			if (~locals.room.tags.indexOf("MountyHall")) {
 				md.registerRenderer(renderMessage, true);
+				ed.registerCommandArgAutocompleter("troll", mountyhall.autocompleteTrollCommandArgument);
 			}
 		}
 	}
