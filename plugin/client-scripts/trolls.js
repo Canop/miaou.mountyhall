@@ -1,5 +1,7 @@
 miaou(function(mountyhall, locals){
 
+	var debug = false;
+
 	if ((!locals.room) || !~locals.room.tags.indexOf("MountyHall")) {
 		window.mh_trolls = null;
 		return;
@@ -69,13 +71,16 @@ miaou(function(mountyhall, locals){
 			force = e[2],
 			existing = mountyhall.lowerCasedTrollNames[alias];
 		if (!name) {
-			console.log("troll introuvable:", e[0]);
+			if (debug) console.log("troll introuvable:", e[0]);
 			return;
 		}
 		if (existing) {
-			console.log("conflit:", alias, "->", name, " existing:", existing);
-			if (force) console.log("(conflit résolu par la force)");
-			else return;
+			if (debug) console.log("conflit:", alias, "->", name, " existing:", existing);
+			if (force) {
+				if (debug) console.log("(conflit résolu par la force)");
+			} else {
+				return;
+			}
 		}
 		mountyhall.lowerCasedTrollNames[alias] = name;
 	});
