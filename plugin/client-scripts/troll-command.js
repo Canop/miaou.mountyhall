@@ -2,8 +2,8 @@
 miaou(function(mountyhall){
 
 	mountyhall.autocompleteTrollCommandArgument = function(ac){
-		if (ac.previous || !ac.arg.length) return;
-		var	lcarg = ac.arg.toLowerCase(),
+		if (!ac.args.length) return;
+		var	lcarg = ac.args.toLowerCase(),
 			lcmap = mountyhall.lowerCasedTrollNames,
 			matches = [];
 		for (var lcname in lcmap) {
@@ -11,7 +11,11 @@ miaou(function(mountyhall){
 				matches.push(lcmap[lcname]);
 			}
 		}
-		return matches;
+		return {
+			matches: matches,
+			replaced: lcarg,
+			mustCheck: false
+		};
 	}
 
 });
