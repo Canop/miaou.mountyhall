@@ -2,6 +2,7 @@ miaou(function(mountyhall, ed, gui, locals, md, plugins){
 
 	var	SHOW_TROLL_BUBBLES = false,
 		numReplacer = new Groumf();
+
 	numReplacer.skipTags('a', 'pre', 'code');
 
 	var charmap = {
@@ -21,6 +22,7 @@ miaou(function(mountyhall, ed, gui, locals, md, plugins){
 		if (message.room != locals.room.id) {
 			return;
 		}
+		mountyhall.seeMessage(message);
 		mountyhall.trollNamesReplacer.replaceTextWithHTMLInHTML($c[0], function(name, id){
 			// replacing troll names
 			return '<a target=_blank href=http://games.mountyhall.com/mountyhall/View/PJView.php?ai_IDPJ='+id+
@@ -54,6 +56,7 @@ miaou(function(mountyhall, ed, gui, locals, md, plugins){
 			if (~locals.room.tags.indexOf("MountyHall")) {
 				md.registerRenderer(renderMessage, true);
 				ed.registerCommandArgAutocompleter("troll", mountyhall.autocompleteTrollCommandArgument);
+				ed.registerCommandArgAutocompleter("oukonenest", mountyhall.autocompleteOukonenestCommandArgument);
 			}
 		}
 	}

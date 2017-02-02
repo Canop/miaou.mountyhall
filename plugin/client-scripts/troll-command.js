@@ -1,4 +1,5 @@
-
+// client side part of the !!troll command
+// That is: autocompletion
 miaou(function(mountyhall){
 
 	mountyhall.autocompleteTrollCommandArgument = function(ac){
