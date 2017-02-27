@@ -24,7 +24,7 @@ miaou(function(mountyhall, locals){
 		"imagine", "inscription", "invi", "ira",
 		"kaboum", "kastar", "kill",
 		"la montagne", "lagavulin", "late", "l'autre", "le troll", "link", "lourd",
-		"malus", "maman", "mauvais", 'max', "meuh", 'merci', "miam", "minuscule", "mithril", "mini", "moche",
+		"malus", "maman", "mars", "mauvais", 'max', "meuh", 'merci', "miam", "minuscule", "mithril", "mini", "moche",
 		'moi', "monsieur", "monstre", "mort", "mounty", "mumuse", "musaraigne",
 		"ninix", "noob", "nos",
 		"okey", "ombre", "origine", "ouille", "oups",
