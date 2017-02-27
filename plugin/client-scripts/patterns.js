@@ -9,7 +9,7 @@
 		{re:/ous avez utilis. le Sortil.ge : (\w+)/i, clear:true, res:['sort']},
 		{re:/Cibl. fait partie des :[^\(\)]+\(\s*([^\(]+)\s*-\s*N°(\d+)\)/i, res:['nom', 'id'], vals:{cdm:'ok'}},
 		{re:/(.*)\s+\((\d+)\) a les caract.ristiques suivantes/i, clear:true, res:['nom', 'id'], vals:{aa:'ok'}},
-		{re:/(.*)\s+\((\d+)\) a .t. influenc. par l'effet du sort/i, res:['nom', 'id']},
+		{re:/(une? )?([\w\s]+)\s+\((\d+)\) a .t. influenc. par l'effet du sort/i, res:['nom', 'id']},
 		{re:/Le Monstre une? (.*)\s+\((\d+)\) a .t. victime du pi.ge/i, clear:true, res:['nom', 'id'], vals:{piege:true}},
 		{re:/a Cible subit donc pleinement l'effet/i, vals:{full:true}},
 		{re:/e sortil.ge a donc un EFFET REDUIT/i, vals:{full:false}},
