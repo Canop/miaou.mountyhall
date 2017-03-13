@@ -177,7 +177,7 @@ Animal.prototype.parse = function(message){
 				cur = {};
 			}
 			for (var j=1; j<m.length; j++) {
-				cur[p.res[j-1]] = m[j].trim();
+				cur[p.res[j-1]] = m[j] ? m[j].trim() : '';
 				console.log(' -> ', p.res[j-1], ' = ', m[j]);
 			}
 			if (p.vals) {
