@@ -8,8 +8,8 @@ exports.onTrollCommand = function(ct){
 	return this.queryRows(
 		"select ppi.player, p.name, ppi.info from plugin_player_info ppi"+
 		" join player p on p.id=ppi.player"+
-		" where plugin='MountyHall' and (info#>'{troll,nom}')::varchar=$1",
-		['"'+trollName+'"'],
+		" where plugin='MountyHall' and lower((info#>'{troll,nom}')::varchar)=$1",
+		['"'+trollName.toLowerCase()+'"'],
 		"search-troll-ppi",
 		false
 	).then(function(trolls){
