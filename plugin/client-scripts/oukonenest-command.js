@@ -30,7 +30,7 @@ miaou(function(mountyhall){
 
 	mountyhall.autocompleteOukonenestCommandArgument = function(ac){
 		return {
-			matches: Array.from(completionSet.values()),
+			matches: Array.from(completionSet.values().reverse()),
 			replaced: ac.args,
 			mustCheck: true
 		};
