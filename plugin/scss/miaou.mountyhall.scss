@@ -35,3 +35,140 @@
 	max-width: 700px;
 	overflow-y: auto;
 }
+
+
+#mountyhall-team-box > .mountyhall-team-troll { // la ligne de titre
+	font-size: 80%;
+	height: 20px;
+}
+.mountyhall-team-troll {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	height: 22px;
+	background: $message-list-bg;
+	border-left-width: 4px;
+	border-left-style: solid;
+	border-left-color: transparent;
+	&>div {
+		padding: 2px 1px;
+		overflow: hidden;
+		border-left: thin solid rgba(255, 255, 255, .2);
+	}
+	.nom {
+		text-overflow: ellipsis;
+		border-left: none;
+	}
+	.x, .y, .n, pv, .dla, .pv, .pa, .pdla, .action {
+		text-align: center;
+	}
+	.pa {
+		width: 12px;
+	}
+	.pv {
+		width: 20px;
+	}
+	.pvMax {
+		&::before {
+			content: '/';
+		}
+	}
+	.dla, .pdla {
+		width: 31px;
+	}
+	&.health-red {
+		border-left-color: red;
+	}
+	&.health-orange {
+		border-left-color: orange;
+	}
+	&.health-yellow {
+		border-left-color: yellow;
+	}
+	&.health-green {
+		border-left-color: green;
+	}
+}
+
+#mountyhall-team-box {
+	position: fixed;
+	bottom: 100px;
+	font-size: 90%;
+	z-index: 25;
+	left: 0;
+	display: flex;
+	flex-direction: column;
+	box-shadow: $closed-stripe-shadow;
+	background: $pad-background;
+	box-shadow: $open-stripe-shadow;
+	&.reduced {
+		.mountyhall-team-troll > div {
+			transition: all .3s;
+		}
+		.nom {
+			width: 27px;
+		}
+		.raceNiveau, .x, .y, .n, .pvMax, .action {
+			width: 0;
+			&::before {
+				display: none;
+			}
+			border-left: none;
+			padding: 0;
+		}
+	}
+	&.full {
+		.mountyhall-team-troll > div {
+			transition: all .3s;
+		}
+		.nom {
+			width: 80px;
+		}
+		.x, .y, .n {
+			width: 30px;
+		}
+		.pvMax {
+			width: 30px;
+		}
+		.raceNiveau {
+			width: 10px;
+		}
+		.action {
+			width: 30px;
+		}
+	}
+	.header {
+		line-height: 24px;
+		height: 24px;
+		display: flex;
+		flex-direction: row;
+	}
+	#mountyhall-team-trolls {
+
+	}
+}
+.mountyhall-refresh-troll {
+	cursor: pointer;
+	&::before {
+		@extend .fontello;
+		font-size: 110%;
+		margin-right: 4px;
+		content: '\e834';
+	}
+}
+#mountyhall-team-refresh-button {
+	@extend .mountyhall-refresh-troll;
+	margin: 0 20px 0 55px;
+}
+#mountyhall-team-toggle-button {
+	cursor: pointer;
+	margin-top: -2px;
+}
+.reduced #mountyhall-team-toggle-button {
+	transform: rotate(0deg);
+	transition: all .3s;
+}
+.full #mountyhall-team-toggle-button {
+	transform: rotate(180deg);
+	transition: all .3s;
+}

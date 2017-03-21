@@ -2,19 +2,22 @@
 //   http://sp.mountyhall.com/
 //   http://sp.mountyhall.com/SP_WebService.php
 
-var	Promise = require("bluebird"),
-	db,
-	iconvlite = require('iconv-lite'),
-	http = require('http'),
+var	db,
+	bench = require("../../libs/bench.js"),
 	Cachette = require('./Cachette.js'),
+	papi = require('./partage.js'),
+	pws = require('./partage-ws.js'),
 	Monster = require('./Monster.js'),
 	onTrollCommand = require('./troll-command.js').onTrollCommand,
+	onPartageCommand = require('./partage-command.js').onPartageCommand,
 	Troll = require('./Troll.js');
 
 exports.name = "MountyHall";
 
 exports.init = function(miaou){
 	db = miaou.db;
+	pws.init(miaou);
+	db.upgrade(exports.name, require("path").resolve(__dirname, 'sql'));
 	return miaou.requestTag({
 		name: "MountyHall",
 		description:
@@ -27,37 +30,10 @@ exports.init = function(miaou){
 	});
 }
 
-// queries a SP ("script public")
-// returns a promise which is resolved if all goes well with an array of arrays of strings (a csv table)
-function fetchSP(sp, num, mdpr){
-	var p = Promise.defer();
-	var req = http.request({
-		hostname: "sp.mountyhall.com",
-		path: "/SP_"+sp+".php?Numero="+num+"&Motdepasse="+encodeURIComponent(mdpr),
-		method: "GET"
-	}, function(res){
-		var lines = [];
-		res.on('data', function(chunk){
-			lines.push(iconvlite.decode(chunk, 'ISO-8859-1').toString().split(';'));
-		}).on('end', function(){
-			if (lines.length>0 && lines[0].length>1) {
-				p.resolve(lines);
-			} else {
-				p.reject('Error : ' + JSON.stringify(lines));
-			}
-		});
-	});
-	req.on('error', function(e){
-		p.reject('request error');
-	});
-	req.end();
-	return p.promise;
-}
-
 // returns a promise
 // updates and provides in resolution the pluginPlayerInfos if successful, else throws an error
 function createMHProfile(user, pluginPlayerInfos, vals){
-	return fetchSP('ProfilPublic2', vals.mh_num, vals.mh_mdpr)
+	return papi.fetchSP('ProfilPublic2', vals.mh_num, vals.mh_mdpr)
 	.then(function(lines){
 		var	l = lines[0];
 		var	troll = {
@@ -161,6 +137,15 @@ exports.registerCommands = function(registerCommand){
 			"Cette commande n'est disponible que dans les salles portant le tag [tag:MountyHall]",
 		filter: room => room.tags.includes("MountyHall")
 	});
+	registerCommand({
+		name: 'partage',
+		fun: onPartageCommand,
+		help:
+			"gère les partages d'informations de votre troll dans les salles",
+		detailedHelp:
+			"Au secours, je n'ai plus de limoncello!",
+		filter: room => room.tags.includes("MountyHall")
+	});
 }
 
 const MH_AUTH_NEEDED = "L'entrée dans cette salle privée est réservée aux joueurs de Mounty Hall authentifiés.\n"+
@@ -180,3 +165,18 @@ exports.beforeAccessRequest = function(args, user){
 	})
 	.finally(db.off);
 }
+
+
+exports.onNewShoe = function(shoe){
+	;["getRoomTrolls"].forEach(key=>{
+		console.log("hooking", 'mountyhall.'+key);
+		shoe.socket
+		.on('mountyhall.'+key, function(){
+			console.log("GRT");
+			var bo = bench.start("mountyhall."+key);
+			pws[key](shoe);
+			bo.end();
+		})
+	});
+}
+
