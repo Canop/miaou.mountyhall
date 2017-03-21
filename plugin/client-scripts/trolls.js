@@ -16,7 +16,7 @@ miaou(function(mountyhall, locals){
 		"bol", "boom", "boum", "boss", "bouarf", "boulette",
 		"ca va chier", "caché", "caribou", "cat", "cerne", "champion", 'chonchon', "claire",
 		"clic", "courte", "crash", "cross",
-		"dark", "darkling", "désolé", "diablotin", "dodo", 'don', "dragon", "dudu",
+		"dark", "darkling", "désolé", "diablotin", "dodo", 'don', "dragon", "dudu", "durakuir",
 		"espace",
 		"fan", "fanatique", "fichtre", "folie",
 		"glop", "gné", "gniark", "gogo", "golem", "gowaps", "gros", "guy",
