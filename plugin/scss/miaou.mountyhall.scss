@@ -47,13 +47,14 @@
 	align-items: center;
 	height: 22px;
 	background: $message-list-bg;
-	border-left-width: 4px;
+	border-left-width: 5px;
 	border-left-style: solid;
 	border-left-color: transparent;
 	&>div {
 		padding: 2px 1px;
 		overflow: hidden;
 		border-left: thin solid rgba(255, 255, 255, .2);
+		white-space: nowrap;
 	}
 	.nom {
 		text-overflow: ellipsis;
@@ -62,11 +63,11 @@
 	.x, .y, .n, pv, .dla, .pv, .pa, .pdla, .action {
 		text-align: center;
 	}
+	.pv {
+		text-align: right;
+	}
 	.pa {
 		width: 12px;
-	}
-	.pv {
-		width: 20px;
 	}
 	.pvMax {
 		&::before {
@@ -74,7 +75,7 @@
 		}
 	}
 	.dla, .pdla {
-		width: 31px;
+		width: 35px;
 	}
 	&.health-red {
 		border-left-color: red;
@@ -106,9 +107,9 @@
 			transition: all .3s;
 		}
 		.nom {
-			width: 27px;
+			width: 40px;
 		}
-		.raceNiveau, .x, .y, .n, .pvMax, .action {
+		.raceNiveau, .x, .y, .n, .pv, .pvMax, .action {
 			width: 0;
 			&::before {
 				display: none;
@@ -127,6 +128,9 @@
 		.x, .y, .n {
 			width: 30px;
 		}
+		.pv {
+			width: 30px;
+		}
 		.pvMax {
 			width: 30px;
 		}
@@ -142,6 +146,7 @@
 		height: 24px;
 		display: flex;
 		flex-direction: row;
+		color: $title-text-color;
 	}
 	#mountyhall-team-trolls {
 
