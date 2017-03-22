@@ -31,10 +31,17 @@ miaou(function(mountyhall, chat, gui, locals, time, ws){
 			chat.sendMessage("!!partage update room");
 		}).bubbleOn({
 			side: "top",
-			text: "Mettre à jour tous les trolls\nAttention: le nombre d'appels est limité"
+			blower: function($c){
+				var txt = [
+					"Mettre à jour tous les trolls",
+					"Attention: le nombre d'appels est limité."
+				];
+				var update = $box.dat("update");
+				if (update) txt.push("Mise à jour: " + time.formatTime(update) + ".");
+				$c[0].innerText = txt.join("\n");
+			}
 		});
 		$("<div id=mountyhall-team-toggle-button>").text("▶").appendTo($head).click(function(){
-			console.log("toggle");
 			if ($box.hasClass("reduced")) {
 				$box.removeClass("reduced").addClass("full");
 			} else {
@@ -48,15 +55,17 @@ miaou(function(mountyhall, chat, gui, locals, time, ws){
 		if (!$("#mountyhall-team-box").length) {
 			buildTeamBox();
 		}
+		var update;
 		$("#mountyhall-team-trolls").empty().append(trolls.map(function(troll){
 			var	$t = $("<div class=mountyhall-team-troll>"),
 				p = troll.profil2;
 			$("<div class=nom>").text(troll.nom).appendTo($t);
 			$("<div class=raceNiveau>").text(raceLetter(troll.race)).appendTo($t); // fixme niveau du troll???
 			if (!p) {
-				$("<div class=missing>").text("Pas de données").appendTo($troll);
+				$("<div class=missing>").text("Pas de données").appendTo($t);
 				return $t;
 			}
+			if (!(update<p.requestTime)) update = p.requestTime;
 			if (p.pv<30 || p.pv<p.pvMax*.35) $t.addClass("health-red");
 			else if (p.pv<40 || p.pv<p.pvMax*.6) $t.addClass("health-orange");
 			else if (p.pv<p.pvMax*.9) $t.addClass("health-yellow");
@@ -73,13 +82,16 @@ miaou(function(mountyhall, chat, gui, locals, time, ws){
 			$("<div class=action>").append(
 				$("<div class=mountyhall-refresh-troll>").click(function(){
 					chat.sendMessage("!!partage update troll @" + troll.miaouUser.name);
-				}).bubbleOn({
-					side: "right",
-					text: "Dernière mise à jour: " + time.formatTime(p.requestTime)
 				})
 			).appendTo($t); // bubble with time.formatTime ?
+			$t.bubbleOn({
+				side: "right",
+				text:	"Dernière mise à jour: " + time.formatTime(p.requestTime)+"\n"+
+					"Troll associé à @" + troll.miaouUser.name
+			});
 			return $t;
 		}));
+		$("#mountyhall-team-box").dat("update", update);
 	}
 
 	// démarre toutes la mécanique des partags
@@ -89,11 +101,10 @@ miaou(function(mountyhall, chat, gui, locals, time, ws){
 		}
 		ws.on("mountyhall.setRoomTrolls", function(trolls){
 			console.log('room trolls:', trolls);
-			if (trolls.length) fillTeamBox(trolls);
+			if (trolls && trolls.length) fillTeamBox(trolls);
 			else $("#mountyhall-team-box").remove();
 		});
 		chat.on("ready", function(){
-			console.log("emit getRoomTrolls");
 			ws.emit("mountyhall.getRoomTrolls", {});
 		});
 	}

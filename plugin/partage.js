@@ -1,5 +1,6 @@
 
 const	MAX_APPELS_DYNAMIQUES = 9,
+	fmt = require("../../libs/fmt.js"),
 	iconvlite = require('iconv-lite'),
 	http = require('http'),
 	Promise = require("bluebird");
@@ -79,6 +80,32 @@ exports.getRoomTrolls = function(roomId){
 	.filter(Boolean);
 }
 
+
+// Returns recent sp requests as a markdown table
+// must be called with context being an open DB connection
+exports.mdRecentSPRequests = function(trollIds, playerIds){
+	var since = Date.now()/1000|0 - 3*24*60;
+	var cond = "requester in(" + playerIds + ")";
+	if (trollIds.length) cond = "(troll in ("+trollIds+") or " + cond + ")";
+	return this.queryRows(
+		"select troll, call_date, requester, name, script, sp_result from mountyhall_sp_call"+
+		" left join player on player.id=requester"+
+		" where " + cond+
+		" and call_date>"+since+
+		" order by call_date desc",
+		null,
+		"select_requests", false
+	)
+	.then(function(rows){
+		if (!rows.length) return "pas de requète dans les trois derniers jours";
+		return	"Date|Troll|Demandeur|Script|Résultat\n"
+		+ ":-:|:-:|:-:|:-:|:-:\n"
+		+ rows.map(r =>
+			`${fmt.date(r.call_date, "YYYY/MM/DD hh:mm")}|${r.troll}|${r.name}|${r.script}|${r.sp_result}`
+		).join("\n");
+	});
+}
+
 // must be called with context being an open DB connection
 exports.updateTroll = function(playerId, requester){
 	console.log("updating troll for player", playerId);
@@ -105,10 +132,11 @@ exports.updateTroll = function(playerId, requester){
 		return exports.fetchSP(script, troll.id, ppi.info.mdpr)
 		.catch(spError=>{
 			console.log('spError:', spError);
+			var badPassword = /mot de passe incorrect/.test(spError.toString());
 			return this.execute(
 				"insert into mountyhall_sp_call (troll, call_date, requester, script, sp_result)"+
 				" values ($1, $2, $3, $4, $5)",
-				[troll.id, now, requester, script, "error"],
+				[troll.id, now, requester, script, badPassword ? "bad-password" : "error"],
 				"mh_insert_sp_call"
 			).then(function(){
 				throw `L'appel du script public ${script} a échoué`;
@@ -169,37 +197,3 @@ function profil2CsvToObject(csv){
 		bonDur: l[i++],
 	};
 }
-
-/*
-csv: [ [ '110000',
-    '-52',
-    '-84',
-    '-62',
-    '65',
-    '60',
-    '6',
-    '2017-03-19 23:48:00',
-    '4',
-    '3',
-    '11',
-    '1',
-    '4',
-    '23',
-    '951',
-    '533',
-    '0',
-    '4',
-    '0',
-    '0',
-    '0',
-    '0',
-    '0',
-    '639',
-    '-175',
-    '1',
-    '0',
-    '0',
-    '0',
-    '0',
-    '0\n' ] ]
-   */

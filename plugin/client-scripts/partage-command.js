@@ -4,11 +4,12 @@ miaou(function(mountyhall){
 
 	const argSequences = [
 		["update", ["troll", "room"]],
+		["requests", ["user", "room"]],
 		["on"],
 		["off"],
 		["list"],
 	];
-	const NB_DEEP_ARGS = 1;
+	const NB_DEEP_ARGS = 2;
 	const firstArgs = argSequences.map(function(v){
 		return v[0];
 	});

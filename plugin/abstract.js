@@ -140,7 +140,6 @@ Animal.prototype.getReportItem = function(o, isAtEnd){
 		r.deg = o.degnet;
 		r.pv = "**-"+o.degnet+" PV**";
 		if (o.kill) r.action += " mortel";
-		console.log('r:', r);
 		return r;
 	}
 }
@@ -167,23 +166,19 @@ Animal.prototype.parse = function(message){
 				line += lines[++l];
 			}
 		}
-		console.log(line);
 		for (var i=0; i<patterns.length; i++) {
 			var p = patterns[i], m = line.match(p.re);
 			if (!m) continue;
 			if (p.clear) {
-				console.log("--- clear ---");
 				this.lookForReportItem(cur, true, message);
 				cur = {};
 			}
 			for (var j=1; j<m.length; j++) {
 				cur[p.res[j-1]] = m[j] ? m[j].trim() : '';
-				console.log(' -> ', p.res[j-1], ' = ', m[j]);
 			}
 			if (p.vals) {
 				for (var k in p.vals) {
 					cur[k] = p.vals[k];
-					console.log(' -> ', k, ' = ', p.vals[k]);
 				}
 			}
 			cur = this.lookForReportItem(cur, false, message);
