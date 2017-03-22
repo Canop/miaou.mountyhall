@@ -46,35 +46,35 @@
 	flex-direction: row;
 	align-items: center;
 	height: 22px;
+	line-height: 22px;
 	background: $message-list-bg;
 	border-left-width: 5px;
 	border-left-style: solid;
 	border-left-color: transparent;
 	&>div {
-		padding: 2px 1px;
 		overflow: hidden;
-		border-left: thin solid rgba(255, 255, 255, .2);
 		white-space: nowrap;
 	}
 	.nom {
+		padding-left: 2px;
 		text-overflow: ellipsis;
-		border-left: none;
 	}
-	.x, .y, .n, pv, .dla, .pv, .pa, .pdla, .action {
+	.x, .y, .n, pv, .jdla-dla, .dla, .pv, .pa, .action {
 		text-align: center;
 	}
-	.pv {
+	.pv, .jdla {
 		text-align: right;
+		padding-right: 2px;
 	}
 	.pa {
-		width: 12px;
+		width: 14px;
 	}
 	.pvMax {
 		&::before {
 			content: '/';
 		}
 	}
-	.dla, .pdla {
+	.dla {
 		width: 35px;
 	}
 	&.health-red {
@@ -107,14 +107,16 @@
 			transition: all .3s;
 		}
 		.nom {
-			width: 40px;
+			width: 42px;
 		}
-		.raceNiveau, .x, .y, .n, .pv, .pvMax, .action {
+		.jdla-dla {
+			width: 35px;
+		}
+		.raceNiveau, .x, .y, .n, .pv, .pvMax, .jdla, .action {
 			width: 0;
 			&::before {
 				display: none;
 			}
-			border-left: none;
 			padding: 0;
 		}
 	}
@@ -134,8 +136,17 @@
 		.pvMax {
 			width: 30px;
 		}
+		.jdla {
+			width: 35px;
+		}
+		.jdla-dla {
+			width: 72px;
+		}
 		.raceNiveau {
 			width: 10px;
+		}
+		.dla {
+			text-align: left;
 		}
 		.action {
 			width: 30px;
@@ -167,7 +178,7 @@
 }
 #mountyhall-team-toggle-button {
 	cursor: pointer;
-	margin-top: -2px;
+	margin-top: -1px;
 }
 .reduced #mountyhall-team-toggle-button {
 	transform: rotate(0deg);

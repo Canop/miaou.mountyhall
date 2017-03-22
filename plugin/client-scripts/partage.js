@@ -5,6 +5,11 @@ miaou(function(mountyhall, chat, gui, locals, time, ws){
 		return race[0];
 	}
 
+	function timeJJMM(time){
+		var	date = new Date(time*1000),
+			d = date.getDate(), m = date.getMonth()+1;
+		return (d<10?'0':'')+d+'/'+(m<10?'0':'')+m;
+	}
 	function timeHHmm(time){
 		var	date = new Date(time*1000),
 			m = date.getMinutes(), h = date.getHours();
@@ -22,13 +27,14 @@ miaou(function(mountyhall, chat, gui, locals, time, ws){
 		$("<div class=x>").text("x").appendTo($t);
 		$("<div class=y>").text("y").appendTo($t);
 		$("<div class=n>").text("n").appendTo($t);
-		$("<div class=dla>").text("DLA").appendTo($t);
 		$("<div class=pa>").text("PA").appendTo($t);
-		$("<div class=pdla>").text("PDLA").appendTo($t);
+		$("<div class=jdla-dla>").text("DLA").appendTo($t);
+		$("<div class=jdla-dla>").text("PDLA").appendTo($t);
 		$("<div class=action>").appendTo($t);
 		$("<div id=mountyhall-team-trolls>").appendTo($box);
 		$("<div id=mountyhall-team-refresh-button>").appendTo($head).click(function(){
 			chat.sendMessage("!!partage update room");
+			$(this).remove();
 		}).bubbleOn({
 			side: "top",
 			blower: function($c){
@@ -65,6 +71,7 @@ miaou(function(mountyhall, chat, gui, locals, time, ws){
 				$("<div class=missing>").text("Pas de données").appendTo($t);
 				return $t;
 			}
+			p.pdla = p.dla+p.dur*60;
 			if (!(update<p.requestTime)) update = p.requestTime;
 			if (p.pv<30 || p.pv<p.pvMax*.35) $t.addClass("health-red");
 			else if (p.pv<40 || p.pv<p.pvMax*.6) $t.addClass("health-orange");
@@ -76,9 +83,11 @@ miaou(function(mountyhall, chat, gui, locals, time, ws){
 			$("<div class=x>").text(p.x).appendTo($t);
 			$("<div class=y>").text(p.y).appendTo($t);
 			$("<div class=n>").text(p.n).appendTo($t);
-			$("<div class=dla>").text(timeHHmm(p.dla)).appendTo($t);
+			$("<div class=jdla>").text(timeJJMM(p.dla)).appendTo($t);
 			$("<div class=pa>").text(p.pa).appendTo($t);
-			$("<div class=pdla>").text(timeHHmm(p.dla+p.dur*60)).appendTo($t); // bubble with time.formatTime ?
+			$("<div class=dla>").text(timeHHmm(p.dla)).appendTo($t);
+			$("<div class=jdla>").text(timeJJMM(p.pdla)).appendTo($t);
+			$("<div class=dla>").text(timeHHmm(p.pdla)).appendTo($t); // bubble with time.formatTime ?
 			$("<div class=action>").append(
 				$("<div class=mountyhall-refresh-troll>").click(function(){
 					chat.sendMessage("!!partage update troll @" + troll.miaouUser.name);
