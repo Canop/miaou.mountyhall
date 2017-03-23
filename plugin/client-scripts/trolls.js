@@ -61,6 +61,7 @@ miaou(function(mountyhall, locals){
 		['Gruhtzog', 'grutz'],
 		['schtroumph_vert_pomme', 'svp'],
 		['Shaksgärt', 'Shaks'],
+		['skrûn-haï', 'skrun'],
 		['Valfëan', 'Valfean'],
 		['wouchy', 'wouch'],
 		['TuttiRikikiMaoussKosTroll', 'Raistlin'],
