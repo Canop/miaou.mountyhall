@@ -53,13 +53,17 @@
 	border-left-color: transparent;
 	&>div {
 		overflow: hidden;
+	}
+	&>a {
+		overflow: hidden;
 		white-space: nowrap;
+		text-decoration: none;
 	}
 	.nom {
 		padding-left: 2px;
 		text-overflow: ellipsis;
 	}
-	.x, .y, .n, pv, .jdla-dla, .dla, .pv, .pa, .action {
+	.x, .y, .n, pv, .jdla-dla, .dla, .pv, .pa, .action, .fat {
 		text-align: center;
 	}
 	.pv, .jdla {
@@ -67,7 +71,7 @@
 		padding-right: 2px;
 	}
 	.pa {
-		width: 14px;
+		width: 13px;
 	}
 	.pvMax {
 		&::before {
@@ -75,7 +79,7 @@
 		}
 	}
 	.dla {
-		width: 35px;
+		width: 37px;
 	}
 	&.health-red {
 		border-left-color: red;
@@ -84,7 +88,7 @@
 		border-left-color: orange;
 	}
 	&.health-yellow {
-		border-left-color: yellow;
+		border-left-color: #afc528;
 	}
 	&.health-green {
 		border-left-color: green;
@@ -107,12 +111,12 @@
 			transition: all .3s;
 		}
 		.nom {
-			width: 42px;
+			width: 44px;
 		}
 		.jdla-dla {
 			width: 35px;
 		}
-		.raceNiveau, .x, .y, .n, .pv, .pvMax, .jdla, .action {
+		.raceNiveau, .x, .y, .n, .pv, .pvMax, .jdla, .action, .fat, .details {
 			width: 0;
 			&::before {
 				display: none;
@@ -125,7 +129,7 @@
 			transition: all .3s;
 		}
 		.nom {
-			width: 80px;
+			width: 90px;
 		}
 		.x, .y, .n {
 			width: 30px;
@@ -133,11 +137,15 @@
 		.pv {
 			width: 30px;
 		}
+		.fat {
+			width: 30px;
+		}
 		.pvMax {
 			width: 30px;
 		}
 		.jdla {
-			width: 35px;
+			width: 32px;
+			font-size: 85%;
 		}
 		.jdla-dla {
 			width: 72px;
@@ -157,7 +165,7 @@
 		height: 24px;
 		display: flex;
 		flex-direction: row;
-		color: $title-text-color;
+		color: $miaou-logo-color;
 	}
 	#mountyhall-team-trolls {
 
@@ -171,10 +179,14 @@
 		margin-right: 4px;
 		content: '\e834';
 	}
+	&.disabled {
+		opacity: .2;
+		cursor: auto;
+	}
 }
 #mountyhall-team-refresh-button {
 	@extend .mountyhall-refresh-troll;
-	margin: 0 20px 0 55px;
+	margin: 0 30px 0 45px;
 }
 #mountyhall-team-toggle-button {
 	cursor: pointer;
@@ -182,9 +194,9 @@
 }
 .reduced #mountyhall-team-toggle-button {
 	transform: rotate(0deg);
-	transition: all .3s;
+	transition: all .4s;
 }
 .full #mountyhall-team-toggle-button {
-	transform: rotate(180deg);
-	transition: all .3s;
+	transform: rotate(-180deg);
+	transition: all .4s;
 }

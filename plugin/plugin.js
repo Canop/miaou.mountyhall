@@ -168,15 +168,11 @@ exports.beforeAccessRequest = function(args, user){
 
 
 exports.onNewShoe = function(shoe){
-	;["getRoomTrolls"].forEach(key=>{
-		console.log("hooking", 'mountyhall.'+key);
-		shoe.socket
-		.on('mountyhall.'+key, function(){
-			console.log("GRT");
-			var bo = bench.start("mountyhall."+key);
-			pws[key](shoe);
-			bo.end();
-		})
+	shoe.socket
+	.on('mountyhall.getRoomTrolls', function(){
+		var bo = bench.start("mountyhall.getRoomTrolls");
+		pws.getRoomTrolls(shoe);
+		bo.end();
 	});
 }
 

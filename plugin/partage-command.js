@@ -80,8 +80,10 @@ commands["UpdateTroll"] = function(ct){
 	.then(function(trolls){
 		ct.reply("troll mis à jour");
 		trolls.forEach(function(troll){
-			console.log("trying to send update to", troll.miaouUser.id);
-			ct.shoe.userSocket(troll.miaouUser.id).emit("mountyhall.setRoomTrolls", trolls);
+			console.log("trying to send update to", troll.miaouUser.name);
+			var socket = ct.shoe.userSocket(troll.miaouUser.id);
+			if (socket) socket.emit("mountyhall.setRoomTrolls", trolls);
+			else console.log("user not in the room");
 		});
 	});
 }
@@ -94,6 +96,10 @@ commands["UpdateRoom"] = function(ct){
 	)
 	.map(function(row){
 		return papi.updateTroll.call(this, row.player, ct.shoe.publicUser.id)
+		.catch(function(e){
+			console.log("Error while updating troll", e);
+			// returning nothing here
+		})
 		.then(function(troll){
 			return troll ? troll.nom + " mis à jour" : "échec pour " + row.player;
 		})
@@ -107,8 +113,10 @@ commands["UpdateRoom"] = function(ct){
 		return papi.getRoomTrolls.call(this, ct.shoe.room.id)
 		.then(function(trolls){
 			trolls.forEach(function(troll){
-				console.log("trying to send update to", troll.miaouUser.id);
-				ct.shoe.userSocket(troll.miaouUser.id).emit("mountyhall.setRoomTrolls", trolls);
+				console.log("trying to send update to", troll.miaouUser.name);
+				var socket = ct.shoe.userSocket(troll.miaouUser.id);
+				if (socket) socket.emit("mountyhall.setRoomTrolls", trolls);
+				else console.log("user not in the room");
 			});
 		})
 	});
