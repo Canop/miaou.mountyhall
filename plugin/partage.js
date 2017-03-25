@@ -80,7 +80,6 @@ exports.getRoomTrolls = function(roomId){
 	.filter(Boolean);
 }
 
-
 // Returns recent sp requests as a markdown table
 // must be called with context being an open DB connection
 exports.mdRecentSPRequests = function(trollIds, playerIds){

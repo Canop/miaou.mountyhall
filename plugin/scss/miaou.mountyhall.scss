@@ -42,6 +42,7 @@
 	height: 20px;
 }
 .mountyhall-team-troll {
+	position: relative;
 	display: flex;
 	flex-direction: row;
 	align-items: center;
@@ -51,11 +52,17 @@
 	border-left-width: 5px;
 	border-left-style: solid;
 	border-left-color: transparent;
-	&>div {
-		overflow: hidden;
+	.mountyhall-time-bar-wrapper {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		.mountyhall-time-bar {
+			height: 100%;
+			background: rgba(100, 100, 120, .24);
+		}
 	}
-	&>a {
-		overflow: hidden;
+	div, a {
+		color: $general-text-color;
 		white-space: nowrap;
 		text-decoration: none;
 	}
@@ -71,7 +78,7 @@
 		padding-right: 2px;
 	}
 	.pa {
-		width: 13px;
+		width: 15px;
 	}
 	.pvMax {
 		&::before {
@@ -106,12 +113,15 @@
 	box-shadow: $closed-stripe-shadow;
 	background: $pad-background;
 	box-shadow: $open-stripe-shadow;
+	div, a {
+		overflow: hidden;
+	}
 	&.reduced {
 		.mountyhall-team-troll > div {
 			transition: all .3s;
 		}
 		.nom {
-			width: 44px;
+			width: 42px;
 		}
 		.jdla-dla {
 			width: 35px;
@@ -123,13 +133,21 @@
 			}
 			padding: 0;
 		}
+		.wrapper1 {
+			left: 60px;
+			width: 37px;
+		}
+		.wrapper2 {
+			left: 97px;
+			width: 37px;
+		}
 	}
 	&.full {
 		.mountyhall-team-troll > div {
 			transition: all .3s;
 		}
 		.nom {
-			width: 90px;
+			width: 88px;
 		}
 		.x, .y, .n {
 			width: 30px;
@@ -148,6 +166,14 @@
 			font-size: 85%;
 		}
 		.jdla-dla {
+			width: 72px;
+		}
+		.wrapper1 {
+			left: 283px;
+			width: 72px;
+		}
+		.wrapper2 {
+			left: 355px;
 			width: 72px;
 		}
 		.raceNiveau {
@@ -170,6 +196,11 @@
 	#mountyhall-team-trolls {
 		overflow-y: auto;
 		max-height: 55vh;
+		.mountyhall-team-troll {
+			.pa, .dla {
+				border-right: thin dotted rgba(150, 150, 150, .7);
+			}
+		}
 	}
 }
 .mountyhall-refresh-troll {
