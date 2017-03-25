@@ -1,6 +1,6 @@
 miaou(function(mountyhall, chat, gui, locals, time, ws){
 
-	const isAdmin = locals.room.auth==="admin" || locals.room.auth==="own";
+	const isAdmin = locals.room && (locals.room.auth==="admin" || locals.room.auth==="own");
 
 	function raceLetter(race){
 		if (race==="Darkling") return "G";
