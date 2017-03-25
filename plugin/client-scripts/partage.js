@@ -84,7 +84,7 @@ miaou(function(mountyhall, chat, gui, locals, time, ws){
 			.attr("href", "https://games.mountyhall.com/mountyhall/View/PJView.php?ai_IDPJ="+troll.id)
 			.attr("target", "troll_"+troll.id)
 			.text(troll.nom).appendTo($t);
-			$("<div class=raceNiveau>").text(raceLetter(troll.race)).appendTo($t); // fixme niveau du troll???
+			$("<div class=raceNiveau>").text(raceLetter(troll.race)+p.niveau).appendTo($t);
 			if (!p) {
 				$("<div class=missing>").text("Pas de données").appendTo($t);
 				return $t;
@@ -115,11 +115,13 @@ miaou(function(mountyhall, chat, gui, locals, time, ws){
 			).appendTo($t); // bubble with time.formatTime ?
 			$("<div class=details>").text([
 				p.invi && "invi",
+				p.course && "en course",
 				p.camou && "camou",
+				p.lévite && "lévite",
 				p.int && "intangible",
 				p.parades && (p.parades+" parades"),
 				p.contras && (p.contras+" contre-attaques"),
-				p.atts && (p.atts+" attaques subies")
+				p.atts && (p.atts+" attaques subies"),
 			].filter(Boolean).join(", ")).appendTo($t);
 			$t.bubbleOn({
 				side: "right",

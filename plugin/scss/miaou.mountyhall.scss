@@ -151,7 +151,7 @@
 			width: 72px;
 		}
 		.raceNiveau {
-			width: 10px;
+			width: 26px;
 		}
 		.dla {
 			text-align: left;
@@ -168,7 +168,8 @@
 		color: $miaou-logo-color;
 	}
 	#mountyhall-team-trolls {
-
+		overflow-y: auto;
+		max-height: 55vh;
 	}
 }
 .mountyhall-refresh-troll {

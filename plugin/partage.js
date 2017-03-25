@@ -175,7 +175,7 @@ function profil2CsvToObject(csv){
 		y: l[i++],
 		n: l[i++],
 		pv: l[i++],
-		pvMax: l[i++],
+		pvPasMax: l[i++],
 		pa: l[i++],
 		dla: Date.parse(l[i++])/1000|0, // ceci marche uniquement si le serveur est en TimeZone CET
 		désAtt: l[i++],
@@ -195,5 +195,13 @@ function profil2CsvToObject(csv){
 		contras: l[i++],
 		dur: l[i++],
 		bonDur: l[i++],
+		armNat: l[i++],
+		mDésArmNat: l[i++],
+		glué: !!l[i++],
+		auSol: !!l[i++],
+		course: !!l[i++],
+		lévite: !!l[i++],
+		pvMax: l[i++],
+		niveau: l[i++]
 	};
 }
