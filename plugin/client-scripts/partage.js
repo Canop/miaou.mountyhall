@@ -107,46 +107,53 @@ miaou(function(mountyhall, chat, gui, locals, time, ws){
 				$("<div class=missing>").text("Pas de données").appendTo($t);
 				return $t;
 			}
-			$("<div class=mountyhall-time-bar>").appendTo(
-				$('<div class="mountyhall-time-bar-wrapper wrapper1">').appendTo($t)
-			).dat("range", [p.dla-p.dur*60, p.dla]);
 			p.pdla = p.dla+p.dur*60;
-			$("<div class=mountyhall-time-bar>").appendTo(
-				$('<div class="mountyhall-time-bar-wrapper wrapper2">').appendTo($t)
-			).dat("range", [p.dla, p.pdla]);
+			var obsolete = p.pdla < Date.now()/1000;
 			if (!(update.newest>p.requestTime)) update.newest = p.requestTime;
 			if (!(update.oldest<p.requestTime)) update.oldest = p.requestTime;
-			if (p.pv<30 || p.pv<p.pvMax*.35) $t.addClass("health-red");
-			else if (p.pv<40 || p.pv<p.pvMax*.6) $t.addClass("health-orange");
-			else if (p.pv<p.pvMax*.9) $t.addClass("health-yellow");
-			else $t.addClass("health-green");
-			if (p.invi || p.cam) $t.addClass("invi");
 			$("<div class=pv>").text(p.pv).appendTo($t);
 			$("<div class=pvMax>").text(p.pvMax).appendTo($t);
 			$("<div class=x>").text(p.x).appendTo($t);
 			$("<div class=y>").text(p.y).appendTo($t);
 			$("<div class=n>").text(p.n).appendTo($t);
-			$("<div class=pa>").text(p.pa).appendTo($t);
-			$("<div class=jdla>").text(timeJJMM(p.dla)).appendTo($t);
-			$("<div class=dla>").text(timeHHmm(p.dla)).appendTo($t);
-			$("<div class=jdla>").text(timeJJMM(p.pdla)).appendTo($t);
-			$("<div class=dla>").text(timeHHmm(p.pdla)).appendTo($t); // bubble with time.formatTime ?
-			$("<div class=fat>").text(p.fat).appendTo($t);
+			if (!obsolete) {
+				if (p.invi || p.cam) $t.addClass("invi");
+				if (p.pv<30 || p.pv<p.pvMax*.35) $t.addClass("health-red");
+				else if (p.pv<40 || p.pv<p.pvMax*.6) $t.addClass("health-orange");
+				else if (p.pv<p.pvMax*.9) $t.addClass("health-yellow");
+				else $t.addClass("health-green");
+				$("<div class=pa>").text(p.pa).appendTo($t);
+				$("<div class=jdla>").text(timeJJMM(p.dla)).appendTo($t);
+				$("<div class=dla>").text(timeHHmm(p.dla)).appendTo($t);
+				$("<div class=jdla>").text(timeJJMM(p.pdla)).appendTo($t);
+				$("<div class=dla>").text(timeHHmm(p.pdla)).appendTo($t); // bubble with time.formatTime ?
+				$("<div class=fat>").text(p.fat).appendTo($t);
+				$("<div class=mountyhall-time-bar>").appendTo(
+					$('<div class="mountyhall-time-bar-wrapper wrapper1">').appendTo($t)
+				).dat("range", [p.dla-p.dur*60, p.dla]);
+				$("<div class=mountyhall-time-bar>").appendTo(
+					$('<div class="mountyhall-time-bar-wrapper wrapper2">').appendTo($t)
+				).dat("range", [p.dla, p.pdla]);
+			} else {
+				$("<div class=obsolete>").text("données obsolètes").appendTo($t);
+			}
 			$("<div class=action>").append(
 				$("<div class=mountyhall-refresh-troll>").click(function(){
 					chat.sendMessage("!!partage update troll @" + troll.miaouUser.name);
 				})
 			).appendTo($t); // bubble with time.formatTime ?
-			$("<div class=details>").text([
-				p.invi && "invi",
-				p.course && "en course",
-				p.camou && "camou",
-				p.lévite && "lévite",
-				p.int && "intangible",
-				p.parades && (p.parades+" parades"),
-				p.contras && (p.contras+" contre-attaques"),
-				p.atts && (p.atts+" attaques subies"),
-			].filter(Boolean).join(", ")).appendTo($t);
+			if (!obsolete) {
+				$("<div class=details>").text([
+					p.invi && "invi",
+					p.course && "en course",
+					p.camou && "camou",
+					p.lévite && "lévite",
+					p.int && "intangible",
+					p.parades && (p.parades+" parades"),
+					p.contras && (p.contras+" contre-attaques"),
+					p.atts && (p.atts+" attaques subies"),
+				].filter(Boolean).join(", ")).appendTo($t);
+			}
 			$t.bubbleOn({
 				side: "right",
 				text:	"Dernière mise à jour: " + time.formatTime(p.requestTime)+"\n"+

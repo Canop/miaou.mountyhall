@@ -77,6 +77,11 @@
 		text-align: right;
 		padding-right: 2px;
 	}
+	.obsolete {
+		font-style: italic;
+		font-size: 80%;
+		margin-top: 2px;
+	}
 	.pa {
 		width: 15px;
 	}
@@ -133,6 +138,9 @@
 			}
 			padding: 0;
 		}
+		.obsolete {
+			width: 89px;
+		}
 		.wrapper1 {
 			left: 60px;
 			width: 37px;
@@ -167,6 +175,9 @@
 		}
 		.jdla-dla {
 			width: 72px;
+		}
+		.obsolete {
+			width: 189px;
 		}
 		.wrapper1 {
 			left: 283px;

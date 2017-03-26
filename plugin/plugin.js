@@ -21,7 +21,7 @@ exports.init = function(miaou){
 	return miaou.requestTag({
 		name: "MountyHall",
 		description:
-			"http://games.mountyhall.com/mountyhall/Images/Troll_accueil_1.jpg\n"+
+			"https://games.mountyhall.com/mountyhall/Images/Troll_accueil_1.jpg\n"+
 			"*[MountyHall](https://www.mountyhall.com) est un jeu de rôles et d'aventures"+
 			" en ligne permettant aux participants d'incarner un Troll en quête d'aventures. "+
 			"Le jeu se déroule en tour-par-tour d'une durée de 12 heures durant lesquelles"+
