@@ -1,7 +1,9 @@
 miaou.moutyhall
 ===============
 
-A plugin for miaou, dedicated to the MountyHall French game.
+A plugin for miaou, dedicated to the MountyHall game.
+
+As the language of the game and its community is the French, all documentation of this plugin will be in French.
 
 Fonctions
 =========
