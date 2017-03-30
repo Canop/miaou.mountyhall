@@ -1,9 +1,36 @@
-
+// gère l'affichage de la vue partagée
 miaou(function(mountyhall, chat, gui, locals, time, ws){
 
+	const	MH_BASE = "https://games.mountyhall.com/mountyhall/View/";
+
 	var	$panel,
+		cellWidth,
 		zoom = 3,
-		currentTroll;
+		currentTroll,
+		hoverGrid = false,
+		debouncing = false,
+		$panel;
+
+	window.addEventListener("wheel", function(e){
+		if (!hoverGrid) return;
+		e.preventDefault();
+		if (debouncing) return;
+		debouncing = true;
+		setTimeout(function(){
+			debouncing = false;
+		}, 100);
+		if (e.deltaY>0) zoom--;
+		else if (e.deltaY<0) zoom++;
+		else return;
+		if (zoom<0) {
+			zoom = 0;
+		} else if (zoom>5) {
+			zoom = 5;
+		} else {
+			applyZoom(e);
+		}
+		return false;
+	});
 
 	function selectTroll(troll){
 		currentTroll = troll;
@@ -33,10 +60,10 @@ miaou(function(mountyhall, chat, gui, locals, time, ws){
 				break;
 			}
 		}
-		$("<div class=mountyhall-help-icon>").bubbleOn({
-			text:	"Glissez la carte en maintenant le bouton de la souris enfonçé\n"+
-				"Zoomez et Dézoomez avec la molette de la souris"
-		}).appendTo($head);
+		$("<div class=mountyhall-help-icon>").bubbleOn(
+			"Glissez la carte en maintenant le bouton de la souris enfonçé\n"+
+			"Zoomez et Dézoomez avec la molette de la souris"
+		).appendTo($head);
 		$("<select>").append(trolls.map(function(t){
 			var $option =  $("<option>").text(t.nom);
 			if (t===localTroll) $option.prop("selected", true);
@@ -70,6 +97,7 @@ miaou(function(mountyhall, chat, gui, locals, time, ws){
 			console.log("mauvais trollView reçu", trollView, currentTroll);
 			return;
 		}
+		currentTroll.view = trollView;
 		var $maj;
 		$("#mountyhall-view-update").empty()
 		.append($maj = $("<div>"))
@@ -135,31 +163,34 @@ miaou(function(mountyhall, chat, gui, locals, time, ws){
 		});
 	}
 
+	function cellBlower($c){
+		if (zoom>2) return false;
+		$c.append($(this).clone());
+	}
+
+	function applyZoom(e){
+		var	$view = $("#mountyhall-view"),
+			$grid = $("#mountyhall-view-grid");
+		$grid[0].className = "zoom"+zoom;
+		var oldCellWidth = cellWidth;
+		cellWidth = [21, 40, 70, 108, 140, 160][zoom];
+		$grid.width(cellWidth*currentTroll.view.size);
+		$view.toggleClass("short-view", $grid.width()<$view.width()-20);
+		if (e && oldCellWidth) {
+			var ratio = cellWidth / oldCellWidth;
+			var x = e.clientX-$view.offset().left;
+			var y = e.clientY-$view.offset().top; // ne tient pas compte des cellules qui dépassent en hauteur
+			$view.scrollLeft(($view.scrollLeft()+x)*ratio-x);
+			$view.scrollTop(($view.scrollTop()+y)*ratio-y);
+		}
+	}
+
 
 	function displayView(trollView){
 		var	cells = trollView.cells,
-			hoveredCell,
-			cellWidth,
 			size = trollView.size,
 			$view = $("#mountyhall-view").empty(),
 			$grid = $("<div id=mountyhall-view-grid>").appendTo($view);
-		function applyZoom(e){
-			console.log('zoom:', zoom);
-			console.log('hoveredCell:', hoveredCell);
-			$grid[0].className = "zoom"+zoom;
-			var oldCellWidth = cellWidth;
-			cellWidth = [21, 45, 80, 120, 150][zoom];
-			$grid.width(cellWidth*size);
-			$view.toggleClass("short-view", $grid.width()<$view.width()-20);
-			if (e && oldCellWidth) {
-				var ratio = cellWidth / oldCellWidth;
-				console.log('ratio:', ratio);
-				var x = e.clientX-$view.offset().left;
-				var y = e.clientY-$view.offset().top; // ne tient pas compte des cellules qui dépassent en hauteur
-				$view.scrollLeft(($view.scrollLeft()+x)*ratio-x);
-				$view.scrollTop(($view.scrollTop()+y)*ratio-y);
-			}
-		}
 		applyZoom();
 		for (var j=size; j--;) {
 			var $line = $("<div class=line>").appendTo($grid);
@@ -167,8 +198,9 @@ miaou(function(mountyhall, chat, gui, locals, time, ws){
 				var	cell = cells[i][j],
 					k,
 					o,
-					$cell = $("<div class=cell>").appendTo($line).dat("cell", cell);
+					$cell = $("<div class=mh-cell>").appendTo($line).dat("cell", cell);
 				if (cell.origine) $cell.addClass("origine");
+				$("<div class=position>").text(cell.x+" "+cell.y).appendTo($cell);
 				for (k=0; cell.lieux && k<cell.lieux.length; k++) {
 					o = cell.lieux[k];
 					var $o = $("<div class=lieu>").appendTo($cell);
@@ -179,16 +211,21 @@ miaou(function(mountyhall, chat, gui, locals, time, ws){
 					cell.trolls.sort(function(a, b){ return b.n - a.n });
 					for (k=0; k<cell.trolls.length; k++) {
 						o = cell.trolls[k];
-						var $o = $("<div class=troll>").appendTo($cell)
+						var $o = $("<a class=troll>").appendTo($cell)
+						.attr("target", "_blank")
+						.attr("href", MH_BASE + "PJView.php?ai_IDPJ=" + o.id)
 						.text(o.n + ": " + o.nom);
 					}
 				}
 				if (cell.monstres) {
 					cell.monstres.sort(function(a, b){ return b.n - a.n });
-					var n = 0;
+					var	n = 0,
+						$n =$("<div class=nb-monstres>").appendTo($cell);
 					for (k=0; k<cell.monstres.length; k++) {
 						o = cell.monstres[k];
-						var $o = $("<div class=monstre>").appendTo($cell);
+						var $o = $("<a class=monstre>").appendTo($cell)
+						.attr("target", "_blank")
+						.attr("href", MH_BASE + "MonsterView.php?ai_IDPJ=" + o.id);
 						var match = o.nom.match(/^([^\[]+)( \[[^\]]+\])$/);
 						if (match) {
 							$o.text(o.n + ": " + match[1]).append(
@@ -200,32 +237,19 @@ miaou(function(mountyhall, chat, gui, locals, time, ws){
 						if (/^Gowap Appr/.test(o.nom)) $o.addClass("gowap");
 						else n++;
 					}
-					if (n) {
-						$cell.append($("<div class=nb-monstres>").text(n));
-					}
+					if (n) $n.text(n);
+					else $n.remove();
 				}
-				$("<div class=position>").text(cell.x+" "+cell.y).appendTo($cell);
-			}
-		}
-		var onwheel = function(e){
-			e.preventDefault();
-			if (e.deltaY>0) zoom--;
-			else if (e.deltaY<0) zoom++;
-			else return;
-			if (zoom<0) {
-				zoom = 0;
-			} else if (zoom>4) {
-				zoom = 4;
-			} else {
-				applyZoom(e);
 			}
 		}
 		$grid.mouseenter(function(){
-			window.addEventListener("wheel", onwheel);
+			hoverGrid = true;
 		}).mouseleave(function(){
-			window.removeEventListener("wheel", onwheel);
-		}).on("mouseenter", ".cell", function(){
-			hoveredCell = this;
+			hoverGrid = false;
+		})
+		$grid.bubbleOn(".mh-cell", {
+			side: "horizontal",
+			blower: cellBlower
 		});
 	}
 
@@ -254,13 +278,9 @@ miaou(function(mountyhall, chat, gui, locals, time, ws){
 			lastTop = e.clientY;
 			$view.on("mousemove", onDrag);
 		});
-		$(document).mouseup(function(e){
+		$(document).on("mouseup wheel", function(e){
 			$view.off("mousemove", onDrag);
 		});
 	}
 
-	// function bindGridHover(){
-	// 	$("#mountyhall-view-grid").hover(
-	// 		fi
-	// }
 });

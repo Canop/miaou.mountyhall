@@ -20,15 +20,13 @@ exports.fetchSP = function(sp, num, mdpr, options){
 		path,
 		method: "GET"
 	}, function(res){
-		var lines = [];
+		var text = '';
 		res.on('data', function(chunk){
-			[].push.apply(
-				lines,
-				iconvlite.decode(chunk, 'ISO-8859-1').toString().split("\n").map(
-					s => s.split(';')
-				)
-			);
+			text += iconvlite.decode(chunk, 'ISO-8859-1').toString();
 		}).on('end', function(){
+			var lines = text.split("\n").map(
+				s => s.split(';')
+			);
 			if (lines.length>0 && !/^\W*erreur/i.test(lines[0])) {
 				p.resolve(lines);
 			} else {

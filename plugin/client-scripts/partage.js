@@ -46,10 +46,8 @@ miaou(function(mountyhall, chat, gui, locals, time, ws){
 				$box.addClass("minimized");
 			}
 		});
-		if (locals.room.id===1|| locals.room.id===1556) {
-			$("<div id=mountyhall-team-open-view-button>")
-			.appendTo($buttons).click(mountyhall.toggleSharedView);
-		}
+		$("<div id=mountyhall-team-open-view-button>")
+		.appendTo($buttons).click(mountyhall.toggleSharedView);
 		$("<div id=mountyhall-team-refresh-button>").appendTo($buttons).click(function(){
 			if (!updateAllEnabled) return;
 			chat.sendMessage("!!partage update room");
