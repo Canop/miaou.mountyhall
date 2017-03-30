@@ -7,18 +7,29 @@ const	MAX_APPELS_DYNAMIQUES = 9,
 
 // queries a SP ("script public")
 // returns a promise which is resolved if all goes well with an array of arrays of strings (a csv table)
-exports.fetchSP = function(sp, num, mdpr){
-	var p = Promise.defer();
+exports.fetchSP = function(sp, num, mdpr, options){
+	var	p = Promise.defer(),
+		path = "/SP_"+sp+".php?Numero="+num+"&Motdepasse="+encodeURIComponent(mdpr);
+	if (options) {
+		for (var key in options) {
+			path += "&" + key + "=" + encodeURIComponent(options[key]);
+		}
+	}
 	var req = http.request({
 		hostname: "sp.mountyhall.com",
-		path: "/SP_"+sp+".php?Numero="+num+"&Motdepasse="+encodeURIComponent(mdpr),
+		path,
 		method: "GET"
 	}, function(res){
 		var lines = [];
 		res.on('data', function(chunk){
-			lines.push(iconvlite.decode(chunk, 'ISO-8859-1').toString().split(';'));
+			[].push.apply(
+				lines,
+				iconvlite.decode(chunk, 'ISO-8859-1').toString().split("\n").map(
+					s => s.split(';')
+				)
+			);
 		}).on('end', function(){
-			if (lines.length>0 && lines[0].length>1) {
+			if (lines.length>0 && !/^\W*erreur/i.test(lines[0])) {
 				p.resolve(lines);
 			} else {
 				p.reject(new Error('Error : ' + JSON.stringify(lines)));
@@ -58,7 +69,7 @@ exports.isPlayerInRoomPartages = function(roomId, playerId){
 }
 
 // must be called with context being an open DB connection
-exports.getRoomTrolls = function(roomId){
+exports.getRoomTrolls = function(roomId, script){
 	return this.queryRows(
 		"select player, name from mountyhall_partage mhp join player p on p.id=mhp.player where room=$1",
 		[roomId],
@@ -78,6 +89,20 @@ exports.getRoomTrolls = function(roomId){
 		});
 	})
 	.filter(Boolean);
+}
+
+// must be called with context being an open DB connection
+exports.getView = function(trollId){
+	return this.queryOptionalRow(
+		"select update, vue from mountyhall_vue where troll=$1",
+		[trollId],
+		"mh_get_vue"
+	)
+	.then(function(troll){
+		troll = troll || {};
+		troll.id = trollId;
+		return troll;
+	});
 }
 
 // Returns recent sp requests as a markdown table
@@ -105,20 +130,48 @@ exports.mdRecentSPRequests = function(trollIds, playerIds){
 	});
 }
 
+// ces fonctions sont appelées avec contexte une connexion BD
+const stores = {};
+stores.Profil2 = function(ppi, script, obj){
+	ppi.info.troll['profil2'] = obj;
+	return this.deletePlayerPluginInfo("MountyHall", ppi.player)
+	.then(function(){
+		return this.storePlayerPluginInfo("MountyHall", ppi.player, ppi.info);
+	}).then(function(){
+		return ppi.info.troll;
+	});
+}
+stores.Vue2 = function(ppi, script, obj){
+	var	now = Date.now()/1000|0,
+		trollId = +ppi.info.troll.id;
+	return this.execute(
+		"delete from mountyhall_vue where troll=$1",
+		[trollId],
+		"delete_mh_vue"
+	)
+	.then(function(){
+		return this.execute(
+			"insert into mountyhall_vue (troll, update, vue) values ($1, $2, $3)",
+			[trollId, now, obj],
+			"insert_mh_vue"
+		);
+	})
+	.then(function(){
+		return {id:trollId, vue:obj};
+	});
+}
+
 // must be called with context being an open DB connection
-exports.updateTroll = function(playerId, requester){
-	console.log("updating troll for player", playerId);
+exports.updateTroll = function(playerId, requester, script, options){
+	console.log("updating ", script, " for player", playerId);
 	var	now = Date.now()/1000|0,
 		troll,
-		ppi,
-		script = 'Profil2';
+		ppi;
 	return this.getPlayerPluginInfo("MountyHall", playerId)
 	.then(function(_ppi){
 		ppi = _ppi;
-		console.log('ppi:', ppi);
 		if (!ppi || !ppi.info) throw "Vous devez lier un troll à votre utilisateur Miaou (voir les *settings*)";
 		troll = ppi.info.troll;
-		console.log('troll:', troll);
 		if (!troll) throw "Troll non trouvé";
 		if (!ppi.info.mdpr) throw "Mot de passe restreint inconnu de Miaou";
 		return exports.getNbSpCallsInLast24h.call(this, troll.id);
@@ -128,7 +181,7 @@ exports.updateTroll = function(playerId, requester){
 		if (nbCalls>MAX_APPELS_DYNAMIQUES) {
 			throw `Trop d'appels aux scripts publics pour le troll ${troll.id}`;
 		}
-		return exports.fetchSP(script, troll.id, ppi.info.mdpr)
+		return exports.fetchSP(script, troll.id, ppi.info.mdpr, options)
 		.catch(spError=>{
 			console.log('spError:', spError);
 			var badPassword = /mot de passe incorrect/.test(spError.toString());
@@ -142,30 +195,30 @@ exports.updateTroll = function(playerId, requester){
 			});
 		})
 		.then(csv=>{
-			console.log('csv:', csv);
 			return this.execute(
 				"insert into mountyhall_sp_call (troll, call_date, requester, script, sp_result)"+
 				" values ($1, $2, $3, $4, $5)",
 				[troll.id, now, requester, script, "ok"],
 				"mh_insert_sp_call"
 			).then(function(){
-				return profil2CsvToObject(csv);
+				return parsers[script](csv);
 			});
 		});
 	})
-	.then(function(profil2){
-		console.log('profil2:', profil2);
-		profil2.requestTime = now;
-		ppi.info.troll.profil2 = profil2;
-		return this.deletePlayerPluginInfo("MountyHall", playerId);
-	}).then(function(){
-		return this.storePlayerPluginInfo("MountyHall", playerId, ppi.info);
-	}).then(function(){
-		return ppi.info.troll;
+	.then(function(obj){
+		obj.requestTime = now;
+		return stores[script].call(this, ppi, script, obj)
 	});
 }
 
-function profil2CsvToObject(csv){
+// met à jour le profil du troll
+// must be called with context being an open DB connection
+exports.updateProfilTroll = function(playerId, requester){
+	return exports.updateTroll.call(this, playerId, requester, "Profil2");
+}
+
+const parsers = {};
+parsers.Profil2 = function(csv){
 	var	l = csv[0].map(v=>v==+v?+v:v),
 		i = 0;
 	return {
@@ -203,4 +256,37 @@ function profil2CsvToObject(csv){
 		pvMax: l[i++],
 		niveau: l[i++]
 	};
+}
+parsers.Vue2 = function(csv){
+	var	vue = {},
+		obj,
+		arr;
+	csv.forEach(line=>{
+		console.log('line:', line);
+		var match = line[0].match(/^#(DEBUT|FIN) (TROLLS|LIEUX|MONSTRES|ORIGINE)$/);
+		if (match) {
+			if (match[1]==="FIN") arr = null;
+			else arr = vue[match[2].toLowerCase()] = [];
+			return;
+		}
+		if (!arr) return;
+		var i = 0;
+		arr.push(obj={id:+line[i++]});
+		if (line.length===5) obj.nom = line[i++];
+		obj.x = +line[i++];
+		obj.y = +line[i++];
+		obj.n = +line[i++];
+	});
+	// l'origine arrive de façon spéciale, on la corrige
+	if (Array.isArray(vue.origine)) {
+		obj = vue.origine[0];
+		vue.origine = {
+			portée: obj.id,
+			x: obj.x,
+			y: obj.y,
+			n: obj.n
+		};
+	}
+	console.log('vue (au parsage):', vue);
+	return vue;
 }

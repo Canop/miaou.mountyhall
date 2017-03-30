@@ -116,10 +116,38 @@
 	display: flex;
 	flex-direction: column;
 	box-shadow: $closed-stripe-shadow;
-	background: $pad-background;
-	box-shadow: $open-stripe-shadow;
 	div, a {
 		overflow: hidden;
+	}
+	.header {
+		-moz-user-select: none;
+		user-select: none;
+		-webkit-user-select: none;
+		background: $pad-background;
+		line-height: 24px;
+		height: 24px;
+		color: $miaou-logo-color;
+		.buttons {
+			width: 130px;
+			display: flex;
+			flex-direction: row;
+			justify-content: space-between;
+			padding: 0 5px;
+		}
+	}
+	&.minimized {
+		width: 22px;
+		box-shadow: none;
+		overflow-y: hidden;
+		.mountyhall-team-troll {
+			width: 0;
+		}
+		#mountyhall-team-trolls {
+			overflow: hidden;
+		}
+		#mountyhall-team-refresh-button, #mountyhall-team-toggle-button {
+			display: none;
+		}
 	}
 	&.reduced {
 		.mountyhall-team-troll > div {
@@ -129,7 +157,7 @@
 			width: 42px;
 		}
 		.jdla-dla {
-			width: 35px;
+			width: 38px;
 		}
 		.raceNiveau, .x, .y, .n, .pv, .pvMax, .jdla, .action, .fat, .details {
 			width: 0;
@@ -137,6 +165,9 @@
 				display: none;
 			}
 			padding: 0;
+		}
+		#mountyhall-team-trolls .mountyhall-team-troll .dla ~ .dla {
+			border-right: none;
 		}
 		.obsolete {
 			width: 89px;
@@ -196,13 +227,13 @@
 		.action {
 			width: 30px;
 		}
-	}
-	.header {
-		line-height: 24px;
-		height: 24px;
-		display: flex;
-		flex-direction: row;
-		color: $miaou-logo-color;
+		.details {
+			paddingi-right: 2px;
+			&:empty {
+				display: none;
+			}
+		}
+
 	}
 	#mountyhall-team-trolls {
 		overflow-y: auto;
@@ -219,7 +250,6 @@
 	&::before {
 		@extend .fontello;
 		font-size: 110%;
-		margin-right: 4px;
 		content: '\e834';
 	}
 	&.disabled {
@@ -229,11 +259,17 @@
 }
 #mountyhall-team-refresh-button {
 	@extend .mountyhall-refresh-troll;
-	margin: 0 30px 0 45px;
 }
-#mountyhall-team-toggle-button {
+#mountyhall-team-open-view-button {
 	cursor: pointer;
-	margin-top: -1px;
+	&::before {
+		@extend .fontello;
+		font-size: 115%;
+		content: '\e811';
+	}
+}
+#mountyhall-team-toggle-button, #mountyhall-team-minimize-button {
+	cursor: pointer;
 }
 .reduced #mountyhall-team-toggle-button {
 	transform: rotate(0deg);
@@ -242,4 +278,17 @@
 .full #mountyhall-team-toggle-button {
 	transform: rotate(-180deg);
 	transition: all .4s;
+}
+.minimized #mountyhall-team-minimize-button {
+	transform: rotate(-180deg);
+}
+.mountyhall-help-icon {
+	width: 20px;
+	height: 20px;
+	&::before {
+		color: $miaou-logo-color;
+		@extend .fontello;
+		font-size: 20px;
+		content: '\e80b';
+	}
 }

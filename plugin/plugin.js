@@ -172,6 +172,11 @@ exports.onNewShoe = function(shoe){
 		var bo = bench.start("mountyhall.getRoomTrolls");
 		pws.getRoomTrolls(shoe);
 		bo.end();
+	})
+	.on('mountyhall.getViewPlayer', function(playerId){
+		var bo = bench.start("mountyhall.getViewPlayer");
+		pws.getViewPlayer(shoe, playerId);
+		bo.end();
 	});
 }
 
@@ -207,6 +212,4 @@ la raison, vous pouvez consulter la liste des appels récents *via*
 	!!partage requests room
 ou
 	!!partage requests user
-
-Notez que cette fonction de partage ne propose pas actuellement le partage de la vue des trolls.
 `;

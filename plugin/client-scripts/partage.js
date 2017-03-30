@@ -2,6 +2,8 @@ miaou(function(mountyhall, chat, gui, locals, time, ws){
 
 	const isAdmin = locals.room && (locals.room.auth==="admin" || locals.room.auth==="own");
 
+	mountyhall.partage = {};
+
 	function raceLetter(race){
 		if (race==="Darkling") return "G";
 		return race[0];
@@ -21,6 +23,7 @@ miaou(function(mountyhall, chat, gui, locals, time, ws){
 	function buildTeamBox(){
 		var	$box = $("<div id=mountyhall-team-box>").appendTo("body"),
 			$head = $("<div class=header>").appendTo($box),
+			$buttons = $("<div class=buttons>").appendTo($head),
 			updateAllEnabled = isAdmin,
 			$t = $("<div class=mountyhall-team-troll>").appendTo($box);
 		$("<div class=nom>").text("Troll").appendTo($t);
@@ -36,7 +39,18 @@ miaou(function(mountyhall, chat, gui, locals, time, ws){
 		$("<div class=fat>").text("fat.").appendTo($t);
 		$("<div class=action>").appendTo($t);
 		$("<div id=mountyhall-team-trolls>").appendTo($box);
-		$("<div id=mountyhall-team-refresh-button>").appendTo($head).click(function(){
+		$("<div id=mountyhall-team-minimize-button>").text("◀").appendTo($buttons).click(function(){
+			if ($box.hasClass("minimized")) {
+				$box.removeClass("minimized");
+			} else {
+				$box.addClass("minimized");
+			}
+		});
+		if (locals.room.id===1|| locals.room.id===1556) {
+			$("<div id=mountyhall-team-open-view-button>")
+			.appendTo($buttons).click(mountyhall.toggleSharedView);
+		}
+		$("<div id=mountyhall-team-refresh-button>").appendTo($buttons).click(function(){
 			if (!updateAllEnabled) return;
 			chat.sendMessage("!!partage update room");
 			$(this).addClass("disabled");
@@ -62,7 +76,7 @@ miaou(function(mountyhall, chat, gui, locals, time, ws){
 				$c[0].innerText = txt.join("\n");
 			}
 		}).toggleClass("disabled", !updateAllEnabled);
-		$("<div id=mountyhall-team-toggle-button>").text("▶").appendTo($head).click(function(){
+		$("<div id=mountyhall-team-toggle-button>").text("▶").appendTo($buttons).click(function(){
 			if ($box.hasClass("reduced")) {
 				$box.removeClass("reduced").addClass("full");
 			} else {
@@ -85,6 +99,7 @@ miaou(function(mountyhall, chat, gui, locals, time, ws){
 	}
 
 	function fillTeamBox(trolls){
+		mountyhall.partage.trolls = trolls;
 		if (!$("#mountyhall-team-box").length) {
 			buildTeamBox();
 		}
@@ -108,7 +123,8 @@ miaou(function(mountyhall, chat, gui, locals, time, ws){
 				return $t;
 			}
 			p.pdla = p.dla+p.dur*60;
-			var obsolete = p.pdla < Date.now()/1000;
+			var	now = Date.now()/1000|0,
+				obsolete = p.requestTime < now - 24*60*60;
 			if (!(update.newest>p.requestTime)) update.newest = p.requestTime;
 			if (!(update.oldest<p.requestTime)) update.oldest = p.requestTime;
 			$("<div class=pv>").text(p.pv).appendTo($t);
@@ -149,9 +165,9 @@ miaou(function(mountyhall, chat, gui, locals, time, ws){
 					p.camou && "camou",
 					p.lévite && "lévite",
 					p.int && "intangible",
-					p.parades && (p.parades+" parades"),
-					p.contras && (p.contras+" contre-attaques"),
-					p.atts && (p.atts+" attaques subies"),
+					p.parades && (p.parades + (p.parades>1 ? " parades" : " parade")),
+					p.contras && (p.contras + (p.contras>1 ? " contre-attaques" : " contre-attaque")),
+					p.atts && (p.atts + (p.atts>1 ? " attaques subies" : " attaque subie")),
 				].filter(Boolean).join(", ")).appendTo($t);
 			}
 			$t.bubbleOn({
@@ -174,6 +190,10 @@ miaou(function(mountyhall, chat, gui, locals, time, ws){
 			console.log('room trolls:', trolls);
 			if (trolls && trolls.length) fillTeamBox(trolls);
 			else $("#mountyhall-team-box").remove();
+		});
+		ws.on("mountyhall.setViewPlayer", function(troll){
+			console.log('set view troll:', troll);
+			mountyhall.setViewContent(troll);
 		});
 		chat.on("ready", function(){
 			ws.emit("mountyhall.getRoomTrolls", {});

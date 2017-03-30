@@ -22,3 +22,37 @@ exports.getRoomTrolls = function(shoe){
 	.finally(db.off);
 }
 
+exports.getViewPlayer = function(shoe, targetPlayer){
+	db.on()
+	.then(function(){
+		return papi.isPlayerInRoomPartages.call(this, shoe.room.id, shoe.publicUser.id);
+	})
+	.then(function(allowed){
+		if (!allowed) throw new Error("unauthorized requester for mh.getView");
+		return papi.isPlayerInRoomPartages.call(this, shoe.room.id, targetPlayer);
+	})
+	.then(function(allowed){
+		if (!allowed) throw new Error("get view target player not in room partage");
+		return this.queryRow(
+			"select info->'troll'->'id' troll from plugin_player_info"+
+			" where plugin='MountyHall' and player=$1",
+			[targetPlayer],
+			"mh_get_player_troll"
+		);
+	})
+	.then(function(row){
+		console.log('row:', row);
+		var trollId = +row.troll;
+		return papi.getView.call(this, trollId);
+	})
+	.then(function(troll){
+		console.log('troll:', troll);
+		shoe.socket.emit("mountyhall.setViewPlayer", troll);
+	})
+	.catch(function(err){
+		console.log('err in mh.getView:', err);
+	})
+	.finally(db.off);
+}
+
+

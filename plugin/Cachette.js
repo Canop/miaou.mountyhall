@@ -24,7 +24,6 @@ fn.parse = function(message){
 	}
 	m = message.content.match(searchRegex);
 	if (!m) {
-		console.log("unrelevant message");
 		return;
 	}
 	if (m[10]!=this.id) return;

@@ -1,0 +1,206 @@
+
+#mountyhall-view-panel {
+	height: calc( 100vh - 250px );
+	background: $pad-background;
+	padding: 0 5px 5px 5px;
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	.head {
+		 flex: 0 0 30px;
+		 display: flex;
+		 align-items: center;
+		 padding: 0 5px;
+		 justify-content: space-between;
+		 button {
+			 padding: 1px 4px;
+		 }
+		.mountyhall-refresh-troll {
+			margin: 0 5px;
+		}
+	}
+}
+
+#mountyhall-view-update {
+	display: flex;
+	flex-direction: row;
+	color: $miaou-logo-color;
+}
+
+.mountyhall-view-wrapper {
+	flex: 1 1 200px;
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	justify-content: center;
+	position: relative;
+	overflow: hidden;
+	&::after {
+		content: '';
+		display: block;
+		box-shadow: inset 1px 1px 5px rgba(0, 0, 0, .7);
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		pointer-events: none;
+	}
+}
+
+#mountyhall-view {
+	flex: 1 1 100%;
+	background: #eee;
+	display: flex;
+	flex-direction: column;
+	&.short-view {
+		align-items: center;
+		justify-content: center;
+	}
+	overflow: hidden;
+}
+
+#mountyhall-view-grid {
+	font-size: 11px;
+	display: table;
+	border-collapse: collapse;
+	cursor: move;
+	-moz-user-select: none;
+	user-select: none;
+	-webkit-user-select: none;
+	table-layout: fixed;
+	.line {
+		display: table-row;
+	}
+	.cell {
+		display: table-cell;
+		overflow: hidden;
+		border: 1px solid #ccc;
+		background: #fafafa;
+		position: relative;
+		vertical-align: middle;
+		&.origine {
+			z-index: 2;
+			box-shadow: inset 0 0 25px rgba(255, 209, 0, .9);
+			border: thick solid black;
+		}
+		.position {
+			font-size: 11px;
+			position: absolute;
+			background: #444;
+			color: white;
+			height: 20px;
+			line-height: 20px;
+			bottom: 0;
+			right: 0;
+			left: 0;
+			display: none;
+			opacity: .8;
+			text-align: center;
+		}
+		&:hover .position {
+			display: block;
+		}
+	}
+	.line:nth-child(odd) .cell:nth-child(odd),
+	.line:nth-child(even) .cell:nth-child(even) {
+		background: rgb(229, 229, 203);
+	}
+	&.zoom0 {
+		.line {
+			height: 21px;
+		}
+		.cell {
+			font-size: 9px;
+			.position {
+				display: none;
+			}
+		}
+		.age {
+			display: none;
+		}
+		.monstre, .troll {
+			display: none;
+		}
+	}
+	&.zoom1 {
+		.line {
+			height: 45px;
+		}
+		.cell {
+			font-size: 10px;
+		}
+		.age {
+			display: none;
+		}
+		.monstre, .troll {
+			display: none;
+		}
+		.nb-monstres, .nb-trolls {
+			padding: 3px 0;
+		}
+	}
+	&.zoom2 {
+		.line {
+			height: 80px;
+		}
+		.cell {
+			font-size: 9px;
+		}
+		.age {
+			display: none;
+		}
+		.nb-monstres, .nb-trolls {
+			display: none;
+		}
+	}
+	&.zoom3 {
+		.line {
+			height: 120px;
+		}
+		.cell {
+		}
+		.age {
+			display: none;
+		}
+		.nb-monstres, .nb-trolls {
+			display: none;
+		}
+	}
+	&.zoom4 {
+		.line {
+			height: 150px;
+		}
+		.cell {
+		}
+		.nb-monstres, .nb-trolls {
+			display: none;
+		}
+	}
+	.nb-monstres {
+		background: brown;
+		color: white;
+		text-align: center;
+	}
+	.monstre {
+		color: brown;
+		&.gowap {
+			color: #c99b1f;
+		}
+		white-space: nowrap;
+	}
+	.nb-trolls {
+		background: blue;
+		color: white;
+		text-align: center;
+	}
+	.troll {
+		color: blue;
+		white-space: nowrap;
+	}
+	.lieu {
+		background: #444;
+		color: #eee;
+		white-space: nowrap;
+	}
+}

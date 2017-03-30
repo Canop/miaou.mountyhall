@@ -7,7 +7,7 @@ commands["On"] = function(ct){
 	if (!ct.shoe.room.private) {
 		throw "Les partages ne sont disponibles que dans les salles privées";
 	}
-	return papi.updateTroll.call(this, ct.shoe.publicUser.id, ct.shoe.publicUser.id)
+	return papi.updateProfilTroll.call(this, ct.shoe.publicUser.id, ct.shoe.publicUser.id)
 	.then(function(){
 		return this.execute(
 			"insert into mountyhall_partage (room, player) values ($1, $2)",
@@ -16,11 +16,11 @@ commands["On"] = function(ct){
 			false
 		);
 	})
-	.catch(function(e){
-		ct.reply("Pas pu ajouter de partage.");
-	})
 	.then(function(res){
 		ct.reply("Partage ajouté");
+	})
+	.catch(function(e){
+		ct.reply("Pas pu ajouter de partage.");
 	})
 }
 
@@ -33,11 +33,11 @@ commands["Off"] = function(ct){
 		"delete_mountyhall_partage",
 		false
 	)
-	.catch(function(e){
-		ct.reply("Pas pu enlever de partage.");
-	})
 	.then(function(res){
 		ct.reply("Partage supprimé");
+	})
+	.catch(function(e){
+		ct.reply("Pas pu enlever de partage.");
 	})
 }
 
@@ -62,7 +62,8 @@ commands["List"] = function(ct){
 	})
 }
 
-commands["UpdateTroll"] = function(ct){
+// username: optionel
+function updateTroll(ct, script){
 	var	promise,
 		m = ct.args.match(/\s@([\w-]{2,30})$/);
 	if (m) {
@@ -71,20 +72,32 @@ commands["UpdateTroll"] = function(ct){
 	} else {
 		promise = Promise.resolve(ct.shoe.publicUser);
 	}
-	return promise.then(function(user){
-		return papi.updateTroll.call(this, user.id, ct.shoe.publicUser.id)
+	return promise.then((user)=>{
+		return papi.updateTroll.call(this, user.id, ct.shoe.publicUser.id, script);
 	})
+}
+
+commands["UpdateProfilTroll"] = function(ct){
+	ct.nostore = true;
+	return updateTroll.call(this, ct, "Profil2")
 	.then(function(){
 		return papi.getRoomTrolls.call(this, ct.shoe.room.id);
 	})
 	.then(function(trolls){
 		ct.reply("troll mis à jour");
 		trolls.forEach(function(troll){
-			console.log("trying to send update to", troll.miaouUser.name);
 			var socket = ct.shoe.userSocket(troll.miaouUser.id);
 			if (socket) socket.emit("mountyhall.setRoomTrolls", trolls);
-			else console.log("user not in the room");
 		});
+	});
+}
+
+commands["UpdateVueTroll"] = function(ct){
+	ct.nostore = true;
+	return updateTroll.call(this, ct, "Vue2", {Lieux:1})
+	.then(function(trollView){
+		console.log('trollView:', trollView);
+		ct.shoe.emit("mountyhall.setViewPlayer", trollView);
 	});
 }
 
@@ -95,7 +108,7 @@ commands["UpdateRoom"] = function(ct){
 		"mh_get_room_partages"
 	)
 	.map(function(row){
-		return papi.updateTroll.call(this, row.player, ct.shoe.publicUser.id)
+		return papi.updateProfilTroll.call(this, row.player, ct.shoe.publicUser.id)
 		.catch(function(e){
 			console.log("Error while updating troll", e);
 			// returning nothing here
@@ -113,10 +126,8 @@ commands["UpdateRoom"] = function(ct){
 		return papi.getRoomTrolls.call(this, ct.shoe.room.id)
 		.then(function(trolls){
 			trolls.forEach(function(troll){
-				console.log("trying to send update to", troll.miaouUser.name);
 				var socket = ct.shoe.userSocket(troll.miaouUser.id);
 				if (socket) socket.emit("mountyhall.setRoomTrolls", trolls);
-				else console.log("user not in the room");
 			});
 		})
 	});
@@ -126,7 +137,8 @@ commands["RequestsUser"] = function(ct){
 	ct.nostore = true;
 	var players = [ct.shoe.publicUser.id];
 	return this.queryOptionalRow(
-		"select info->'troll'->'id' troll from plugin_player_info where player=$1",
+		"select info->'troll'->'id' troll from plugin_player_info"+
+		" where plugin='MountyHall' and player=$1",
 		players,
 		"mh_get_player_troll"
 	)
@@ -177,10 +189,11 @@ exports.onPartageCommand = function(ct){
 	if (/^list\b/i.test(ct.args)) return doCommand("List");
 	if (/^on\b/i.test(ct.args)) return doCommand("On");
 	if (/^off\b/i.test(ct.args)) return doCommand("Off");
-	if (/^update[-\s]*troll\b/i.test(ct.args)) return doCommand("UpdateTroll");
-	if (/^update[-\s]*room\b/i.test(ct.args)) return doCommand("UpdateRoom");
-	if (/^requests[-\s]*user\b/i.test(ct.args)) return doCommand("RequestsUser");
-	if (/^requests[-\s]*room\b/i.test(ct.args)) return doCommand("RequestsRoom");
+	if (/^update[-\s]*troll/i.test(ct.args)) return doCommand("UpdateProfilTroll");
+	if (/^update[-\s]*vue/i.test(ct.args)) return doCommand("UpdateVueTroll");
+	if (/^update[-\s]*room/i.test(ct.args)) return doCommand("UpdateRoom");
+	if (/^requests[-\s]*user/i.test(ct.args)) return doCommand("RequestsUser");
+	if (/^requests[-\s]*room/i.test(ct.args)) return doCommand("RequestsRoom");
 	throw "Command not understood";
 }
 

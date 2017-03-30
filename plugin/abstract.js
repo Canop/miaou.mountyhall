@@ -135,7 +135,6 @@ Animal.prototype.getReportItem = function(o, isAtEnd){
 		return r;
 	}
 	if (o.piege && isAtEnd) {
-		console.dir(o);
 		r.action = "Piège";
 		r.deg = o.degnet;
 		r.pv = "**-"+o.degnet+" PV**";

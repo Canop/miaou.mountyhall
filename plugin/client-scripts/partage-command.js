@@ -3,7 +3,7 @@
 miaou(function(mountyhall){
 
 	const argSequences = [
-		["update", ["troll", "room"]],
+		["update", ["troll", "room", "vue"]],
 		["requests", ["user", "room"]],
 		["on"],
 		["off"],
