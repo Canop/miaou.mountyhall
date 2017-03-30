@@ -32,6 +32,23 @@ miaou(function(mountyhall, chat, gui, locals, time, ws){
 		return false;
 	});
 
+	$(window).on("keydown", function(e){
+		if (!hoverGrid) return;
+		if (e.ctrlKey && !e.shiftKey) {
+			if (e.which==38) zoom++; // up
+			else if (e.which=40) zoom--; // down
+			else return;
+			if (zoom<0) {
+				zoom = 0;
+			} else if (zoom>5) {
+				zoom = 5;
+			} else {
+				applyZoom(e);
+			}
+			return false;
+		}
+	});
+
 	function selectTroll(troll){
 		currentTroll = troll;
 		console.log("request view of", troll.nom);
@@ -62,7 +79,7 @@ miaou(function(mountyhall, chat, gui, locals, time, ws){
 		}
 		$("<div class=mountyhall-help-icon>").bubbleOn(
 			"Glissez la carte en maintenant le bouton de la souris enfonçé\n"+
-			"Zoomez et Dézoomez avec la molette de la souris"
+			"Zoomez et Dézoomez avec la molette de la souris ou avec ctrl-haut et ctrl-bas"
 		).appendTo($head);
 		$("<select>").append(trolls.map(function(t){
 			var $option =  $("<option>").text(t.nom);
