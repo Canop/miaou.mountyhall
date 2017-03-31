@@ -114,6 +114,25 @@
 }
 
 .bubble {
+	&.monstre {
+		font-size: 11px;
+		tr:first-child th {
+			text-align: center;
+		}
+		th {
+			text-align: right;
+		}
+		.bubble-content {
+			min-height: 40px;
+		}
+		.bubble-content, .bubble-content a {
+			background-color: brown;
+			color: #ddd;
+		}
+		.bubble-arrow {
+			color: brown;
+		}
+	}
 	.mh-cell .position {
 		background: $bubble-bg;
 	}

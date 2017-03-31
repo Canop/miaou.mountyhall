@@ -185,6 +185,29 @@ miaou(function(mountyhall, chat, gui, locals, time, ws){
 		$c.append($(this).clone());
 	}
 
+	function gonfleurDeMonstre($c){
+		if (zoom<4) return;
+		$c.text("Appel de Chrall...");
+		$.getJSON(
+			"https://canop.org/8000/chrall/json?action=get_extract"+
+			"&name="+encodeURIComponent(this.text().split(":").pop().trim()),
+			function(data){
+				$c.html(data);
+			}
+		);
+	}
+
+	//function gonfleurDeTroll($c){ Il manque la fonction dans Chrallserver...
+	//	if (zoom<4) return;
+	//	$.getJSON(
+	//		"https://canop.org/8000/chrall/json?action=get_extract"+
+	//		"&name="+encodeURIComponent(this.text().split(":").pop().trim()),
+	//		function(data){
+	//			$c.html(data);
+	//		}
+	//	);
+	//}
+
 	function applyZoom(e){
 		var	$view = $("#mountyhall-view"),
 			$grid = $("#mountyhall-view-grid");
@@ -267,6 +290,14 @@ miaou(function(mountyhall, chat, gui, locals, time, ws){
 		$grid.bubbleOn(".mh-cell", {
 			side: "horizontal",
 			blower: cellBlower
+		}).bubbleOn(".monstre", {
+			side: "horizontal",
+			classes: "monstre",
+			blower: gonfleurDeMonstre
+		// }).bubbleOn(".troll", {
+		// 	side: "horizontal",
+		// 	classes: "troll",
+		// 	blower: gonfleurDeTroll
 		});
 	}
 
