@@ -186,7 +186,7 @@ miaou(function(mountyhall, chat, gui, locals, time, ws){
 	}
 
 	function gonfleurDeMonstre($c){
-		if (zoom<4) return;
+		if (zoom<4) return false;
 		$c.text("Appel de Chrall...");
 		$.getJSON(
 			"https://canop.org/8000/chrall/json?action=get_extract"+
