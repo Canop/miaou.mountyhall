@@ -5,25 +5,69 @@
 	display: flex;
 	flex-direction: column;
 	align-items: stretch;
+	position: relative;
 	.head {
-		 flex: 0 0 30px;
-		 display: flex;
-		 align-items: center;
-		 padding: 0 5px;
-		 justify-content: space-between;
-		 button {
-			 padding: 1px 4px;
-		 }
+		color: $miaou-logo-color;
+		flex: 0 0 30px;
+		display: flex;
+		align-items: center;
+		padding: 0 5px;
+		justify-content: space-between;
+		.button {
+			padding: 2px 4px;
+			border: thin solid transparentize( $miaou-logo-color, .3);
+			cursor: pointer;
+			&:hover {
+				border: thin solid $miaou-logo-color;
+				background: transparentize( $miaou-logo-color, .3);
+				color: $pad-background;
+			}
+		}
 		.mountyhall-refresh-troll {
 			margin: 0 5px;
 		}
 	}
 }
+#mountyhall-view-search-panel {
+	position: absolute;
+	bottom: 0;
+	left: 100%;
+	padding: 5px;
+	z-index: 100;
+	background: $pad-background;
+	color: $miaou-logo-color;
+	font-size: 12px;
+	.title {
+		text-align: center;
+		margin: 8px;
+	}
+	.input-line {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		height: 24px;
+		label:first-of-type {
+			width: 60px;
+		}
+		.filter-details {
+			opacity: .4;
+		}
+		input:first-of-type:checked ~ .filter-details {
+			opacity: 1;
+			transition: all .2s;
+		}
+		input {
+			margin: 0 4px;
+		}
+	}
+}
+#mh-view-min-depth, #mh-view-max-depth {
+	width: 40px;
+}
 
 #mountyhall-view-update {
 	display: flex;
 	flex-direction: row;
-	color: $miaou-logo-color;
 }
 
 .mountyhall-view-wrapper {
@@ -160,6 +204,9 @@
 	user-select: none;
 	-webkit-user-select: none;
 	table-layout: fixed;
+	.filtered {
+		display: none;
+	}
 	.line {
 		display: table-row;
 	}

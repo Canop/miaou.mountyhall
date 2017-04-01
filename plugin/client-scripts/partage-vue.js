@@ -89,13 +89,110 @@ miaou(function(mountyhall, chat, gui, locals, time, ws){
 			selectTroll(trolls[this.selectedIndex]);
 		});
 		$("<div id=mountyhall-view-update>").appendTo($head);
-		$("<button>").text("centrer").click(centerView).appendTo($head);
-		$("<button>").text("fermer").click(function(){
+		$("<div class=button>").text("centrer").click(centerView).appendTo($head);
+		$("<div class=button>").text("fermer").click(function(){
 			$panel.remove();
 			$panel = null;
 		}).appendTo($head);
 		selectTroll(localTroll);
+
+		$("<div id=mountyhall-view-search-panel>")
+		.appendTo($panel)
+		.append("<div class=title>Filtrage</div>")
+		.append($("<div class=input-line>").html(
+			"<input type=checkbox id=mh-view-depth-cb><label for=mh-view-depth-cb>Niveau</label> "+
+			"<div class=filter-details>"+
+			"<input id=mh-view-min-depth placeholder=min> à <input id=mh-view-max-depth placeholder=max>"+
+			"</div>"
+		))
+		.append($("<div class=input-line>").html(
+			"<input type=checkbox id=mh-view-name-cb><label for=mh-name-cb>Nom</label> "+
+			"<div class=filter-details><input id=mh-view-filter-name></div>"
+		))
+		.on("change", "input", applyFilters)
+		.on("focus", ".filter-details input", function(){
+			$(this).closest(".input-line").find("input[type=checkbox]").prop("checked", true);
+		});
 	}
+
+	function applyFilters(){
+		console.log("apply filters");
+		var	min = +$("#mh-view-min-depth").val(),
+			max = +$("#mh-view-max-depth").val(),
+			name = $("#mh-view-filter-name").val().trim(),
+			rname = name  && $("#mh-view-name-cb").prop("checked") ? new RegExp(name, "i") : null;
+		if (min>0) min *= -1;
+		if (max>0) max *= -1;
+		if (min>max) {
+			var temp = max;
+			max = min;
+			min = temp;
+		}
+		if (!$("#mh-view-depth-cb").prop("checked")) {
+			min = max = NaN;
+		}
+		var	total = 0,
+			filtered = 0;
+		$("#mountyhall-view-grid .mh-cell").each(function(){
+			var cell = $(this).dat("cell");
+			if (cell.monstres) {
+				var	$monstres = $(".monstre", this),
+					n = 0,
+					changed = false;
+				for (var i=0; i<cell.monstres.length; i++) {
+					var	o = cell.monstres[i],
+						wasFiltered = $monstres[i].classList.contains("filtered"),
+						filtered = (min && o.n<min) || (max && o.n>max) || (rname && !rname.test(o.nom));
+					if (filtered != wasFiltered) {
+						changed = true;
+						$monstres[i].classList.toggle("filtered", filtered);
+						if (filtered) {
+							$monstres[i].classList.add("filtered");
+						} else {
+							$monstres[i].classList.remove("filtered");
+						}
+					}
+					if (filtered) {
+						filtered++;
+					} else {
+						n++;
+					}
+					total++;
+				}
+				if (changed) $(".nb-monstres", this).text(n).toggleClass("filtered", !n);
+
+			}
+			if (cell.trolls) {
+				var	$trolls = $(".troll", this),
+					n = 0,
+					changed = false;
+				for (var i=0; i<cell.trolls.length; i++) {
+					var	o = cell.trolls[i],
+						wasFiltered = $trolls[i].classList.contains("filtered"),
+						filtered = (min && o.n<min) || (max && o.n>max);
+					if (filtered != wasFiltered) {
+						changed = true;
+						$trolls[i].classList.toggle("filtered", filtered);
+						if (filtered) {
+							$trolls[i].classList.add("filtered");
+						} else {
+							$trolls[i].classList.remove("filtered");
+						}
+					}
+					if (filtered) {
+						filtered++;
+					} else {
+						n++;
+					}
+					total++;
+				}
+				if (changed) $(".nb-trolls", this).text(n).toggleClass("filtered", !n);
+
+			}
+		});
+		console.log("=>", filtered, "/", total);
+	}
+
 
 	// la vue arrive sans les noms des trolls, on essaye de la corriger
 	function fixTrollView(trollView){
@@ -143,7 +240,7 @@ miaou(function(mountyhall, chat, gui, locals, time, ws){
 	function makeCells(trollView){
 		var	vue = trollView.vue,
 			origine = vue.origine,
-			portée = origine.portée || origine.range,
+			portée = Math.max(origine.portée || origine.range, 0),
 			xmin = origine.x - portée,
 			ymin = origine.y - portée,
 			size = trollView.size = 2*portée+1,
@@ -186,7 +283,7 @@ miaou(function(mountyhall, chat, gui, locals, time, ws){
 	}
 
 	function gonfleurDeMonstre($c){
-		if (zoom<4) return false;
+		if (zoom<3) return false;
 		$c.text("Appel de Chrall...");
 		$.getJSON(
 			"https://canop.org/8000/chrall/json?action=get_extract"+
