@@ -6,6 +6,16 @@
 	flex-direction: column;
 	align-items: stretch;
 	position: relative;
+	.button {
+		padding: 2px 4px;
+		border: thin solid transparentize( $miaou-logo-color, .3);
+		cursor: pointer;
+		&:hover {
+			border: thin solid $miaou-logo-color;
+			background: transparentize( $miaou-logo-color, .3);
+			color: $pad-background;
+		}
+	}
 	.head {
 		color: $miaou-logo-color;
 		flex: 0 0 30px;
@@ -13,16 +23,6 @@
 		align-items: center;
 		padding: 0 5px;
 		justify-content: space-between;
-		.button {
-			padding: 2px 4px;
-			border: thin solid transparentize( $miaou-logo-color, .3);
-			cursor: pointer;
-			&:hover {
-				border: thin solid $miaou-logo-color;
-				background: transparentize( $miaou-logo-color, .3);
-				color: $pad-background;
-			}
-		}
 		.mountyhall-refresh-troll {
 			margin: 0 5px;
 		}
@@ -37,17 +37,24 @@
 	background: $pad-background;
 	color: $miaou-logo-color;
 	font-size: 12px;
+	display: flex;
+	flex-direction: column;
 	.title {
 		text-align: center;
 		margin: 8px;
+	}
+	.button {
+		margin: 2px 0;
+		align-self: center;
 	}
 	.input-line {
 		display: flex;
 		flex-direction: row;
 		align-items: center;
 		height: 24px;
+		margin: 2px 0;
 		label:first-of-type {
-			width: 60px;
+			width: 70px;
 		}
 		.filter-details {
 			opacity: .4;

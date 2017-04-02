@@ -98,9 +98,8 @@ miaou(function(mountyhall, chat, gui, locals, time, ws){
 
 		$("<div id=mountyhall-view-search-panel>")
 		.appendTo($panel)
-		.append("<div class=title>Filtrage</div>")
 		.append($("<div class=input-line>").html(
-			"<input type=checkbox id=mh-view-depth-cb><label for=mh-view-depth-cb>Niveau</label> "+
+			"<input type=checkbox id=mh-view-depth-cb><label for=mh-view-depth-cb>Profondeur</label> "+
 			"<div class=filter-details>"+
 			"<input id=mh-view-min-depth placeholder=min> à <input id=mh-view-max-depth placeholder=max>"+
 			"</div>"
@@ -109,6 +108,7 @@ miaou(function(mountyhall, chat, gui, locals, time, ws){
 			"<input type=checkbox id=mh-view-name-cb><label for=mh-name-cb>Nom</label> "+
 			"<div class=filter-details><input id=mh-view-filter-name></div>"
 		))
+		.append($("<span class=button>").text("filtrer").click(applyFilters))
 		.on("change", "input", applyFilters)
 		.on("focus", ".filter-details input", function(){
 			$(this).closest(".input-line").find("input[type=checkbox]").prop("checked", true);
