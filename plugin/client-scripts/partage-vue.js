@@ -101,7 +101,7 @@ miaou(function(mountyhall, chat, gui, locals, skin, time, ws){
 			"</div>"
 		))
 		.append($("<div class=input-line>").html(
-			"<input type=checkbox id=mh-view-name-cb><label for=mh-name-cb>Nom</label> "+
+			"<input type=checkbox id=mh-view-name-cb><label for=mh-view-name-cb>Nom</label> "+
 			"<div class=filter-details><input id=mh-view-filter-name></div>"
 		))
 		.append($("<span class=button>").text("filtrer").click(applyFilters))
@@ -116,7 +116,7 @@ miaou(function(mountyhall, chat, gui, locals, skin, time, ws){
 		var	min = +$("#mh-view-min-depth").val(),
 			max = +$("#mh-view-max-depth").val(),
 			name = $("#mh-view-filter-name").val().trim(),
-			rname = name  && $("#mh-view-name-cb").prop("checked") ? new RegExp(name, "i") : null;
+			rname = (name  && $("#mh-view-name-cb").prop("checked")) ? new RegExp(name, "i") : null;
 		if (min>0) min *= -1;
 		if (max>0) max *= -1;
 		if (min>max) {
@@ -130,61 +130,39 @@ miaou(function(mountyhall, chat, gui, locals, skin, time, ws){
 		var	total = 0,
 			filtered = 0;
 		$("#mountyhall-view-grid .mh-cell").each(function(){
-			var cell = $(this).dat("cell");
-			if (cell.monstres) {
-				var	$monstres = $(".monstre", this),
-					n = 0,
-					changed = false;
-				for (var i=0; i<cell.monstres.length; i++) {
-					var	o = cell.monstres[i],
-						wasFiltered = $monstres[i].classList.contains("filtered"),
-						filtered = (min && o.n<min) || (max && o.n>max) || (rname && !rname.test(o.nom));
-					if (filtered != wasFiltered) {
-						changed = true;
-						$monstres[i].classList.toggle("filtered", filtered);
-						if (filtered) {
-							$monstres[i].classList.add("filtered");
-						} else {
-							$monstres[i].classList.remove("filtered");
+			var	elem = this,
+				cell = $(this).dat("cell");
+			;["monstre", "troll"].forEach(function(key){
+				var arr = cell[key+"s"];
+				if (arr) {
+					var	elems = elem.querySelectorAll("."+key),
+						n = 0,
+						changed = false;
+					for (var i=0; i<arr.length; i++) {
+						var	o = arr[i],
+							wasFiltered = elems[i].classList.contains("filtered"),
+							filtered = (min && o.n<min) ||
+								(max && o.n>max) ||
+								(rname && !rname.test(o.nom));
+						if (filtered != wasFiltered) {
+							changed = true;
+							elems[i].classList.toggle("filtered", filtered);
+							if (filtered) {
+								elems[i].classList.add("filtered");
+							} else {
+								elems[i].classList.remove("filtered");
+							}
 						}
-					}
-					if (filtered) {
-						filtered++;
-					} else {
-						n++;
-					}
-					total++;
-				}
-				if (changed) $(".nb-monstres", this).text(n).toggleClass("filtered", !n);
-
-			}
-			if (cell.trolls) {
-				var	$trolls = $(".troll", this),
-					n = 0,
-					changed = false;
-				for (var i=0; i<cell.trolls.length; i++) {
-					var	o = cell.trolls[i],
-						wasFiltered = $trolls[i].classList.contains("filtered"),
-						filtered = (min && o.n<min) || (max && o.n>max);
-					if (filtered != wasFiltered) {
-						changed = true;
-						$trolls[i].classList.toggle("filtered", filtered);
 						if (filtered) {
-							$trolls[i].classList.add("filtered");
+							filtered++;
 						} else {
-							$trolls[i].classList.remove("filtered");
+							n++;
 						}
+						total++;
 					}
-					if (filtered) {
-						filtered++;
-					} else {
-						n++;
-					}
-					total++;
+					if (changed) $(".nb-"+key+"s", elem).text(n).toggleClass("filtered", !n);
 				}
-				if (changed) $(".nb-trolls", this).text(n).toggleClass("filtered", !n);
-
-			}
+			});
 		});
 		console.log("=>", filtered, "/", total);
 	}
@@ -230,6 +208,7 @@ miaou(function(mountyhall, chat, gui, locals, skin, time, ws){
 		makeCells(trollView);
 		displayView(trollView);
 		makeGridDraggable();
+		applyFilters();
 		setTimeout(centerView, 0);
 	}
 
