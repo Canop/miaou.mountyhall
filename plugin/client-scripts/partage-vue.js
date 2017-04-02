@@ -1,11 +1,15 @@
 // gère l'affichage de la vue partagée
-miaou(function(mountyhall, chat, gui, locals, time, ws){
+miaou(function(mountyhall, chat, gui, locals, skin, time, ws){
 
-	const	MH_BASE = "https://games.mountyhall.com/mountyhall/View/";
+	const MH_BASE = "https://games.mountyhall.com/mountyhall/View/";
+	const cellSizes = skin.getCssValue(/#mountyhall-view-grid.zoom(\d+) .line/, "height").map(function(v){
+		return parseInt(v);
+	});
+	console.log('cellSizes:', cellSizes);
 
 	var	$panel,
 		cellWidth,
-		zoom = 3,
+		zoom = 5,
 		currentTroll,
 		hoverGrid = false,
 		debouncing = false,
@@ -22,13 +26,8 @@ miaou(function(mountyhall, chat, gui, locals, time, ws){
 		if (e.deltaY>0) zoom--;
 		else if (e.deltaY<0) zoom++;
 		else return;
-		if (zoom<0) {
-			zoom = 0;
-		} else if (zoom>5) {
-			zoom = 5;
-		} else {
-			applyZoom(e);
-		}
+		zoom = Math.max(0, Math.min(cellSizes.length-1, zoom));
+		applyZoom(e);
 		return false;
 	});
 
@@ -38,13 +37,10 @@ miaou(function(mountyhall, chat, gui, locals, time, ws){
 			if (e.which==38) zoom++; // up
 			else if (e.which=40) zoom--; // down
 			else return;
-			if (zoom<0) {
-				zoom = 0;
-			} else if (zoom>5) {
-				zoom = 5;
-			} else {
-				applyZoom(e);
-			}
+			console.log('zoom avant min max:', zoom);
+			zoom = Math.max(0, Math.min(cellSizes.length-1, zoom));
+			console.log('zoom:', zoom);
+			applyZoom(e);
 			return false;
 		}
 	});
@@ -278,7 +274,7 @@ miaou(function(mountyhall, chat, gui, locals, time, ws){
 	}
 
 	function cellBlower($c){
-		if (zoom>2) return false;
+		if (zoom>3) return false;
 		$c.append($(this).clone());
 	}
 
@@ -308,9 +304,11 @@ miaou(function(mountyhall, chat, gui, locals, time, ws){
 	function applyZoom(e){
 		var	$view = $("#mountyhall-view"),
 			$grid = $("#mountyhall-view-grid");
+		console.log('zoom:', zoom);
 		$grid[0].className = "zoom"+zoom;
 		var oldCellWidth = cellWidth;
-		cellWidth = [21, 40, 70, 108, 140, 160][zoom];
+		cellWidth = cellSizes[zoom];
+		console.log('cellWidth:', cellWidth);
 		$grid.width(cellWidth*currentTroll.view.size);
 		$view.toggleClass("short-view", $grid.width()<$view.width()-20);
 		if (e && oldCellWidth) {

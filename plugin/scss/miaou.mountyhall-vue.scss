@@ -206,7 +206,7 @@
 	font-size: 11px;
 	display: table;
 	border-collapse: collapse;
-	cursor: move;
+	cursor: crosshair; //move;
 	-moz-user-select: none;
 	user-select: none;
 	-webkit-user-select: none;
@@ -240,12 +240,19 @@
 			display: block;
 		}
 	}
+	// cell sizes computed with Array(7).fill(12).map((v, i)=>v*Math.pow(1.6, i))
 	&.zoom0 {
 		.line {
-			height: 21px;
+			height: 12px;
 		}
 		.mh-cell {
-			font-size: 9px;
+			border: none;
+			&.origine {
+				border-right: thick solid gold;
+				border-left: thick solid gold;
+			}
+			font-size: 6px;
+			line-height: 6px;
 			.position {
 				display: none;
 			}
@@ -259,7 +266,25 @@
 	}
 	&.zoom1 {
 		.line {
-			height: 40px;
+			height: 19px;
+		}
+		.mh-cell {
+			font-size: 9px;
+			line-height: 9px;
+			.position {
+				display: none;
+			}
+		}
+		.age {
+			display: none;
+		}
+		.monstre, .troll {
+			display: none;
+		}
+	}
+	&.zoom2 {
+		.line {
+			height: 31px;
 		}
 		.mh-cell {
 			font-size: 10px;
@@ -274,15 +299,35 @@
 			display: none;
 		}
 		.nb-monstres, .nb-trolls {
+			padding: 2px 0;
+		}
+	}
+	&.zoom3 {
+		.line {
+			height: 49px;
+		}
+		.mh-cell {
+			font-size: 11px;
+			.position {
+				display: none;
+			}
+		}
+		.age {
+			display: none;
+		}
+		.monstre, .troll {
+			display: none;
+		}
+		.nb-monstres, .nb-trolls {
 			padding: 3px 0;
 		}
 	}
-	&.zoom2 {
+	&.zoom4 {
 		.line {
-			height: 70px;
+			height: 78px;
 		}
 		.mh-cell {
-			font-size: 6px;
+			font-size: 8px;
 			.position {
 				display: none;
 			}
@@ -294,36 +339,20 @@
 			display: none;
 		}
 	}
-	&.zoom3 {
-		.line {
-			height: 108px;
-		}
-		.mh-cell {
-			font-size: 9px;
-		}
-		.age {
-			display: none;
-		}
-		.nb-monstres, .nb-trolls {
-			display: none;
-		}
-	}
-	&.zoom4 {
-		.line {
-			height: 140px;
-		}
-		.mh-cell {
-		}
-		.age {
-			display: none;
-		}
-		.nb-monstres, .nb-trolls {
-			display: none;
-		}
-	}
 	&.zoom5 {
 		.line {
-			height: 160px;
+			height: 126px;
+		}
+		.mh-cell {
+			font-size: 10px;
+		}
+		.nb-monstres, .nb-trolls {
+			display: none;
+		}
+	}
+	&.zoom6 {
+		.line {
+			height: 201px;
 		}
 		.mh-cell {
 		}
