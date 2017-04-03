@@ -63,7 +63,7 @@ commands["List"] = function(ct){
 }
 
 // username: optionel
-function updateTroll(ct, script){
+function updateTroll(ct, script, options){
 	var	promise,
 		m = ct.args.match(/\s@([\w-]{2,30})$/);
 	if (m) {
@@ -73,7 +73,7 @@ function updateTroll(ct, script){
 		promise = Promise.resolve(ct.shoe.publicUser);
 	}
 	return promise.then((user)=>{
-		return papi.updateTroll.call(this, user.id, ct.shoe.publicUser.id, script);
+		return papi.updateTroll.call(this, user.id, ct.shoe.publicUser.id, script, options);
 	})
 }
 

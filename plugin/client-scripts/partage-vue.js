@@ -132,10 +132,10 @@ miaou(function(mountyhall, chat, gui, locals, skin, time, ws){
 		$("#mountyhall-view-grid .mh-cell").each(function(){
 			var	elem = this,
 				cell = $(this).dat("cell");
-			;["monstre", "troll"].forEach(function(key){
-				var arr = cell[key+"s"];
+			;["lieux", "monstres", "trolls"].forEach(function(key){
+				var arr = cell[key];
 				if (arr) {
-					var	elems = elem.querySelectorAll("."+key),
+					var	elems = elem.querySelectorAll("."+key.slice(0, -1)),
 						n = 0,
 						changed = false;
 					for (var i=0; i<arr.length; i++) {
@@ -160,7 +160,7 @@ miaou(function(mountyhall, chat, gui, locals, skin, time, ws){
 						}
 						total++;
 					}
-					if (changed) $(".nb-"+key+"s", elem).text(n).toggleClass("filtered", !n);
+					if (changed) $(".nb-"+key, elem).text(n).toggleClass("filtered", !n);
 				}
 			});
 		});
@@ -315,10 +315,15 @@ miaou(function(mountyhall, chat, gui, locals, skin, time, ws){
 					$cell = $("<div class=mh-cell>").appendTo($line).dat("cell", cell);
 				if (cell.origine) $cell.addClass("origine");
 				$("<div class=position>").text(cell.x+" "+cell.y).appendTo($cell);
-				for (k=0; cell.lieux && k<cell.lieux.length; k++) {
-					o = cell.lieux[k];
-					var $o = $("<div class=lieu>").appendTo($cell);
-					$o.text(o.n + ": " + o.nom);
+				if (cell.lieux) {
+					$cell.append("<div class=nb-lieux>");
+					cell.lieux.sort(function(a, b){ return b.n - a.n });
+					for (k=0; k<cell.lieux.length; k++) {
+						o = cell.lieux[k];
+						var $o = $("<div class=lieu>").appendTo($cell);
+						if (o.nom === "Trou de Météorite") $o.text("Trou").addClass("trou");
+						else $o.text(o.n + ": " + o.nom);
+					}
 				}
 				if (cell.trolls) {
 					$cell.append($("<div class=nb-trolls>").text(cell.trolls.length));

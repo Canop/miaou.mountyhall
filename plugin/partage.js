@@ -15,6 +15,7 @@ exports.fetchSP = function(sp, num, mdpr, options){
 			path += "&" + key + "=" + encodeURIComponent(options[key]);
 		}
 	}
+	console.log('path:', path);
 	var req = http.request({
 		hostname: "sp.mountyhall.com",
 		path,
@@ -257,23 +258,33 @@ parsers.Profil2 = function(csv){
 }
 parsers.Vue2 = function(csv){
 	var	vue = {},
+		curr,
 		obj,
 		arr;
 	csv.forEach(line=>{
 		console.log('line:', line);
 		var match = line[0].match(/^#(DEBUT|FIN) (TROLLS|LIEUX|MONSTRES|ORIGINE)$/);
 		if (match) {
-			if (match[1]==="FIN") arr = null;
-			else arr = vue[match[2].toLowerCase()] = [];
+			if (match[1]==="FIN") {
+				arr = null;
+			} else {
+				curr = match[2].toLowerCase();
+				arr = vue[curr] = [];
+			}
 			return;
 		}
 		if (!arr) return;
 		var i = 0;
-		arr.push(obj={id:+line[i++]});
+		obj={id:+line[i++]};
 		if (line.length===5) obj.nom = line[i++];
 		obj.x = +line[i++];
 		obj.y = +line[i++];
 		obj.n = +line[i++];
+		if (curr==="lieux" && "Trou de Météorite"===obj.nom) {
+			// pour les trous de météorites, on ne va en conserver qu'un
+			if (arr[arr.length-1].nom==="Trou de Météorite") return;
+		}
+		arr.push(obj);
 	});
 	// l'origine arrive de façon spéciale, on la corrige
 	if (Array.isArray(vue.origine)) {

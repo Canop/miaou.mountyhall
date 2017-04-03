@@ -115,6 +115,7 @@
 	background: #fafafa;
 	position: relative;
 	vertical-align: middle;
+	text-align: center;
 	.position {
 		background: #444;
 		font-size: 11px;
@@ -123,6 +124,24 @@
 		line-height: 20px;
 		text-align: center;
 		pointer-events: none;
+	}
+	.nb-lieux {
+		background: #444;
+		color: white;
+		text-align: center;
+	}
+	.lieu {
+		display: block;
+		background: #444;
+		color: #eee;
+		white-space: nowrap;
+		&.trou {
+			text-align: center;
+		}
+		&:hover {
+			background: #444;
+			color: white;
+		}
 	}
 	.nb-monstres {
 		background: brown;
@@ -156,11 +175,6 @@
 			background: blue;
 			color: white;
 		}
-	}
-	.lieu {
-		background: #444;
-		color: #eee;
-		white-space: nowrap;
 	}
 }
 
@@ -197,7 +211,10 @@
 			content: ' monstres';
 		}
 	}
-	.nb-trolls, .troll, .nb-monstres, .monstre {
+	.nb-lieux {
+		display: none;
+	}
+	.nb-trolls, .troll, .nb-monstres, .monstre, .lieu {
 		font-size: 10px;
 	}
 }
@@ -260,8 +277,12 @@
 		.age {
 			display: none;
 		}
-		.monstre, .troll {
+		.monstre, .troll, .lieu {
 			display: none;
+		}
+		.nb-lieux, .nb-trolls {
+			display: inline-block;
+			width: 50%;
 		}
 	}
 	&.zoom1 {
@@ -278,8 +299,12 @@
 		.age {
 			display: none;
 		}
-		.monstre, .troll {
+		.monstre, .troll, .lieu {
 			display: none;
+		}
+		.nb-lieux, .nb-trolls {
+			display: inline-block;
+			width: 50%;
 		}
 	}
 	&.zoom2 {
@@ -295,11 +320,15 @@
 		.age {
 			display: none;
 		}
-		.monstre, .troll {
+		.monstre, .troll, .lieu {
 			display: none;
 		}
-		.nb-monstres, .nb-trolls {
+		.nb-monstres, .nb-trolls, .nb-lieux {
 			padding: 2px 0;
+		}
+		.nb-lieux, .nb-trolls {
+			display: inline-block;
+			width: 50%;
 		}
 	}
 	&.zoom3 {
@@ -315,11 +344,15 @@
 		.age {
 			display: none;
 		}
-		.monstre, .troll {
+		.monstre, .troll, .lieu {
 			display: none;
 		}
-		.nb-monstres, .nb-trolls {
+		.nb-monstres, .nb-trolls, .nb-lieux {
 			padding: 3px 0;
+		}
+		.nb-lieux, .nb-trolls {
+			display: inline-block;
+			width: 50%;
 		}
 	}
 	&.zoom4 {
@@ -335,7 +368,7 @@
 		.age {
 			display: none;
 		}
-		.nb-monstres, .nb-trolls {
+		.nb-monstres, .nb-trolls, .nb-lieux {
 			display: none;
 		}
 	}
@@ -346,7 +379,7 @@
 		.mh-cell {
 			font-size: 10px;
 		}
-		.nb-monstres, .nb-trolls {
+		.nb-monstres, .nb-trolls, .nb-lieux {
 			display: none;
 		}
 	}
@@ -356,7 +389,7 @@
 		}
 		.mh-cell {
 		}
-		.nb-monstres, .nb-trolls {
+		.nb-monstres, .nb-trolls, .nb-lieux {
 			display: none;
 		}
 	}
