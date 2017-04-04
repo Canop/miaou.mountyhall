@@ -103,10 +103,6 @@
 	background: #eee;
 	display: flex;
 	flex-direction: column;
-	&.short-view {
-		align-items: center;
-		justify-content: center;
-	}
 	overflow: hidden;
 }
 
@@ -228,6 +224,7 @@
 	user-select: none;
 	-webkit-user-select: none;
 	table-layout: fixed;
+	margin: 500px;
 	.filtered {
 		display: none;
 	}

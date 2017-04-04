@@ -5,7 +5,6 @@ miaou(function(mountyhall, chat, gui, locals, skin, time, ws){
 	const cellSizes = skin.getCssValue(/#mountyhall-view-grid.zoom(\d+) .line/, "height").map(function(v){
 		return parseInt(v);
 	});
-	console.log('cellSizes:', cellSizes);
 
 	var	$panel,
 		cellWidth,
@@ -22,12 +21,13 @@ miaou(function(mountyhall, chat, gui, locals, skin, time, ws){
 		debouncing = true;
 		setTimeout(function(){
 			debouncing = false;
-		}, 100);
+		}, 200);
+		var oldZoom = zoom;
 		if (e.deltaY>0) zoom--;
 		else if (e.deltaY<0) zoom++;
 		else return;
 		zoom = Math.max(0, Math.min(cellSizes.length-1, zoom));
-		applyZoom(e);
+		if (zoom!=oldZoom) applyZoom(e);
 		return false;
 	});
 
@@ -40,7 +40,7 @@ miaou(function(mountyhall, chat, gui, locals, skin, time, ws){
 			console.log('zoom avant min max:', zoom);
 			zoom = Math.max(0, Math.min(cellSizes.length-1, zoom));
 			console.log('zoom:', zoom);
-			applyZoom(e);
+			applyZoom();
 			return false;
 		}
 	});
@@ -269,42 +269,96 @@ miaou(function(mountyhall, chat, gui, locals, skin, time, ws){
 		);
 	}
 
-	//function gonfleurDeTroll($c){ Il manque la fonction dans Chrallserver...
-	//	if (zoom<4) return;
-	//	$.getJSON(
-	//		"https://canop.org/8000/chrall/json?action=get_extract"+
-	//		"&name="+encodeURIComponent(this.text().split(":").pop().trim()),
-	//		function(data){
-	//			$c.html(data);
-	//		}
-	//	);
-	//}
-
 	function applyZoom(e){
 		var	$view = $("#mountyhall-view"),
 			$grid = $("#mountyhall-view-grid");
-		console.log('zoom:', zoom);
-		$grid[0].className = "zoom"+zoom;
 		var oldCellWidth = cellWidth;
-		cellWidth = cellSizes[zoom];
-		console.log('cellWidth:', cellWidth);
-		$grid.width(cellWidth*currentTroll.view.size);
-		$view.toggleClass("short-view", $grid.width()<$view.width()-20);
-		if (e && oldCellWidth) {
-			var ratio = cellWidth / oldCellWidth;
-			var x = e.clientX-$view.offset().left;
-			var y = e.clientY-$view.offset().top; // ne tient pas compte des cellules qui dépassent en hauteur
-			$view.scrollLeft(($view.scrollLeft()+x)*ratio-x);
-			$view.scrollTop(($view.scrollTop()+y)*ratio-y);
+		var size = currentTroll.view.size;
+		var adjustScroll = e && oldCellWidth;
+		if (adjustScroll) {
+			// on va avoir besoin des hauteurs de lignes avant application du style
+			var lines = $grid[0].querySelectorAll(".line");
+			var heights1 = [].map.call(lines, function(line){
+				return line.offsetHeight;
+			});
+			var marg = parseInt($grid.css("margin"));
+			// on doit récupérer le scroll avant ajustement prce qu'il est parfois
+			//  modifié par le changement de style
+			var VG1x = marg - $view.scrollLeft();
+			var VG1y = marg - $view.scrollTop();
 		}
-	}
 
+		// application du style
+		$grid[0].className = "zoom"+zoom;
+		cellWidth = cellSizes[zoom];
+		$grid.width(cellWidth*size);
+
+		if (!adjustScroll) return;
+
+		// l'objectif des opérations qui suivent est d'assurer que la même cellule
+		//  soit sous la souris avant et après zoom
+		// Glossaire:
+		//   S : coin haut gauche de la fenêtre
+		//   V : coin haut gauche de la view (scrollable, contenant la grille)
+		//   G : coin haut gauche de la grille
+		//   G1: G avant zoom
+		//   G2: G après zoom
+		//   M : position de la souris
+		//   (x,y) : position de la souris dans le référentiel MH avec l'origine le coin
+		//           gauche de la grille
+		//   marg : marge autour de la grille
+		var SV = $view.offset();
+
+		// En x c'est relativement simple car les cellules ont toutes la même largeur
+		var r = cellWidth / oldCellWidth;
+		var SMx = e.clientX;
+		var VG2x = SMx - SV.left - r*( SMx - SV.left - VG1x );
+
+		// En y il faut composer avec des cellules qui ont des hauteurs variables
+
+		//  => G1M connu (G1M=SM-VG1-SV)
+		var SMy = e.clientY;
+		var G1My = SMy - VG1y - SV.top;
+		// BUG: au dézoom le G1My est parfois faux
+
+		//  => on en déduit y par accumulation des hauteurs de cellules jusqu'à atteindre G1My
+		//     (on peut estimer un float en prenant le reste et en divisant par la hauteur de la
+		//      cellule suivante)
+		var y = 0;
+		for (var gm=0;;) {
+			if (y>=heights1.length || gm>=G1My) break;
+			if (gm+heights1[y]>G1My) {
+				y += (G1My-gm)/heights1[y];
+				break;
+			}
+			gm += heights1[y++];
+		}
+
+		// => on fait la démarche inverse pour partir de y et arriver à G2M (somme des
+		//      y premières hauteurs de ligne)
+		var G2My = 0;
+		var ry = Math.floor(y);
+		for (var iy=0; iy<ry; iy++) {
+			G2My += lines[iy].offsetHeight;
+		}
+		if (ry<lines.length-1) {
+			G2My += (y-ry)*lines[ry+1].offsetHeight;
+		}
+
+		// => G2M nous donne VG2 via VG2=-G2M+SM-SV)
+		var VG2y = SMy - SV.top - G2My;
+
+		// => et il ne reste plus qu'à tenir compte de la marge
+		$view.scrollLeft(marg - VG2x);
+		$view.scrollTop(marg - VG2y);
+	}
 
 	function displayView(trollView){
 		var	cells = trollView.cells,
 			size = trollView.size,
 			$view = $("#mountyhall-view").empty(),
 			$grid = $("<div id=mountyhall-view-grid>").appendTo($view);
+		$("<div>").css({width:5000, height:15}).text("hack").appendTo($view);
 		applyZoom();
 		for (var j=size; j--;) {
 			var $line = $("<div class=line>").appendTo($grid);
@@ -365,7 +419,7 @@ miaou(function(mountyhall, chat, gui, locals, skin, time, ws){
 			hoverGrid = true;
 		}).mouseleave(function(){
 			hoverGrid = false;
-		})
+		});
 		$grid.bubbleOn(".mh-cell", {
 			side: "horizontal",
 			blower: cellBlower
@@ -373,10 +427,6 @@ miaou(function(mountyhall, chat, gui, locals, skin, time, ws){
 			side: "horizontal",
 			classes: "monstre",
 			blower: gonfleurDeMonstre
-		// }).bubbleOn(".troll", {
-		// 	side: "horizontal",
-		// 	classes: "troll",
-		// 	blower: gonfleurDeTroll
 		});
 	}
 
