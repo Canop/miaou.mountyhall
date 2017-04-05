@@ -6,6 +6,7 @@ miaou(function(mountyhall){
 		["update", ["troll", "room", "vue"]],
 		["requests", ["user", "room"]],
 		["on"],
+		["remove"],
 		["off"],
 		["list"],
 	];

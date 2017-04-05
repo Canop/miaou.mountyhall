@@ -41,6 +41,29 @@ commands["Off"] = function(ct){
 	})
 }
 
+// command removing a partage from the current room
+commands["Remove"] = function(ct){
+	ct.shoe.checkAuth("admin");
+	var m = ct.args.match(/\s@([\w-]{2,30})$/);
+	if (!m) throw "Vous devez passer en argument le nom du joueur";
+	return  this.getUserByName(m[1])
+	.then(function(user){
+		if (!user) throw "Utilisateur non trouvé";
+		return this.execute(
+			"delete from mountyhall_partage where room=$1 and player=$2",
+			[ct.shoe.room.id, user.id],
+			"delete_mountyhall_partage",
+			false
+		)
+	})
+	.then(function(res){
+		ct.reply("Partage supprimé");
+	})
+	.catch(function(e){
+		ct.reply("Pas pu enlever de partage: " + e);
+	})
+}
+
 commands["List"] = function(ct){
 	var shoe = ct.shoe;
 	ct.nostore = true;
@@ -189,6 +212,7 @@ exports.onPartageCommand = function(ct){
 	if (/^list\b/i.test(ct.args)) return doCommand("List");
 	if (/^on\b/i.test(ct.args)) return doCommand("On");
 	if (/^off\b/i.test(ct.args)) return doCommand("Off");
+	if (/^remove\b/i.test(ct.args)) return doCommand("Remove");
 	if (/^update[-\s]*troll/i.test(ct.args)) return doCommand("UpdateProfilTroll");
 	if (/^update[-\s]*vue/i.test(ct.args)) return doCommand("UpdateVueTroll");
 	if (/^update[-\s]*room/i.test(ct.args)) return doCommand("UpdateRoom");
