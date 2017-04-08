@@ -3,5 +3,7 @@ Public_Trolls.txt-save
 
 node_modules
 
+*.swp
+
 # generated file
 plugin/client-scripts/trollsdb.min.js
