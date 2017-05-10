@@ -61,7 +61,6 @@ miaou(function(mountyhall, locals){
 		['gogo27', 'g27'],
 		['Gnu Sauvage [Chef de Harde]', 'gnu'],
 		['Gruhtzog', 'grutz'],
-		['schtroumph_vert_pomme', 'svp'],
 		['Shaksgärt', 'Shaks'],
 		['skrûn-haï', 'skrun'],
 		['Valfëan', 'Valfean'],
