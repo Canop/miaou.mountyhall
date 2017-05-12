@@ -67,7 +67,7 @@ miaou(function(mountyhall, locals){
 		['wouchy', 'wouch'],
 		['TuttiRikikiMaoussKosTroll', 'Raistlin'],
 		['lulu vroumette', 'lulu', true],
-		['Animatroll', 'Animatrõll'],
+		['Animatrõll', 'Animatroll'],
 	].forEach(function(e){
 		var	name = mountyhall.lowerCasedTrollNames[e[0].toLowerCase()],
 			alias = e[1].toLowerCase(),
