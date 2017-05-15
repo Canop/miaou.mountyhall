@@ -262,7 +262,7 @@ parsers.Vue2 = function(csv){
 		obj,
 		arr;
 	csv.forEach(line=>{
-		console.log('line:', line);
+		// console.log('line:', line);
 		var match = line[0].match(/^#(DEBUT|FIN) (TROLLS|LIEUX|MONSTRES|ORIGINE)$/);
 		if (match) {
 			if (match[1]==="FIN") {
@@ -282,7 +282,7 @@ parsers.Vue2 = function(csv){
 		obj.n = +line[i++];
 		if (curr==="lieux" && "Trou de Météorite"===obj.nom) {
 			// pour les trous de météorites, on ne va en conserver qu'un
-			if (arr[arr.length-1].nom==="Trou de Météorite") return;
+			if (arr.length && arr[arr.length-1].nom==="Trou de Météorite") return;
 		}
 		arr.push(obj);
 	});
@@ -296,6 +296,6 @@ parsers.Vue2 = function(csv){
 			n: obj.n
 		};
 	}
-	console.log('vue (au parsage):', vue);
+	// console.log('vue (au parsage):', vue);
 	return vue;
 }

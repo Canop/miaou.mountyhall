@@ -1,5 +1,4 @@
-// documentation of called pages :
-//   http://sp.mountyhall.com/
+
 //   http://sp.mountyhall.com/SP_WebService.php
 
 var	db,
