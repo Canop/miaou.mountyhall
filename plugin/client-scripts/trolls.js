@@ -51,6 +51,7 @@ miaou(function(mountyhall, locals){
 
 	// alias
 	[
+		['Le Comte Demont\'Cristo', 'comte'],
 		['squ@le', 'squale'],
 		['cebolla', 'cébo'],
 		['cebolla', 'cebo'],
