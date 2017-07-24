@@ -18,8 +18,6 @@ fn.parse = function(message){
 	var m = message.content.match(this.deathRegex);
 	if (m) {
 		this.digits = [+m[2]||0, +m[3], +m[5]||0, +m[6], +m[7]||0, +m[8]];
-		this.xneg = !!m[1];
-		this.yneg = !!m[4];
 		return;
 	}
 	m = message.content.match(searchRegex);
@@ -30,7 +28,9 @@ fn.parse = function(message){
 	var search = {
 		message: '['+message.authorname+' '+utils.formatTime(message.created)+'](#'+message.id+')',
 		digits: [+m[2]||0, +m[3], +m[5]||0, +m[6], +m[8]||0, +m[9]],
-		nbDigits: +m[13]
+		xcoin: !m[10] == !m[0] ? "+" : "-",
+		ycoin: !m[11] == !m[3] ? "+" : "-",
+	 	nbDigits: +m[13]
 	};
 	var key = search.digits.join("");
 	if (this.searchesSet.has(key)) {
@@ -76,6 +76,13 @@ fn.findPossibleLocations = function(){
 		locations.push(digits.slice());
 	}
 	permute(0);
+}
+
+fn.findXYCoins = function(){
+	if (!this.digits || !this.searches.length) return;
+	// pour l'instant on va supposer que les recherches sont cohérentes
+	this.xneg = this.searches[0].xcoin === "-";
+	this.yneg = this.searches[0].ycoin === "-";
 }
 
 fn.mdDigits = function(){
@@ -135,6 +142,7 @@ fn.reply = function(messages, ct){
 	var benchOperation = bench.start("MountyHall / !!oukonenest / Cachette");
 	for (var i=messages.length; i--;) this.parse(messages[i]);
 	this.findPossibleLocations();
+	this.findXYCoins();
 	var md = this.mdReport();
 	benchOperation.end();
 	ct.reply(md);
