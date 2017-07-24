@@ -19,7 +19,7 @@ miaou(function(mountyhall, locals){
 		"dark", "darkling", "de pierre", "désolé", "diablotin", "dodo", 'don',
 		"down", "dragon", "dudu", "durak", "durakuir",
 		"espace",
-		"fan", "fanatique", "fichtre", "folie", "forge",
+		"fan", "fanatique", "fichtre", "fish", "folie", "forge",
 		"giant", "glop", "gné", "gniark", "gogo", "golem", "gowaps", "gros", "guy",
 		"hein ?", "hum", "hypnos", "hypnotiseur",
 		"imagine", "inscription", "invi", "invisible", "ira",
