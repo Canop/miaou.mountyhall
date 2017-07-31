@@ -26,6 +26,7 @@ miaou(function(mountyhall, chat, gui, locals, time, ws){
 			$buttons = $("<div class=buttons>").appendTo($head),
 			updateAllEnabled = isAdmin,
 			$t = $("<div class=mountyhall-team-troll>").appendTo($box);
+		if (gui.mobile) $box.addClass("minimized");
 		$("<div class=nom>").text("Troll").appendTo($t);
 		$("<div class=raceNiveau>").text("").appendTo($t);
 		$("<div class=pv>").text("PV").appendTo($t);
@@ -39,7 +40,8 @@ miaou(function(mountyhall, chat, gui, locals, time, ws){
 		$("<div class=fat>").text("fat.").appendTo($t);
 		$("<div class=action>").appendTo($t);
 		$("<div id=mountyhall-team-trolls>").appendTo($box);
-		$("<div id=mountyhall-team-minimize-button>").text("◀").appendTo($buttons).click(function(){
+		$("<div id=mountyhall-team-minimize-button>").text("◀")
+		.appendTo($buttons).click(function(){
 			if ($box.hasClass("minimized")) {
 				$box.removeClass("minimized");
 			} else {
@@ -181,7 +183,7 @@ miaou(function(mountyhall, chat, gui, locals, time, ws){
 
 	// démarre toutes la mécanique des partags
 	mountyhall.startPartage = function(){
-		if (gui.mobile || !locals.room.private) {
+		if (/*gui.mobile || */ !locals.room.private) {
 			return;
 		}
 		ws.on("mountyhall.setRoomTrolls", function(trolls){
