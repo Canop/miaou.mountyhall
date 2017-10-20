@@ -26,6 +26,11 @@ exports.init = function(miaou){
 			"Le jeu se déroule en tour-par-tour d'une durée de 12 heures durant lesquelles"+
 			" les joueurs peuvent faire agir leur Troll en dépensant jusqu'à 6 Points d'Actions.*\n"+
 			"Donner ce tag à une salle Miaou apporte de nombreuses fonctions liées au jeu MountyHall."
+	})
+	.then(function(){
+		return db.on().then(function(){
+			return require("./auto-badges.js").registerBadges(this, miaou);
+		}).finally(db.off);
 	});
 }
 
