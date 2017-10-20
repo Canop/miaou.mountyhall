@@ -98,7 +98,7 @@ miaou(function(mountyhall, locals){
 		if (lcname==+lcname) lcname = 'T'+lcname;
 		if (lcname.length>2) replacer.add(lcname, id);
 	}
-	replacer.skipTags('a', 'pre', 'code');
+	replacer.skipTags('a', 'span', 'pre', 'code');
 	mountyhall.trollNamesReplacer = replacer;
 
 	window.mh_trolls = null;

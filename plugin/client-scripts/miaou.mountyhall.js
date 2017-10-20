@@ -3,7 +3,7 @@ miaou(function(mountyhall, ed, gui, locals, md, plugins){
 	var	SHOW_TROLL_BUBBLES = false,
 		numReplacer = new Groumf();
 
-	numReplacer.skipTags('a', 'pre', 'code');
+	numReplacer.skipTags('a', 'span', 'pre', 'code');
 
 	var charmap = {
 		'"': '&quot;',
