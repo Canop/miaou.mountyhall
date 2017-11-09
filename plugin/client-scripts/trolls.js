@@ -14,7 +14,7 @@ miaou(function(mountyhall, locals){
 		"ade", "arf", 'autre', "aura", "aventure",
 		"balrog", "beurk", "belle", "bibi", "bidouille", "blabla", "blanche", "bleu", "bof",
 		"bol", "boom", "boum", "boss", "bouarf", "boulette",
-		"ca va chier", "caché", "caribou", "cat", "cerne", "champion", 'chonchon', "claire",
+		"ca va chier", "caché", "caribou", "cassis", "cat", "cerne", "champion", 'chonchon', "claire",
 		"clic", "courte", "crash", "cross",
 		"dark", "darkling", "de pierre", "désolé", "diablotin", "dodo", 'don',
 		"down", "dragon", "dudu", "durak", "durakuir",
