@@ -10,8 +10,7 @@ exports.onTrollCommand = function(ct){
 		" join player p on p.id=ppi.player"+
 		" where plugin='MountyHall' and lower((info#>'{troll,nom}')::varchar)=$1",
 		['"'+trollName.toLowerCase()+'"'],
-		"search-troll-ppi",
-		false
+		"search-troll-ppi"
 	).then(function(trolls){
 		console.log('trolls:', trolls);
 		var s;

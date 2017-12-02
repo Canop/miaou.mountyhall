@@ -12,8 +12,7 @@ commands["On"] = function(ct){
 		return this.execute(
 			"insert into mountyhall_partage (room, player) values ($1, $2)",
 			[ct.shoe.room.id, ct.shoe.publicUser.id],
-			"insert_mountyhall_partage",
-			false
+			"insert_mountyhall_partage"
 		);
 	})
 	.then(function(res){
@@ -30,8 +29,7 @@ commands["Off"] = function(ct){
 	return this.execute(
 		"delete from mountyhall_partage where room=$1 and player=$2",
 		[roomId, ct.shoe.publicUser.id],
-		"delete_mountyhall_partage",
-		false
+		"delete_mountyhall_partage"
 	)
 	.then(function(res){
 		ct.reply("Partage supprimé");
@@ -52,8 +50,7 @@ commands["Remove"] = function(ct){
 		return this.execute(
 			"delete from mountyhall_partage where room=$1 and player=$2",
 			[ct.shoe.room.id, user.id],
-			"delete_mountyhall_partage",
-			false
+			"delete_mountyhall_partage"
 		)
 	})
 	.then(function(res){

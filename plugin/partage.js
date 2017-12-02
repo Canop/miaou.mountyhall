@@ -117,7 +117,7 @@ exports.mdRecentSPRequests = function(trollIds, playerIds){
 		" and call_date>"+since+
 		" order by call_date desc",
 		null,
-		"select_requests", false
+		"select_requests"
 	)
 	.then(function(rows){
 		if (!rows.length) return "pas de requète dans les trois derniers jours";
