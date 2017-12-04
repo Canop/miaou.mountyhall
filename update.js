@@ -14,10 +14,10 @@ fs.readFile("Public_Trolls.txt", function(err, data){
 		}
 		if (!id) {
 			console.log("invalid id:", cells[0]);
-			return;			
+			return;
 		}
 		trolls[name] = id;
 	});
 	console.log(Object.keys(trolls).length);
-	fs.writeFile("plugin/client-scripts/trollsdb.min.js", "window.mh_trolls="+JSON.stringify(trolls)+";");
+	fs.writeFileSync("plugin/client-scripts/trollsdb.min.js", "window.mh_trolls="+JSON.stringify(trolls)+";");
 });
