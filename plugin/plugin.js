@@ -16,6 +16,7 @@ exports.name = "MountyHall";
 exports.init = function(miaou){
 	db = miaou.db;
 	pws.init(miaou);
+	require("./sciz-oukonenest.js").init(miaou);
 	db.upgrade(exports.name, require("path").resolve(__dirname, 'sql'));
 	return miaou.requestTag({
 		name: "MountyHall",

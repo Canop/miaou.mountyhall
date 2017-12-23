@@ -4,7 +4,8 @@
 
 var	bench = require("../../libs/bench.js"),
 	utils = require("./utils.js"),
-	patterns = require("./client-scripts/patterns.js").patterns;
+	patterns = require("./client-scripts/patterns.js").patterns,
+	scizParser = require("./sciz-oukonenest.js");
 
 function cpl(){
 	var cur = arguments[0];
@@ -26,8 +27,8 @@ Animal.prototype.init = function(){
 Animal.prototype.addItem = function(item, message){
 	this.items.push(item);
 	this.nom = item.nom;
-	item.message = '['+message.authorname+' '+utils.formatTime(message.created)+'](#'+message.id+')';
-	item.time = message.created;
+	item.link = '['+message.authorname+'](#'+message.id+')';
+	item.time = item.time || message.created;
 }
 // returns a (shared) {min,max} object
 Animal.prototype.reduce = function(name, min, max){
@@ -146,12 +147,14 @@ Animal.prototype.getReportItem = function(o, isAtEnd){
 Animal.prototype.lookForReportItem = function(cur, isAtEnd, message){
 	var item = this.getReportItem(cur, isAtEnd);
 	if (!item) return cur;
+	console.log('cur:', cur);
 	this.addItem(item, message);
 	return {};
 }
 
 // receives a message and adds to the array of displayable objects {Message|Action|PV|Détails}
 Animal.prototype.parse = function(message){
+	if (scizParser.parse.call(this, message)) return;
 	var	cur = {},
 		lines = message.content.replace(/\.{2,}/g, '_').split(/[\n\.]+/);
 	this.nbMessages++;
@@ -189,11 +192,11 @@ Animal.prototype.parse = function(message){
 
 Animal.prototype.table = function(){
 	return (
-		"Message|Action|PV|Détails\n"+
-		"-|:-:|:-:|-\n"+
-		this.items.map(function(i){
-			return (i.message||' ')+'|'+(i.action||' ')+'|'+(i.pv||' ')+'|'+(i.détails||' ')
-		}).join('\n')
+		"Date|Source|Action|PV|Détails\n"+
+		"-|:-:|:-:|:-:|-\n"+
+		this.items.map(
+			i => utils.formatTime(i.time)+'|'+i.link+'|'+i.action+'|'+(i.pv||' ')+'|'+(i.détails||' ')
+		).join('\n')
 	);
 }
 
@@ -240,6 +243,7 @@ Animal.prototype.mdReport = function(){
 // Returns a promise.
 Animal.prototype.reply = function(messages, ct){
 	var benchOperation = bench.start("MountyHall / !!oukonenest / Animal");
+	scizParser.prepare();
 	for (var i=messages.length; i--;) this.parse(messages[i]);
 	var md = this.mdReport();
 	benchOperation.end();
