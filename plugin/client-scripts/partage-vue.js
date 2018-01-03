@@ -281,7 +281,7 @@ miaou(function(mountyhall, chat, gui, locals, skin, time, ws){
 			var heights1 = [].map.call(lines, function(line){
 				return line.offsetHeight;
 			});
-			var marg = parseInt($grid.css("margin"));
+			var marg = parseInt($grid.css("marginLeft"));
 			// on doit récupérer le scroll avant ajustement prce qu'il est parfois
 			//  modifié par le changement de style
 			var VG1x = marg - $view.scrollLeft();
