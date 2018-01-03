@@ -253,7 +253,13 @@ parsers.Profil2 = function(csv){
 		course: !!l[i++],
 		lévite: !!l[i++],
 		pvMax: l[i++],
-		niveau: l[i++]
+		niveau: l[i++],
+		pi: l[i++],
+		numGuilde: l[i++],
+		vue: l[i++],
+		nbRetraites: l[i++],
+		dirRetraites: l[i++],
+		durTotale: l[i++] // durée totale du tour
 	};
 }
 parsers.Vue2 = function(csv){

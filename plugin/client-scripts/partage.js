@@ -122,7 +122,7 @@ miaou(function(mountyhall, chat, gui, locals, time, ws){
 				$("<div class=missing>").text("Pas de données").appendTo($t);
 				return $t;
 			}
-			p.pdla = p.dla+p.dur*60;
+			p.pdla = p.dla+(p.durTotale||p.dur)*60;
 			var	now = Date.now()/1000|0,
 				obsolete = p.requestTime < now - 24*60*60;
 			if (!(update.newest>p.requestTime)) update.newest = p.requestTime;
