@@ -10,7 +10,7 @@ exports.init = function(_miaou){
 	miaou = _miaou;
 	eventRegex = miaou.lib("rex").concat(
 		/^(\d\d)\/(\d\d)\/(20\d\d) (\d\d)h(\d\d):(\d\d)/, // date
-		/ (\w{3,}(?: \w{3,})*)(?: \(([^)]+)\))?/, // action (modifieur)
+		/ ([A-zÀ-ÿ]{3,}(?: [A-zÀ-ÿ]{2,})*)(?: \(([^)]+)\))?/, // action (modifieur)
 		/ de ([^(]+) \((\d+)\)/, // auteur (numéro)
 		/ sur ([^(]+) \((\d+)\)/, // victime (numéro)
 		/ :/,
