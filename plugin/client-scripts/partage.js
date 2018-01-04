@@ -167,7 +167,7 @@ miaou(function(mountyhall, chat, gui, locals, time, ws){
 					p.int && "intangible",
 					p.parades && (p.parades + (p.parades>1 ? " parades" : " parade")),
 					p.contras && (p.contras + (p.contras>1 ? " contre-attaques" : " contre-attaque")),
-					p.atts && (p.atts + (p.atts>1 ? " attaques subies" : " attaque subie")),
+					p.atts && (p.atts + " dés d'esquive en moins"),
 				].filter(Boolean).join(", ")).appendTo($t);
 			}
 			$t.bubbleOn({
