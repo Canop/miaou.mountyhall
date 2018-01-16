@@ -12,7 +12,6 @@ exports.onTrollCommand = function(ct){
 		['"'+trollName.toLowerCase()+'"'],
 		"search-troll-ppi"
 	).then(function(trolls){
-		console.log('trolls:', trolls);
 		var s;
 		if (trolls.length) {
 			s = trolls.map(function(troll){

@@ -147,7 +147,6 @@ Animal.prototype.getReportItem = function(o, isAtEnd){
 Animal.prototype.lookForReportItem = function(cur, isAtEnd, message){
 	var item = this.getReportItem(cur, isAtEnd);
 	if (!item) return cur;
-	console.log('cur:', cur);
 	this.addItem(item, message);
 	return {};
 }

@@ -116,7 +116,6 @@ commands["UpdateVueTroll"] = function(ct){
 	ct.nostore = true;
 	return updateTroll.call(this, ct, "Vue2", {Lieux:1})
 	.then(function(trollView){
-		console.log('trollView:', trollView);
 		ct.shoe.emit("mountyhall.setViewPlayer", trollView);
 	});
 }

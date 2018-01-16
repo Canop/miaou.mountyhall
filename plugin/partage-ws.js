@@ -41,12 +41,10 @@ exports.getViewPlayer = function(shoe, targetPlayer){
 		);
 	})
 	.then(function(row){
-		console.log('row:', row);
 		var trollId = +row.troll;
 		return papi.getView.call(this, trollId);
 	})
 	.then(function(troll){
-		console.log('troll:', troll);
 		shoe.socket.emit("mountyhall.setViewPlayer", troll);
 	})
 	.catch(function(err){

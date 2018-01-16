@@ -98,7 +98,6 @@ function onOukonenestCommand(ct){
 		throw "Précisez le numéro (par exemple `!!"+ct.cmd.name+" 12345678`)";
 	}
 	var num = +match[1];
-	console.log("num:", num);
 	return this.search_tsquery(ct.shoe.room.id, num+'&!oukonenest', 'english', 50)
 	.filter(m => !/^!!deleted/.test(m.content))
 	.then(messages => {
@@ -107,7 +106,6 @@ function onOukonenestCommand(ct){
 			return;
 		}
 		var text = messages[0].content;
-		console.log('text:', text);
 		// ici on essaye de deviner si le numéro correspond à une cachette,
 		//  à un monstre ou à un troll
 		if (/cachette/i.test(text) && /carte/i.test(text)) {
