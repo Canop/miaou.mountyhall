@@ -100,6 +100,7 @@ miaou(function(mountyhall, chat, gui, locals, time, ws){
 
 	function fillTeamBox(trolls){
 		mountyhall.partage.trolls = trolls;
+		console.log('trolls:', trolls);
 		if (!$("#mountyhall-team-box").length) {
 			buildTeamBox();
 		}

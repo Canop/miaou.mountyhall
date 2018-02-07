@@ -8,17 +8,17 @@ let	miaou,
 
 exports.init = function(_miaou){
 	miaou = _miaou;
-	eventRegex = miaou.lib("rex").concat(
-		/^(\d\d)\/(\d\d)\/(20\d\d) (\d\d)h(\d\d):(\d\d)/, // date
-		/ ([A-zÀ-ÿ]{3,}(?: [A-zÀ-ÿ]{2,})*)(?: \(([^)]+)\))?/, // action (modifieur)
-		/ de ([^(]+) \((\d+)\)/, // auteur (numéro)
-		/ sur ([^(]+) \((\d+)\)/, // victime (numéro)
-		/ :/,
-		/\s*(-?\d+PV)?/, // impact en PV
-		/\s*(\d+%)?/, // blessure
-		/.*?/,
-		/(?:\s*\(([a-z0-9 ]+)\))?$/ // details
-	);
+	eventRegex = miaou.lib("rex")`
+		^(\d\d)\/(\d\d)\/(20\d\d) (\d\d)h(\d\d):(\d\d)		// date
+		\s([A-zÀ-ÿ]{3,}(?: [A-zÀ-ÿ]{2,})*)(?: \(([^)]+)\))?	// action (modifieur)
+		\sde ([^(]+) \((\d+)\)					// auteur (numéro)
+		\ssur ([^(]+) \((\d+)\)					// victime (numéro)
+		\s:
+		\s*(-?\d+PV)?						// impact en PV
+		\s*(\d+%)?						// blessure
+		.*?
+		(?:\s*\(([a-z0-9 ]+)\))?$				// details
+	`;
 }
 
 function initBot(){
