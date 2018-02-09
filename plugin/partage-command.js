@@ -99,7 +99,7 @@ function updateTroll(ct, script, options){
 
 commands["UpdateProfilTroll"] = function(ct){
 	ct.nostore = true;
-	return updateTroll.call(this, ct, "Profil2")
+	return updateTroll.call(this, ct, "Profil4", {json:1})
 	.then(function(){
 		return papi.getRoomTrolls.call(this, ct.shoe.room.id);
 	})

@@ -6,7 +6,8 @@ const	MAX_APPELS_DYNAMIQUES = 9,
 	Promise = require("bluebird");
 
 // queries a SP ("script public")
-// returns a promise which is resolved if all goes well with an array of arrays of strings (a csv table)
+// returns a promise which is resolved if all goes well with data
+// parsed as JSON or CSV (an array of arrays of strings) depending on options
 exports.fetchSP = function(sp, num, mdpr, options){
 	var	p = Promise.defer(),
 		path = "/SP_"+sp+".php?Numero="+num+"&Motdepasse="+encodeURIComponent(mdpr);
@@ -25,13 +26,22 @@ exports.fetchSP = function(sp, num, mdpr, options){
 		res.on('data', function(chunk){
 			text += iconvlite.decode(chunk, 'ISO-8859-1').toString();
 		}).on('end', function(){
-			var lines = text.split("\n").map(
-				s => s.split(';')
-			);
-			if (lines.length>0 && !/^\W*erreur/i.test(lines[0])) {
-				p.resolve(lines);
+			if (options.json) {
+				try {
+					p.resolve(JSON.parse(text));
+				} catch (e) {
+					p.reject(new Error('Error : ' + JSON.stringify(text)));
+				}
 			} else {
-				p.reject(new Error('Error : ' + JSON.stringify(lines)));
+				// if not JSON we assume CSV. OK it's a little dirty
+				var lines = text.split("\n").map(
+					s => s.split(';')
+				);
+				if (lines.length>0 && !/^\W*erreur/i.test(lines[0])) {
+					p.resolve(lines);
+				} else {
+					p.reject(new Error('Error : ' + JSON.stringify(lines)));
+				}
 			}
 		});
 	});
@@ -140,6 +150,15 @@ stores.Profil2 = function(ppi, script, obj){
 		return ppi.info.troll;
 	});
 }
+stores.Profil4 = function(ppi, script, obj){
+	ppi.info.troll['profil4'] = obj;
+	return this.deletePlayerPluginInfo("MountyHall", ppi.player)
+	.then(function(){
+		return this.storePlayerPluginInfo("MountyHall", ppi.player, ppi.info);
+	}).then(function(){
+		return ppi.info.troll;
+	});
+}
 stores.Vue2 = function(ppi, script, obj){
 	var	now = Date.now()/1000|0,
 		trollId = +ppi.info.troll.id;
@@ -193,14 +212,14 @@ exports.updateTroll = function(playerId, requester, script, options){
 				throw `L'appel du script public ${script} a échoué`;
 			});
 		})
-		.then(csv=>{
+		.then(content=>{
 			return this.execute(
 				"insert into mountyhall_sp_call (troll, call_date, requester, script, sp_result)"+
 				" values ($1, $2, $3, $4, $5)",
 				[troll.id, now, requester, script, "ok"],
 				"mh_insert_sp_call"
 			).then(function(){
-				return parsers[script](csv);
+				return parsers[script](content);
 			});
 		});
 	})
@@ -213,7 +232,7 @@ exports.updateTroll = function(playerId, requester, script, options){
 // met à jour le profil du troll
 // must be called with context being an open DB connection
 exports.updateProfilTroll = function(playerId, requester){
-	return exports.updateTroll.call(this, playerId, requester, "Profil2");
+	return exports.updateTroll.call(this, playerId, requester, "Profil4", {json:1});
 }
 
 const parsers = {};
@@ -261,6 +280,14 @@ parsers.Profil2 = function(csv){
 		dirRetraites: l[i++],
 		durTotale: l[i++] // durée totale du tour
 	};
+}
+parsers.Profil4 = function(data){
+	let troll = data.troll;
+	for (let k in data.situation) troll[k] = data.situation[k];
+	["flags", "caracs", "sorts", "competences"].forEach(k=>{
+		troll[k] = data[k];
+	});
+	return troll;
 }
 parsers.Vue2 = function(csv){
 	var	vue = {},

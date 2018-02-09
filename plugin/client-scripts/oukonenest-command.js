@@ -18,7 +18,6 @@ miaou(function(mountyhall){
 		// message SCIZ
 		if (message.authorname==scizBotName) {
 			var match = message.content.match(scizEventRegex);
-			console.log('match:', match);
 			if (match) {
 				completionSet.add(match[4]+" ("+match[5]+")");
 			}

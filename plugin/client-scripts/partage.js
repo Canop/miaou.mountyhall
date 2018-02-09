@@ -98,6 +98,10 @@ miaou(function(mountyhall, chat, gui, locals, time, ws){
 		});
 	}
 
+	function tot(c){
+		return c ? c.CAR+c.BMP+c.BMM : "?";
+	}
+
 	function fillTeamBox(trolls){
 		mountyhall.partage.trolls = trolls;
 		console.log('trolls:', trolls);
@@ -113,7 +117,7 @@ miaou(function(mountyhall, chat, gui, locals, time, ws){
 		});
 		$("#mountyhall-team-trolls").empty().append(trolls.map(function(troll){
 			var	$t = $("<div class=mountyhall-team-troll>"),
-				p = troll.profil2;
+				p = troll.profil4;
 			$("<a class=nom>")
 			.attr("href", "https://games.mountyhall.com/mountyhall/View/PJView.php?ai_IDPJ="+troll.id)
 			.attr("target", "troll_"+troll.id)
@@ -123,7 +127,9 @@ miaou(function(mountyhall, chat, gui, locals, time, ws){
 				$("<div class=missing>").text("Pas de données").appendTo($t);
 				return $t;
 			}
-			p.pdla = p.dla+(p.durTotale||p.dur)*60;
+			p.pv = tot(p.caracs.pvActuels);
+			p.pvMax = tot(p.caracs.pvMax);
+			p.pdla = p.dla+p.dureeTour*60;
 			var	now = Date.now()/1000|0,
 				obsolete = p.requestTime < now - 24*60*60;
 			if (!(update.newest>p.requestTime)) update.newest = p.requestTime;
@@ -135,7 +141,7 @@ miaou(function(mountyhall, chat, gui, locals, time, ws){
 			$("<div class=n>").text(p.n).appendTo($t);
 			if (!obsolete) {
 				if (p.invi || p.cam) $t.addClass("invi");
-				if (p.pv<30 || p.pv<p.pvMax*.35) $t.addClass("health-red");
+				if ((p.pv<40&&p.pvMax>60) || p.pv<p.pvMax*.37) $t.addClass("health-red");
 				else if (p.pv<40 || p.pv<p.pvMax*.6) $t.addClass("health-orange");
 				else if (p.pv<p.pvMax*.9) $t.addClass("health-yellow");
 				else $t.addClass("health-green");
@@ -144,10 +150,10 @@ miaou(function(mountyhall, chat, gui, locals, time, ws){
 				$("<div class=dla>").text(timeHHmm(p.dla)).appendTo($t);
 				$("<div class=jdla>").text(timeJJMM(p.pdla)).appendTo($t);
 				$("<div class=dla>").text(timeHHmm(p.pdla)).appendTo($t); // bubble with time.formatTime ?
-				$("<div class=fat>").text(p.fat).appendTo($t);
+				$("<div class=fat>").text(p.fatigue).appendTo($t);
 				$("<div class=mountyhall-time-bar>").appendTo(
 					$('<div class="mountyhall-time-bar-wrapper wrapper1">').appendTo($t)
-				).dat("range", [p.dla-p.dur*60, p.dla]);
+				).dat("range", [p.dla-p.dureeTour*60, p.dla]);
 				$("<div class=mountyhall-time-bar>").appendTo(
 					$('<div class="mountyhall-time-bar-wrapper wrapper2">').appendTo($t)
 				).dat("range", [p.dla, p.pdla]);
@@ -161,20 +167,30 @@ miaou(function(mountyhall, chat, gui, locals, time, ws){
 			).appendTo($t); // bubble with time.formatTime ?
 			if (!obsolete) {
 				$("<div class=details>").text([
-					p.invi && "invi",
+					p.invisible && "invi",
 					p.course && "en course",
-					p.camou && "camou",
-					p.lévite && "lévite",
-					p.int && "intangible",
-					p.parades && (p.parades + (p.parades>1 ? " parades" : " parade")),
-					p.contras && (p.contras + (p.contras>1 ? " contre-attaques" : " contre-attaque")),
-					p.atts && (p.atts + " dés d'esquive en moins"),
+					p.camouflage && "camou",
+					p.levitation && "lévite",
+					p.intangible && "intangible",
+					p.nbParades && (p.nbParades + (p.nbParades>1 ? " parades" : " parade")),
+					p.nbCA && (p.nbCA + (p.nbCA>1 ? " contre-attaques" : " contre-attaque")),
+					p.nbEsq && (p.nbEsq + " dés d'esquive en moins"),
 				].filter(Boolean).join(", ")).appendTo($t);
 			}
+			let strikes = mountyhall.strikes(p);
+			let thead = [" ", "att", "deg"];
+			let tbl = [
+				thead,
+				thead.map(c=>":-:"),
+				...strikes.map(s=>[s.name, s.att|0, (s.deg|0) + " / " + (s.crit|0)])
+			].map(row => row.join("|"));
 			$t.bubbleOn({
 				side: "right",
-				text:	"Dernière mise à jour: " + time.formatTime(p.requestTime)+"\n"+
-					"Troll associé à @" + troll.miaouUser.name
+				md: [
+					...tbl,
+					"Dernière mise à jour: " + time.formatTime(p.requestTime),
+					"Troll associé à @" + troll.miaouUser.name,
+				].join("\n")
 			});
 			return $t;
 		}));
@@ -184,9 +200,7 @@ miaou(function(mountyhall, chat, gui, locals, time, ws){
 
 	// démarre toutes la mécanique des partags
 	mountyhall.startPartage = function(){
-		if (/*gui.mobile || */ !locals.room.private) {
-			return;
-		}
+		if (!locals.room.private) return;
 		ws.on("mountyhall.setRoomTrolls", function(trolls){
 			console.log('room trolls:', trolls);
 			if (trolls && trolls.length) fillTeamBox(trolls);
