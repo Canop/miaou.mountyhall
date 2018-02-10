@@ -122,11 +122,11 @@ miaou(function(mountyhall, chat, gui, locals, time, ws){
 			.attr("href", "https://games.mountyhall.com/mountyhall/View/PJView.php?ai_IDPJ="+troll.id)
 			.attr("target", "troll_"+troll.id)
 			.text(troll.nom).appendTo($t);
-			$("<div class=raceNiveau>").text(raceLetter(troll.race)+p.niveau).appendTo($t);
 			if (!p) {
 				$("<div class=missing>").text("Pas de données").appendTo($t);
 				return $t;
 			}
+			$("<div class=raceNiveau>").text(raceLetter(troll.race)+p.niveau).appendTo($t);
 			p.pv = tot(p.caracs.pvActuels);
 			p.pvMax = tot(p.caracs.pvMax);
 			p.pdla = p.dla+p.dureeTour*60;

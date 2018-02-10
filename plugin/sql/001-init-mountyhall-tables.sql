@@ -7,6 +7,7 @@ create table mountyhall_partage (
 create index mountyhall_partage_room on mountyhall_partage(room);
 
 create type mountyhall_sp_script as enum(
+	'Profil4',
 	'Profil2',
 	'Vue2'
 );
