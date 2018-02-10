@@ -181,8 +181,8 @@ miaou(function(mountyhall, chat, gui, locals, time, ws){
 			let thead = [" ", "att", "deg"];
 			let tbl = [
 				thead,
-				thead.map(c=>":-:"),
-				...strikes.map(s=>[s.name, s.att|0, (s.deg|0) + " / " + (s.crit|0)])
+				["-:", ":-:", ":-:"],
+				...strikes.map(s=>[s.name, (s.att|0)||" ", (s.deg|0) + (s.crit ? (" / " + (s.crit|0)) : "")])
 			].map(row => row.join("|"));
 			$t.bubbleOn({
 				side: "right",
