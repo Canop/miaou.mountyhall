@@ -74,7 +74,7 @@ miaou(function(mountyhall){
 			deg: (vue.CAR/2|0)*2 + deg.BMM,
 			details: `*portée*: ${range}`
 		}
-		r.crit = r.deg + ((deg.vue/2|0)/2|0)*2;
+		r.crit = r.deg + ((vue.CAR/2|0)/2|0)*2;
 		return r;
 	});
 
