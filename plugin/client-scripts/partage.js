@@ -178,11 +178,16 @@ miaou(function(mountyhall, chat, gui, locals, time, ws){
 				].filter(Boolean).join(", ")).appendTo($t);
 			}
 			let strikes = mountyhall.strikes(p);
-			let thead = [" ", "att", "deg"];
+			let thead = [" ", "att", "deg", " "];
 			let tbl = [
 				thead,
-				["-:", ":-:", ":-:"],
-				...strikes.map(s=>[s.name, (s.att|0)||" ", (s.deg|0) + (s.crit ? (" / " + (s.crit|0)) : "")])
+				["-:", ":-:", ":-:", ":-"],
+				...strikes.map(s=>[
+					s.name,
+					(s.att|0)||" ",
+					(s.deg|0) + (s.crit ? (" / " + (s.crit|0)) : ""),
+					s.details || " "
+				])
 			].map(row => row.join("|"));
 			$t.bubbleOn({
 				side: "right",

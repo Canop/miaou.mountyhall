@@ -63,6 +63,21 @@ miaou(function(mountyhall){
 		return r;
 	});
 
+
+	addStrike("sorts", 1, "Projo", p=>{
+		let vue = p.caracs.vue;
+		let att = p.caracs.att;
+		let deg = p.caracs.deg;
+		let range = Math.ceil((Math.sqrt(19 + 8 * (vue.CAR + vue.BMM + vue.BMP + 3)) - 7) / 2);
+		let r = {
+			att: vue.CAR*3.5 + att.BMM,
+			deg: (vue.CAR/2|0)*2 + deg.BMM,
+			details: `*portée*: ${range}`
+		}
+		r.crit = r.deg + ((deg.vue/2|0)/2|0)*2;
+		return r;
+	});
+
 	addStrike("sorts", 4, "RP", p=>{
 		let deg = p.caracs.deg;
 		let r = {

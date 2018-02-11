@@ -8,7 +8,7 @@ const	MAX_APPELS_DYNAMIQUES = 9,
 // queries a SP ("script public")
 // returns a promise which is resolved if all goes well with data
 // parsed as JSON or CSV (an array of arrays of strings) depending on options
-exports.fetchSP = function(sp, num, mdpr, options){
+exports.fetchSP = function(sp, num, mdpr, options={}){
 	var	p = Promise.defer(),
 		path = "/SP_"+sp+".php?Numero="+num+"&Motdepasse="+encodeURIComponent(mdpr);
 	if (options) {
