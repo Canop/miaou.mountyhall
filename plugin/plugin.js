@@ -215,4 +215,7 @@ la raison, vous pouvez consulter la liste des appels récents *via*
 	!!partage requests room
 ou
 	!!partage requests user
+
+Pour enlever un autre utilisateur du partage, tapez
+	!!partage remove @someuser
 `;

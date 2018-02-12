@@ -11,10 +11,8 @@ const	MAX_APPELS_DYNAMIQUES = 9,
 exports.fetchSP = function(sp, num, mdpr, options={}){
 	var	p = Promise.defer(),
 		path = "/SP_"+sp+".php?Numero="+num+"&Motdepasse="+encodeURIComponent(mdpr);
-	if (options) {
-		for (var key in options) {
-			path += "&" + key + "=" + encodeURIComponent(options[key]);
-		}
+	for (var key in options) {
+		path += "&" + key + "=" + encodeURIComponent(options[key]);
 	}
 	console.log('path:', path);
 	var req = http.request({
