@@ -1,8 +1,15 @@
 var	bench = require("../../libs/bench.js"),
+	rex = require("../../libs/rex.js"),
 	utils = require("./utils.js");
 
-// eslint-disable-next-line max-len
-var	searchRegex = /Vous êtes en X = (-)?(\d)?(\d) Y = (-)?(\d)?(\d) N = (-)?(\d)?(\d)[^\w]+Vous n'avez pas trouv. la cachette de la carte \((\d+)\)\.[^\w]+Mais voici quelques indications[^\w]+Vous .{1,3}tes(\spas)? dans le bon Xcoin[^\w]+Vous .{1,3}tes(\spas)? dans le bon Ycoin[^\w]+Vous avez retrouvé (\d+) chiffres? de la caverne/,
+const	searchRegex = rex`
+		Vous êtes en X = (-)?(\d)?(\d) Y = (-)?(\d)?(\d) N = (-)?(\d)?(\d)[^\w]+
+		Vous n'avez pas trouv. la cachette de la carte \((\d+)\)\.[^\w]+
+		Mais voici quelques indications[^\w]+
+		Vous .{1,3}tes(\spas)? dans le bon Xcoin[^\w]+
+		Vous .{1,3}tes(\spas)? dans le bon Ycoin[^\w]+
+		Vous avez retrouvé (\d+) chiffres? de la caverne
+		`,
 	deathRegexEnd = "[\\s\\S]*?J.ai .t. tu. en X = (-?)(\\d)?(\\d) Y = (-?)(\\d)?(\\d) N = -?(\\d)?(\\d)";
 
 function Cachette(id){
@@ -28,8 +35,8 @@ fn.parse = function(message){
 	var search = {
 		message: '['+message.authorname+' '+utils.formatTime(message.created)+'](#'+message.id+')',
 		digits: [+m[2]||0, +m[3], +m[5]||0, +m[6], +m[8]||0, +m[9]],
-		xcoin: !m[10] == !m[0] ? "+" : "-",
-		ycoin: !m[11] == !m[3] ? "+" : "-",
+		xcoin: !m[11] == !m[1] ? "+" : "-",
+		ycoin: !m[12] == !m[4] ? "+" : "-",
 	 	nbDigits: +m[13]
 	};
 	var key = search.digits.join("");
