@@ -63,7 +63,6 @@ miaou(function(mountyhall){
 		return r;
 	});
 
-
 	addStrike("sorts", 1, "Projo", p=>{
 		let vue = p.caracs.vue;
 		let att = p.caracs.att;
@@ -71,7 +70,7 @@ miaou(function(mountyhall){
 		let range = Math.ceil((Math.sqrt(19 + 8 * (vue.CAR + vue.BMM + vue.BMP + 3)) - 7) / 2);
 		let r = {
 			att: vue.CAR*3.5 + att.BMM,
-			deg: (vue.CAR/2|0)*2 + deg.BMM,
+			deg: (range+vue.CAR/2|0)*2 + deg.BMM,
 			details: `*portée*: ${range}`
 		}
 		r.crit = r.deg + ((vue.CAR/2|0)/2|0)*2;
