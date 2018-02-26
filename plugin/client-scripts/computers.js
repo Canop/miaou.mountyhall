@@ -44,7 +44,7 @@ miaou(function(mountyhall){
 		let degDices = Math.floor(att.CAR/2);
 		let r = {
 			att: 3.5*Math.floor(att.CAR*2/3) + Math.floor((att.BMP + att.BMM)/2),
-			deg: degDices*2 + Math.floor((deg.BMM + deg.BMM)/2)
+			deg: degDices*2 + Math.floor((deg.BMP + deg.BMM)/2)
 		}
 		r.crit = r.deg + (degDices/2|0)*2;
 		return r;
