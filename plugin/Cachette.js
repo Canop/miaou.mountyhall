@@ -135,7 +135,7 @@ fn.mdPossibleLocations = function(){
 fn.mdReport = function(){
 	var r = "*oukonenest* carte " + this.id + ":\n";
 	if (!this.digits) {
-		return r + "Je n'ai pas trouvé de message contenant le texte de la carte";
+		return r + "Je n'ai pas trouvé de message contenant la description de la carte de Capitan";
 	} else if (!this.searches.length) {
 		return r + "Je n'ai pas trouvé de message de recherche de carte";
 	}
