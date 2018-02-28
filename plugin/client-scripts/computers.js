@@ -96,6 +96,18 @@ miaou(function(mountyhall){
 		r.crit = r.deg + (deg.CAR/2|0)*2;
 		return r;
 	});
+	
+	addStrike("sort", 14, "Siphon", p=>{
+		let att = p.caracs.att;
+		let deg = p.caracs.reg;
+		let reg = p.caracs.reg;
+		let r = {
+			att: att.CAR*3.5 + att.BMM,
+			deg: reg.CAR*2 + deg.BMM,
+		}
+		r.crit = d.reg + (reg.CAR/2|0)*2;
+		return r;
+	});
 
 	mountyhall.strikes = function(p){
 		let strikes = [];
