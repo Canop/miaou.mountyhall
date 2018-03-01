@@ -86,17 +86,6 @@ miaou(function(mountyhall){
 		return r;
 	});
 
-	addStrike("sorts", 3, "vampi", p=>{
-		let att = p.caracs.att;
-		let deg = p.caracs.deg;
-		let r = {
-			att: deg.CAR*7/3 + att.BMM,
-			deg: deg.CAR*2 + deg.BMM
-		}
-		r.crit = r.deg + (deg.CAR/2|0)*2;
-		return r;
-	});
-	
 	addStrike("sort", 14, "Siphon", p=>{
 		let att = p.caracs.att;
 		let deg = p.caracs.reg;
@@ -106,6 +95,17 @@ miaou(function(mountyhall){
 			deg: reg.CAR*2 + deg.BMM,
 		}
 		r.crit = d.reg + (reg.CAR/2|0)*2;
+		return r;
+	});
+
+	addStrike("sorts", 3, "Vampi", p=>{
+		let att = p.caracs.att;
+		let deg = p.caracs.deg;
+		let r = {
+			att: deg.CAR*7/3 + att.BMM,
+			deg: deg.CAR*2 + deg.BMM
+		}
+		r.crit = r.deg + (deg.CAR/2|0)*2;
 		return r;
 	});
 
