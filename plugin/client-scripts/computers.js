@@ -86,7 +86,7 @@ miaou(function(mountyhall){
 		return r;
 	});
 
-	addStrike("sort", 14, "Siphon", p=>{
+	addStrike("sorts", 14, "Siphon", p=>{
 		let att = p.caracs.att;
 		let deg = p.caracs.reg;
 		let reg = p.caracs.reg;
