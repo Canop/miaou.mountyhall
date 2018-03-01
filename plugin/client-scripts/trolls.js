@@ -52,7 +52,6 @@ miaou(function(mountyhall, locals){
 
 	// alias
 	[
-		['Le Comte Demont\'Cristo', 'comte'],
 		['squ@le', 'squale'],
 		['cebolla', 'cébo'],
 		['cebolla', 'cebo'],
@@ -71,6 +70,7 @@ miaou(function(mountyhall, locals){
 		['lulu vroumette', 'lulu', true],
 		['Animatrõll', 'Animatroll'],
 		['Bunkeeeeeeeer', 'bkr'],
+		['Le Comte Demont\'Cristo', 'comte'],
 	].forEach(function(e){
 		var	name = mountyhall.lowerCasedTrollNames[e[0].toLowerCase()],
 			alias = e[1].toLowerCase(),
