@@ -94,7 +94,7 @@ miaou(function(mountyhall){
 			att: att.CAR*3.5 + att.BMM,
 			deg: reg.CAR*2 + deg.BMM,
 		}
-		r.crit = d.reg + (reg.CAR/2|0)*2;
+		r.crit = r.reg + (reg.CAR/2|0)*2;
 		return r;
 	});
 
