@@ -139,6 +139,9 @@ miaou(function(mountyhall, chat, gui, locals, time, ws){
 			$("<div class=x>").text(p.x).appendTo($t);
 			$("<div class=y>").text(p.y).appendTo($t);
 			$("<div class=n>").text(p.n).appendTo($t);
+			if (typeof p.fatigue === "object") {
+				p.fatigue = p.fatigue.CAR + p.fatigue.BM;
+			}
 			if (!obsolete) {
 				if (p.invi || p.cam) $t.addClass("invi");
 				if ((p.pv<40&&p.pvMax>60) || p.pv<p.pvMax*.37) $t.addClass("health-red");
