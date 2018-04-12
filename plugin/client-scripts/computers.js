@@ -14,6 +14,11 @@ miaou(function(mountyhall){
 		});
 	}
 
+	function totalCarac(p, name){
+		let car = p.caracs[name];
+		return car.CAR + car.BMM + car.BMP;
+	}
+
 	addStrike(null, 0, "AN", p=>{
 		let att = p.caracs.att;
 		let deg = p.caracs.deg;
@@ -63,6 +68,28 @@ miaou(function(mountyhall){
 		return r;
 	});
 
+	addStrike("competences", 14, "Charge", p=>{
+		let att = p.caracs.att;
+		let deg = p.caracs.deg;
+		let r = {
+			att: att.CAR*3.5 + att.BMP + att.BMM,
+			deg: deg.CAR*2 + deg.BMP + deg.BMM,
+		};
+		let sight = totalCarac(p, "vue");
+		if (sight<1) {
+			r.details = "*troll aveugle*";
+		} else {
+			let reg = p.caracs.reg;
+			let range = Math.ceil((Math.sqrt(19 + 8 * (p.pv/10 + reg.CAR + 3)) - 7) / 2);
+			range -= Math.floor(p.fatigue/5);
+			if (range<1) range = 1;
+			if (range>sight) range = sight;
+			r.details = `*portée*: ${range}`;
+		}
+		r.crit = r.deg + (deg.CAR/2|0)*2;
+		return r;
+	});
+
 	addStrike("sorts", 1, "Projo", p=>{
 		let vue = p.caracs.vue;
 		let att = p.caracs.att;
@@ -88,13 +115,15 @@ miaou(function(mountyhall){
 
 	addStrike("sorts", 14, "Siphon", p=>{
 		let att = p.caracs.att;
-		let deg = p.caracs.reg;
+		let deg = p.caracs.deg;
 		let reg = p.caracs.reg;
 		let r = {
 			att: att.CAR*3.5 + att.BMM,
 			deg: reg.CAR*2 + deg.BMM,
 		}
+
 		r.crit = r.reg + (reg.CAR/2|0)*2;
+
 		return r;
 	});
 
@@ -105,7 +134,7 @@ miaou(function(mountyhall){
 			att: deg.CAR*7/3 + att.BMM,
 			deg: deg.CAR*2 + deg.BMM
 		}
-		r.crit = r.deg + (deg.CAR/2|0)*2;
+		r.crit = deg.CAR*2 + deg.BMM + (deg.CAR/2|0)*2;
 		return r;
 	});
 
