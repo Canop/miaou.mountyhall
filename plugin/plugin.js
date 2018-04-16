@@ -58,7 +58,11 @@ function renderMHProfile(ppi){
 	}
 	var html = '<div class=mh-troll-id-card>';
 	if (ppi.troll.blason) {
-		html += '<img src="' + ppi.troll.blason + '">'; // fixme possible injection
+		let src = ppi.troll.blason.replace( // fixing old blason URL
+			/^http:\/\/blason.mountyhall.com\//,
+			"https://games.mountyhall.com/MH_Blasons/"
+		);
+		html += '<img src="' + src + '">'; // fixme possible injection
 	}
 	html += '<div>';
 	var href = 'https://games.mountyhall.com/mountyhall/View/PJView.php?ai_IDPJ=' + ppi.troll.id;
@@ -151,7 +155,7 @@ exports.registerCommands = function(registerCommand){
 }
 
 const MH_AUTH_NEEDED = "L'entrée dans cette salle privée est réservée aux joueurs de Mounty Hall authentifiés.\n"+
-	"Pour authentifier votre compte, allez dans [les préférences](http://dystroy.org/miaou/prefs#Identities).";
+	"Pour authentifier votre compte, allez dans [les préférences](https://dystroy.org/miaou/prefs#Identities).";
 
 exports.beforeAccessRequest = function(args, user){
 	var room = args.vars.room;
