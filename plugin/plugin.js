@@ -119,6 +119,7 @@ function onOukonenestCommand(ct){
 		} else if (num<567891) {
 			return (new Troll(num)).reply(messages, ct);
 		}
+		ct.end();
 	});
 }
 
