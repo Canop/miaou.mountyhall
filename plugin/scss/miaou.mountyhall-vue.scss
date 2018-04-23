@@ -29,10 +29,13 @@
 	}
 }
 #mountyhall-view-search-panel {
-	position: absolute;
+	position: fixed;
 	bottom: 0;
-	left: 100%;
+	right: 0;
 	padding: 5px;
+	width: $right-panel-width - 10px;
+	box-sizing: border-box;
+	box-shadow: $center-shadow;
 	z-index: 100;
 	background: $pad-background;
 	color: $miaou-logo-color;
@@ -68,6 +71,7 @@
 		}
 	}
 }
+
 #mh-view-min-depth, #mh-view-max-depth {
 	width: 40px;
 }
