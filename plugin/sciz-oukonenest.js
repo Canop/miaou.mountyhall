@@ -13,11 +13,11 @@ exports.init = function(_miaou){
 		\s([A-zÀ-ÿ]{3,}(?: [A-zÀ-ÿ]{2,})*)(?: \(([^)]+)\))?	// action (modifieur)
 		\sde ([^(]+) \((\d+)\)					// auteur (numéro)
 		\ssur ([^(]+) \((\d+)\)					// victime (numéro)
-		\s:
+		\s*:?
 		\s*(-?\d+PV)?						// impact en PV
 		\s*(\d+%)?						// blessure
 		.*?
-		(?:\s*\(([a-z0-9 ]+)\))?$				// details
+		(?:\s*\(([a-z0-9 +-]+)\))?$				// details
 	`;
 }
 
@@ -47,6 +47,7 @@ exports.prepare = function(){
 
 function strToEvent(str){
 	let m = str.match(eventRegex);
+	console.log('m:', m);
 	if (!m) return;
 	let [, day, month, year, hour, min, sec, action, mod, name1, num1, name2, num2, pv, blessure, détails] = m;
 	// parsing en temps local... mon serveur est sur la même timezone que celui de MH ^^
@@ -65,7 +66,9 @@ function strToEvent(str){
 exports.parse = function(message){
 	if (message.author!==scizBotId) return false;
 	let lines = message.content.split(/\n/);
+	console.log('lines:', lines);
 	let event = strToEvent(lines.shift());
+	console.log('event:', event);
 	if (event && event.p2.num==this.id) {
 		event.nom = event.p2.nom;
 		if (event.action=="CDM") {
