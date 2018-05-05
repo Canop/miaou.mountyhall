@@ -17,7 +17,7 @@ exports.init = function(_miaou){
 		\s*(-?\d+PV)?						// impact en PV
 		\s*(\d+%)?						// blessure
 		.*?
-		(?:\s*\(([a-z0-9 ]+)\))?$				// details
+		(?:\s*\(([a-zA-Z0-9\(\) ]+)\))?$			// details
 	`;
 }
 
