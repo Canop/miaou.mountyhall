@@ -19,14 +19,18 @@ miaou(function(mountyhall){
 		return car.CAR + car.BMM + car.BMP;
 	}
 
+	function mkcrit(r, degdice){
+		r.crit = {N:r.deg.N+(degdice/2|0), S:r.deg.S, C:r.deg.C};
+	}
+
 	addStrike(null, 0, "AN", p=>{
 		let att = p.caracs.att;
 		let deg = p.caracs.deg;
 		let r = {
-			att: att.CAR*3.5 + att.BMP + att.BMM,
-			deg: deg.CAR*2 + deg.BMP + deg.BMM,
+			att: {N:att.CAR, S:6, C:att.BMP+att.BMM},
+			deg: {N:deg.CAR, S:3, C:deg.BMP+deg.BMM},
 		};
-		r.crit = r.deg + (deg.CAR/2|0)*2;
+		mkcrit(r, deg.CAR);
 		return r;
 	});
 
@@ -34,24 +38,23 @@ miaou(function(mountyhall){
 		let att = p.caracs.att;
 		let deg = p.caracs.deg;
 		let level = t.niveaux.length;
-		let bonusAtt = 3.5*Math.min(att.CAR/2|0, level*3);
 		let r = {
-			att: att.CAR*3.5 + att.BMP + att.BMM + bonusAtt,
-			deg: deg.CAR*2 + deg.BMP + deg.BMM,
+			att: {N:att.CAR+Math.min(att.CAR/2|0, level*3), S:6, C:att.BMP+att.BMM},
+			deg: {N:deg.CAR, S:3, C:deg.BMP+deg.BMM},
 		}
-		r.crit = r.deg + (deg.CAR/2|0)*2;
+		mkcrit(r, deg.CAR);
 		return r;
 	});
 
 	addStrike("competences", 1, "BS", p=>{
 		let att = p.caracs.att;
 		let deg = p.caracs.deg;
-		let degDices = Math.floor(att.CAR/2);
+		let degDice = Math.floor(att.CAR/2);
 		let r = {
-			att: 3.5*Math.floor(att.CAR*2/3) + Math.floor((att.BMP + att.BMM)/2),
-			deg: degDices*2 + Math.floor((deg.BMP + deg.BMM)/2)
+			att: {N:Math.floor(att.CAR*2/3), S:6, C:Math.floor((att.BMP + att.BMM)/2)},
+			deg: {N:degDice, S:3, C:Math.floor((deg.BMP + deg.BMM)/2)}
 		}
-		r.crit = r.deg + (degDices/2|0)*2;
+		mkcrit(r, degDice);
 		return r;
 	});
 
@@ -59,12 +62,11 @@ miaou(function(mountyhall){
 		let att = p.caracs.att;
 		let deg = p.caracs.deg;
 		let level = t.niveaux.length;
-		let bonusDeg = 2*Math.min(deg.CAR/2|0, level*3);
 		let r = {
-			att: att.CAR*3.5 + att.BMP + att.BMM,
-			deg: deg.CAR*2 + deg.BMP + deg.BMM + bonusDeg,
+			att: {N:att.CAR, S:6, C:att.BMP+att.BMM},
+			deg: {N:deg.CAR+Math.min(deg.CAR/2|0, level*3), S:3, C:deg.BMP+deg.BMM},
 		}
-		r.crit = r.deg + (deg.CAR/2|0)*2;
+		mkcrit(r, deg.CAR);
 		return r;
 	});
 
@@ -72,9 +74,10 @@ miaou(function(mountyhall){
 		let att = p.caracs.att;
 		let deg = p.caracs.deg;
 		let r = {
-			att: att.CAR*3.5 + att.BMP + att.BMM,
-			deg: deg.CAR*2 + deg.BMP + deg.BMM,
+			att: {N:att.CAR, S:6, C:att.BMP+att.BMM},
+			deg: {N:deg.CAR, S:3, C:deg.BMP+deg.BMM},
 		};
+		mkcrit(r, deg.CAR);
 		let sight = totalCarac(p, "vue");
 		if (sight<1) {
 			r.details = "*troll aveugle*";
@@ -86,7 +89,6 @@ miaou(function(mountyhall){
 			if (range>sight) range = sight;
 			r.details = `*portée*: ${range}`;
 		}
-		r.crit = r.deg + (deg.CAR/2|0)*2;
 		return r;
 	});
 
@@ -96,19 +98,18 @@ miaou(function(mountyhall){
 		let deg = p.caracs.deg;
 		let range = Math.ceil((Math.sqrt(19 + 8 * (vue.CAR + vue.BMM + vue.BMP + 3)) - 7) / 2);
 		let r = {
-			att: vue.CAR*3.5 + att.BMM,
-			deg: (range+vue.CAR/2|0)*2 + deg.BMM,
+			att: {N:vue.CAR, S:6, C:att.BMM},
+			deg: {N:(range+vue.CAR/2|0), S:3, C:deg.BMM},
 			details: `*portée*: ${range}`
 		}
-		r.crit = r.deg + ((vue.CAR/2|0)/2|0)*2;
+		mkcrit(r, (vue.CAR/2|0));
 		return r;
 	});
 
 	addStrike("sorts", 4, "RP", p=>{
 		let deg = p.caracs.deg;
 		let r = {
-			att: NaN,
-			deg: deg.CAR*2 + deg.BMM
+			deg: {N:deg.CAR, S:3, C:deg.BMM}
 		}
 		return r;
 	});
@@ -118,10 +119,10 @@ miaou(function(mountyhall){
 		let deg = p.caracs.deg;
 		let reg = p.caracs.reg;
 		let r = {
-			att: att.CAR*3.5 + att.BMM,
-			deg: reg.CAR*2 + deg.BMM,
+			att: {N:att.CAR, S:6, C:att.BMM},
+			deg: {N:reg.CAR, S:3, C:deg.BMM}
 		}
-		r.crit = r.deg + (reg.CAR/2|0)*2;
+		mkcrit(r, reg.CAR/2|0);
 		return r;
 	});
 
@@ -129,10 +130,10 @@ miaou(function(mountyhall){
 		let att = p.caracs.att;
 		let deg = p.caracs.deg;
 		let r = {
-			att: deg.CAR*7/3 + att.BMM,
-			deg: deg.CAR*2 + deg.BMM
+			att: {N:2*(deg.CAR/3|0), S:6, C:att.BMM},
+			deg: {N:deg.CAR, S:3, C:deg.BMM}
 		}
-		r.crit = deg.CAR*2 + deg.BMM + (deg.CAR/2|0)*2;
+		mkcrit(r, deg.CAR);
 		return r;
 	});
 

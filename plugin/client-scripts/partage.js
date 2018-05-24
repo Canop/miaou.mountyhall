@@ -20,6 +20,17 @@ miaou(function(mountyhall, chat, gui, locals, time, ws){
 		return (h<10?'0':'')+h+':'+(m<10?'0':'')+m;
 	}
 
+	function wrapDRD(drd){
+		if (!drd) return "";
+		let {N, S, C} = drd;
+		if (!N || !S) return drd; // this is probably a number or a string
+		let mean = +N * (+S+1)/2 + (+C||0);
+		let s = N+"D"+S;
+		if (C>0) s+= "+"+C;
+		else if (C<0) s+= C;
+		return `<span class=dice-roll-def data-def="${s}">${mean}</span>`;
+	}
+
 	function buildTeamBox(){
 		var	$box = $("<div id=mountyhall-team-box>").appendTo("body"),
 			$head = $("<div class=header>").appendTo($box),
@@ -182,24 +193,23 @@ miaou(function(mountyhall, chat, gui, locals, time, ws){
 				].filter(Boolean).join(", ")).appendTo($t);
 			}
 			let strikes = mountyhall.strikes(p);
-			let thead = [" ", "att", "deg", " "];
-			let tbl = [
-				thead,
-				["-:", ":-:", ":-:", ":-"],
-				...strikes.map(s=>[
-					s.name,
-					(s.att|0)||" ",
-					(s.deg|0) + (s.crit ? (" / " + (s.crit|0)) : ""),
-					s.details || " "
-				])
-			].map(row => row.join("|"));
+			let tbl = "<table>" + [
+				"<tr><th></th><th>att</th><th>deg</th><th></th>",
+				...strikes.map(s=> "<tr>" +
+					"<td>"+s.name+"</td>"+
+					"<td>"+wrapDRD(s.att)+"</td>"+
+					"<td>"+wrapDRD(s.deg)+ (s.crit ? (" / " + wrapDRD(s.crit)) : "") + "</td>"+
+					"<td>"+(s.details || "")+"</td>"+
+					"</tr>"
+				)
+			].join("\n") + "</table>";
 			$t.bubbleOn({
 				side: "right",
-				md: [
-					...tbl,
+				html: [
+					tbl,
 					"Dernière mise à jour: " + time.formatTime(p.requestTime),
 					"Troll associé à @" + troll.miaouUser.name,
-				].join("\n")
+				].join("<br>")
 			});
 			return $t;
 		}));
