@@ -193,7 +193,6 @@ exports.updateTroll = function(playerId, requester, script, options){
 		return exports.getNbSpCallsInLast24h.call(this, troll.id);
 	})
 	.then(function(nbCalls){
-		//console.log('nbCalls:', nbCalls);
 		if (nbCalls>MAX_APPELS_DYNAMIQUES) {
 			throw `Trop d'appels aux scripts publics pour le troll ${troll.id}`;
 		}

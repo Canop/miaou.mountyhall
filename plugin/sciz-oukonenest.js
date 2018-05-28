@@ -47,7 +47,6 @@ exports.prepare = function(){
 
 function strToEvent(str){
 	let m = str.match(eventRegex);
-	console.log('m:', m);
 	if (!m) return;
 	let [, day, month, year, hour, min, sec, action, mod, name1, num1, name2, num2, pv, blessure, détails] = m;
 	// parsing en temps local... mon serveur est sur la même timezone que celui de MH ^^

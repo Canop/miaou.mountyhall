@@ -37,9 +37,7 @@ miaou(function(mountyhall, chat, gui, locals, skin, time, ws){
 			if (e.which==38) zoom++; // up
 			else if (e.which=40) zoom--; // down
 			else return;
-			console.log('zoom avant min max:', zoom);
 			zoom = Math.max(0, Math.min(cellSizes.length-1, zoom));
-			console.log('zoom:', zoom);
 			applyZoom();
 			return false;
 		}
@@ -47,7 +45,6 @@ miaou(function(mountyhall, chat, gui, locals, skin, time, ws){
 
 	function selectTroll(troll){
 		currentTroll = troll;
-		console.log("request view of", troll.nom);
 		$("#mountyhall-view").text("Recherche de la vue de " + troll.nom + "...");
 		$("#mountyhall-view-update").text("chargement...");
 		ws.emit("mountyhall.getViewPlayer", troll.miaouUser.id);
@@ -112,7 +109,6 @@ miaou(function(mountyhall, chat, gui, locals, skin, time, ws){
 	}
 
 	function applyFilters(){
-		console.log("apply filters");
 		var	min = +$("#mh-view-min-depth").val(),
 			max = +$("#mh-view-max-depth").val(),
 			name = $("#mh-view-filter-name").val().trim(),
@@ -127,8 +123,6 @@ miaou(function(mountyhall, chat, gui, locals, skin, time, ws){
 		if (!$("#mh-view-depth-cb").prop("checked")) {
 			min = max = NaN;
 		}
-		var	total = 0,
-			filtered = 0;
 		$("#mountyhall-view-grid .mh-cell").each(function(){
 			var	elem = this,
 				cell = $(this).dat("cell");
@@ -153,18 +147,14 @@ miaou(function(mountyhall, chat, gui, locals, skin, time, ws){
 								elems[i].classList.remove("filtered");
 							}
 						}
-						if (filtered) {
-							filtered++;
-						} else {
+						if (!filtered) {
 							n++;
 						}
-						total++;
 					}
 					if (changed) $(".nb-"+key, elem).text(n).toggleClass("filtered", !n);
 				}
 			});
 		});
-		console.log("=>", filtered, "/", total);
 	}
 
 
@@ -179,7 +169,6 @@ miaou(function(mountyhall, chat, gui, locals, skin, time, ws){
 	}
 
 	mountyhall.setViewContent = function(trollView){
-		console.log('view receive trollView:', trollView);
 		if (!$panel) return;
 		if (trollView.id != currentTroll.id) {
 			console.log("mauvais trollView reçu", trollView, currentTroll);
