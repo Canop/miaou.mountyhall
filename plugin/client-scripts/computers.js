@@ -30,7 +30,7 @@ miaou(function(mountyhall){
 			att: {N:att.CAR, S:6, C:att.BMP+att.BMM},
 			deg: {N:deg.CAR, S:3, C:deg.BMP+deg.BMM},
 		};
-		mkcrit(r, deg.CAR);
+		mkcrit(r, 2*(deg.CAR|0));
 		return r;
 	});
 
@@ -42,7 +42,7 @@ miaou(function(mountyhall){
 			att: {N:att.CAR+Math.min(att.CAR/2|0, level*3), S:6, C:att.BMP+att.BMM},
 			deg: {N:deg.CAR, S:3, C:deg.BMP+deg.BMM},
 		}
-		mkcrit(r, deg.CAR);
+		mkcrit(r, 2*(deg.CAR|0));
 		return r;
 	});
 
@@ -122,7 +122,7 @@ miaou(function(mountyhall){
 			att: {N:att.CAR, S:6, C:att.BMM},
 			deg: {N:reg.CAR, S:3, C:deg.BMM}
 		}
-		mkcrit(r, reg.CAR/2|0);
+		mkcrit(r, 2*(reg.CAR/2|0));
 		return r;
 	});
 
@@ -133,7 +133,7 @@ miaou(function(mountyhall){
 			att: {N:2*(deg.CAR/3|0), S:6, C:att.BMM},
 			deg: {N:deg.CAR, S:3, C:deg.BMM}
 		}
-		mkcrit(r, deg.CAR);
+		mkcrit(r, 2*(deg.CAR/2|0));
 		return r;
 	});
 
