@@ -40,7 +40,7 @@ miaou(function(mountyhall){
 		let level = t.niveaux.length;
 		let r = {
 			att: {N:att.CAR+Math.min(att.CAR/2|0, level*3), S:6, C:att.BMP+att.BMM},
-			deg: {N:deg.CAR, S:3, C:deg.BMP+deg.BMM},
+			deg: {N:deg.CAR, S:3, C:deg.BMP+deg.BMM}
 		}
 		mkcrit(r, deg.CAR);
 		return r;
@@ -64,7 +64,18 @@ miaou(function(mountyhall){
 		let level = t.niveaux.length;
 		let r = {
 			att: {N:att.CAR, S:6, C:att.BMP+att.BMM},
-			deg: {N:deg.CAR+Math.min(deg.CAR/2|0, level*3), S:3, C:deg.BMP+deg.BMM},
+			deg: {N:deg.CAR+Math.min(deg.CAR/2|0, level*3), S:3, C:deg.BMP+deg.BMM}
+		}
+		mkcrit(r, deg.CAR);
+		return r;
+	});
+
+	addStrike("competences", 11, "CA", p=>{
+		let att = p.caracs.att;
+		let deg = p.caracs.deg;
+		let r = {
+			att: {N:Math.floor(att.CAR/2), S:6, C:Math.floor((att.BMP + att.BMM)/2)},
+			deg: {N:deg.CAR, S:3, C:deg.BMP+deg.BMM}
 		}
 		mkcrit(r, deg.CAR);
 		return r;
@@ -75,19 +86,19 @@ miaou(function(mountyhall){
 		let deg = p.caracs.deg;
 		let r = {
 			att: {N:att.CAR, S:6, C:att.BMP+att.BMM},
-			deg: {N:deg.CAR, S:3, C:deg.BMP+deg.BMM},
+			deg: {N:deg.CAR, S:3, C:deg.BMP+deg.BMM}
 		};
 		mkcrit(r, deg.CAR);
 		let sight = totalCarac(p, "vue");
 		if (sight<1) {
-			r.details = "*troll aveugle*";
+			r.details = "troll aveugle";
 		} else {
 			let reg = p.caracs.reg;
 			let range = Math.ceil((Math.sqrt(19 + 8 * (p.pv/10 + reg.CAR + 3)) - 7) / 2);
 			range -= Math.floor(p.fatigue/5);
 			if (range<1) range = 1;
 			if (range>sight) range = sight;
-			r.details = `*portée*: ${range}`;
+			r.details = `portée: ${range}`;
 		}
 		return r;
 	});
@@ -100,7 +111,7 @@ miaou(function(mountyhall){
 		let r = {
 			att: {N:vue.CAR, S:6, C:att.BMM},
 			deg: {N:(range+vue.CAR/2|0), S:3, C:deg.BMM},
-			details: `*portée*: ${range}`
+			details: `portée: ${range}`
 		}
 		mkcrit(r, (vue.CAR/2|0));
 		return r;
@@ -122,7 +133,7 @@ miaou(function(mountyhall){
 			att: {N:att.CAR, S:6, C:att.BMM},
 			deg: {N:reg.CAR, S:3, C:deg.BMM}
 		}
-		mkcrit(r, reg.CAR/2|0);
+		mkcrit(r, reg.CAR);
 		return r;
 	});
 
@@ -162,7 +173,6 @@ miaou(function(mountyhall){
 		}
 		return strikes;
 	}
-
 
 });
 
