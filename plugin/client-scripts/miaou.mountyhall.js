@@ -3,7 +3,7 @@ miaou(function(mountyhall, ed, gui, locals, md, plugins){
 	var	SHOW_TROLL_BUBBLES = false,
 		numReplacer = new Groumf();
 
-	numReplacer.skipTags('a', 'span', 'pre', 'code');
+	numReplacer.skipTags('a', 'span', 'pre', 'code', 'i');
 
 	var charmap = {
 		'"': '&quot;',
@@ -59,6 +59,7 @@ miaou(function(mountyhall, ed, gui, locals, md, plugins){
 				ed.registerCommandArgAutocompleter("oukonenest", mountyhall.autocompleteOukonenestCommandArgument);
 				ed.registerCommandArgAutocompleter("partage", mountyhall.autocompletePartageCommandArgument);
 				mountyhall.startPartage();
+				mountyhall.startSpots();
 			}
 		}
 	}

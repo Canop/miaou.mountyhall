@@ -1,5 +1,5 @@
 // gère l'affichage de la vue partagée
-miaou(function(mountyhall, chat, gui, locals, skin, time, ws){
+miaou(function(mountyhall, chat, fish, gui, locals, skin, time, ws){
 
 	const MH_BASE = "https://games.mountyhall.com/mountyhall/View/";
 	const cellSizes = skin.getCssValue(/#mountyhall-view-grid.zoom(\d+) .line/, "height").map(function(v){
@@ -50,12 +50,90 @@ miaou(function(mountyhall, chat, gui, locals, skin, time, ws){
 		ws.emit("mountyhall.getViewPlayer", troll.miaouUser.id);
 	}
 
+	function writeSpotPragma(s, trollId){
+		var md = `#mhspot(x=${s.x},y=${s.y},n=${s.n},troll=${trollId})\n${s.text}`;
+		$("#input").val(md);
+	}
+
+	function showMessage(text){
+		$message = $("<div>").addClass("spot-click-message").text(text).appendTo(document.body);
+		$message.delay(3200).fadeOut(()=>$message.remove());
+	}
+
+	function markSpot(){
+		showMessage("Cliquez sur la carte");
+		fish.closeBubbles();
+		$grid = $("#mountyhall-view-grid");
+		$grid.one("click", function(e){
+			var $cell = $(e.target).closest(".mh-cell");
+			if (!$cell.length) {
+				console.log("no cell clicked!");
+				return;
+			}
+			var cell = $cell.dat("cell");
+			var	$c = $("<div>").addClass("spot-def"),
+				$inx = $("<input>").addClass("coord").val(cell.x),
+				$iny = $("<input>").addClass("coord").val(cell.y),
+				$inn = $("<input>").addClass("coord").val("-"),
+				$intext = $("<input>").addClass("text"),
+				$err = $("<p>").addClass("error");
+			var OK = function(){
+				var spot = {
+					x: +$inx.val(),
+					y: +$iny.val(),
+					n: +$inn.val(),
+					text: $intext.val()
+				};
+				if (isNaN(spot.x)) {
+					$err.text("x invalide");
+					return false;
+				}
+				if (isNaN(spot.y)) {
+					$err.text("y invalide");
+					return false;
+				}
+				if (!(spot.n<=0)) {
+					$err.text("n invalide");
+					return false;
+				}
+				writeSpotPragma(spot, currentTroll.id);
+				showMessage("Envoyez le message pour partager");
+			}
+			$("<div>").append(
+				$("<span>").text("x:"),
+				$inx,
+				$("<span>").text("y:"),
+				$iny,
+				$("<span>").text("n:"),
+				$inn
+			).appendTo($c);
+			$("<div>").append(
+				$("<span>").text("text:"),
+				$intext
+			).appendTo($c);
+			$err.appendTo($c);
+			miaou.dialog({
+				title: "marquer une case",
+				content: $c,
+				buttons: {
+					OK,
+					Annuler: null
+				}
+			});
+		});
+	}
+
 	mountyhall.toggleSharedView = function(){
 		if ($panel) {
 			$panel.remove();
 			$panel = null;
-			return;
+		} else {
+			mountyhall.showSharedView();
 		}
+	}
+
+	mountyhall.showSharedView = function(trollId){
+		if ($panel) $panel.remove();
 		$panel = $("<div id=mountyhall-view-panel>").insertBefore("#input-panel");
 		gui.scrollToBottom();
 		var	trolls = mountyhall.partage.trolls,
@@ -64,30 +142,44 @@ miaou(function(mountyhall, chat, gui, locals, skin, time, ws){
 		$("<div id=mountyhall-view>").appendTo(
 			$("<div class=mountyhall-view-wrapper>").appendTo($panel)
 		);
+		var	selectedTroll;
 		for (var i=0; i<trolls.length; i++) {
 			if (trolls[i].miaouUser.id === locals.me.id) {
 				localTroll = trolls[i];
-				break;
+			}
+			if (trollId==trolls[i].id) {
+				selectedTroll = trolls[i];
 			}
 		}
+		selectedTroll = selectedTroll || localTroll;
 		$("<div class=mountyhall-help-icon>").bubbleOn(
 			"Glissez la carte en maintenant le bouton de la souris enfonçé\n"+
 			"Zoomez et Dézoomez avec la molette de la souris ou avec ctrl-haut et ctrl-bas"
 		).appendTo($head);
 		$("<select>").append(trolls.map(function(t){
 			var $option =  $("<option>").text(t.nom);
-			if (t===localTroll) $option.prop("selected", true);
+			if (t===selectedTroll) $option.prop("selected", true);
 			return $option;
 		})).appendTo($head).on("change", function(){
 			selectTroll(trolls[this.selectedIndex]);
 		});
 		$("<div id=mountyhall-view-update>").appendTo($head);
 		$("<div class=button>").text("centrer").click(centerView).appendTo($head);
+		$("<div class=button>").text("marquer")
+		.click(markSpot)
+		.bubbleOn({
+			md: [
+				"Cliquez ce bouton, puis sur la carte, à l'endroit que vous voulez marquer.",
+				"Renseignez ensuite la profondeur et un nom pour ce spot.",
+				"Envoyez enfin le message pour le partager."
+			].join('\n')
+		})
+		.appendTo($head);
 		$("<div class=button>").text("fermer").click(function(){
 			$panel.remove();
 			$panel = null;
 		}).appendTo($head);
-		selectTroll(localTroll);
+		selectTroll(selectedTroll);
 
 		$("<div id=mountyhall-view-search-panel>")
 		.appendTo($panel)
@@ -239,6 +331,20 @@ miaou(function(mountyhall, chat, gui, locals, skin, time, ws){
 				cell[key].push(o);
 			});
 		});
+		mountyhall.allSpots().forEach(function(o){
+			var col = cells[o.x-xmin];
+			if (!col) {
+				console.log("hors grille:", key, o);
+				return;
+			}
+			var cell = col[o.y-ymin];
+			if (!cell) {
+				console.log("hors grille:", key, o);
+				return;
+			}
+			if (!cell.spots) cell.spots = [];
+			cell.spots.push(o);
+		});
 	}
 
 	function cellBlower($c){
@@ -358,6 +464,19 @@ miaou(function(mountyhall, chat, gui, locals, skin, time, ws){
 					$cell = $("<div class=mh-cell>").appendTo($line).dat("cell", cell);
 				if (cell.origine) $cell.addClass("origine");
 				$("<div class=position>").text(cell.x+" "+cell.y).appendTo($cell);
+				if (cell.spots) {
+					for (k=0; k<cell.spots.length; k++) {
+						o = cell.spots[k];
+						var $o = $("<div class=spot>").appendTo($cell);
+						$o.text(o.n + " ✖ " + o.text);
+						$o.bubbleOn({md:[
+							o.x + " " + o.y + " " + o.n,
+							"spot marked by " + o.message.authorname,
+							o.text
+						].join("\n")});
+						$cell.addClass("has-spot");
+					}
+				}
 				if (cell.lieux) {
 					$cell.append("<div class=nb-lieux>");
 					cell.lieux.sort(function(a, b){ return b.n - a.n });

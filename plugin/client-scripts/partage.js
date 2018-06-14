@@ -225,9 +225,9 @@ miaou(function(mountyhall, chat, gui, locals, time, ws){
 			if (trolls && trolls.length) fillTeamBox(trolls);
 			else $("#mountyhall-team-box").remove();
 		});
-		ws.on("mountyhall.setViewPlayer", function(troll){
-			console.log('set view troll:', troll);
-			mountyhall.setViewContent(troll);
+		ws.on("mountyhall.setViewPlayer", function(trollview){
+			console.log('set view troll:', trollview);
+			mountyhall.setViewContent(trollview);
 		});
 		chat.on("ready", function(){
 			ws.emit("mountyhall.getRoomTrolls", {});

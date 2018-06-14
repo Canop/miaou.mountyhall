@@ -143,6 +143,13 @@
 			color: white;
 		}
 	}
+	.spot {
+		white-space: nowrap;
+		text-overflow: ellipsis;
+		overflow-x: hidden;
+		color: black;
+		font-weight: bold;
+	}
 	.nb-monstres {
 		background: brown;
 		color: white;
@@ -238,6 +245,9 @@
 	.line:nth-child(odd) .mh-cell:nth-child(odd),
 	.line:nth-child(even) .mh-cell:nth-child(even) {
 		background: rgb(229, 229, 203);
+		&.has-spot {
+			background: rgba(253, 199, 30, 0.65);
+		}
 	}
 	.mh-cell {
 		display: table-cell;
@@ -256,6 +266,9 @@
 		}
 		&:hover .position {
 			display: block;
+		}
+		&.has-spot {
+			background: rgba(253, 199, 30, 0.65);
 		}
 	}
 	// cell sizes computed with Array(7).fill(12).map((v, i)=>v*Math.pow(1.6, i))
