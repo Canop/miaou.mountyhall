@@ -18,7 +18,7 @@ exports.init = function(_miaou){
 		\s*(\d+%)?						// blessure
 		.*?
 		(?:\s*\(([a-z0-9 +-]+)\))?$				// details
-	`;
+	/i`;
 }
 
 function initBot(){
