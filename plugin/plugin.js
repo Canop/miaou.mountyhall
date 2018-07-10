@@ -50,9 +50,13 @@ function createMHProfile(user, pluginPlayerInfos, vals){
 	});
 }
 
+function filterMHProfile(ppi, room){
+	return room && room.tags.includes("MountyHall");
+}
+
 // returns the HTML of the profile
 // or undefined if there's no profile
-function renderMHProfile(ppi){
+function renderMHProfile(ppi, room){
 	if (!ppi || !ppi.troll || !ppi.troll.id || !ppi.troll.race) {
 		return '<i class=error>profil invalide</i>';
 	}
@@ -77,20 +81,24 @@ exports.externalProfile = {
 	creation: {
 		fields: [
 			{
-				name:'mh_num',
-				label:'Numéro',
-				type:'Number'
+				name: 'mh_num',
+				label: 'Numéro',
+				type: 'Number',
 			},
 			{
-				name:'mh_mdpr',
-				label:'Mot de passe restreint',
-				notice:"Vous pouvez créer un mot de passe restreint"
-					+ " (également appelé code d'accès spécifique) dans Options / Options Tröll"
-			}
+				name: 'mh_mdpr',
+				label: 'Mot de passe restreint',
+				notice: "Vous pouvez créer un mot de passe restreint"
+					+ " (également appelé code d'accès spécifique) dans Options / Options Tröll",
+			},
 		],
 		create: createMHProfile
 	},
-	render: renderMHProfile,
+	rendering: {
+		filter: filterMHProfile,
+		render: renderMHProfile,
+	},
+	comments: "This profile is only displayed in rooms having the MountyHall tag.",
 	avatarUrl: function(ppi){
 		return ppi.troll.blason;
 	}
@@ -172,7 +180,6 @@ exports.beforeAccessRequest = function(args, user){
 	})
 	.finally(db.off);
 }
-
 
 exports.onNewShoe = function(shoe){
 	shoe.socket
