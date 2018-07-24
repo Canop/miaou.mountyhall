@@ -115,7 +115,6 @@ miaou(function(mountyhall, chat, gui, locals, time, ws){
 
 	function fillTeamBox(trolls){
 		mountyhall.partage.trolls = trolls;
-		console.log('trolls:', trolls);
 		if (!$("#mountyhall-team-box").length) {
 			buildTeamBox();
 		}
@@ -137,7 +136,9 @@ miaou(function(mountyhall, chat, gui, locals, time, ws){
 				$("<div class=missing>").text("Pas de données").appendTo($t);
 				return $t;
 			}
-			$("<div class=raceNiveau>").text(raceLetter(troll.race)+p.niveau).appendTo($t);
+			var rnc = p.raceNomCourt;
+			if (!rnc) rnc = raceLetter(troll.race);
+			$("<div class=raceNiveau>").text(rnc+p.niveau).appendTo($t);
 			p.pv = tot(p.caracs.pvActuels);
 			p.pvMax = tot(p.caracs.pvMax);
 			p.pdla = p.dla+p.dureeTour*60;
