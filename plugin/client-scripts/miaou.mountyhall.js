@@ -57,7 +57,14 @@ miaou(function(mountyhall, ed, gui, locals, md, plugins){
 				md.registerRenderer(renderMessage, true);
 				ed.registerCommandArgAutocompleter("troll", mountyhall.autocompleteTrollCommandArgument);
 				ed.registerCommandArgAutocompleter("oukonenest", mountyhall.autocompleteOukonenestCommandArgument);
-				ed.registerCommandArgAutocompleter("partage", mountyhall.autocompletePartageCommandArgument);
+				ed.registerCommandArgAutocompleter("partage", [
+					["update", ["troll", "room", "vue"]],
+					["requests", ["user", "room"]],
+					["on"],
+					["remove"],
+					["off"],
+					["list"],
+				]);
 				mountyhall.startPartage();
 				mountyhall.startSpots();
 			}
