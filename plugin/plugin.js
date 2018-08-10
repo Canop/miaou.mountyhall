@@ -1,8 +1,9 @@
 
 //   http://sp.mountyhall.com/SP_WebService.php
 
-var	db,
-	bench = require("../../libs/bench.js"),
+let	db,
+	bench,
+	prefs,
 	Cachette = require('./Cachette.js'),
 	papi = require('./partage.js'),
 	pws = require('./partage-ws.js'),
@@ -13,12 +14,24 @@ var	db,
 
 exports.name = "MountyHall";
 
-exports.init = function(miaou){
+exports.init = async function(miaou){
 	db = miaou.db;
+	bench = miaou.lib("bench");
+	prefs = miaou.lib("prefs");
 	pws.init(miaou);
 	require("./sciz-oukonenest.js").init(miaou);
-	db.upgrade(exports.name, require("path").resolve(__dirname, 'sql'));
-	return miaou.requestTag({
+	await db.upgrade(exports.name, require("path").resolve(__dirname, 'sql'));
+	prefs.definePref(
+		"mountyhall.trollVisible",
+		"salles-MH",
+		"Montrer le troll dans le profil",
+		[
+			{ value: "salles-MH", label: "uniquement dans les salles portant le tag MountyHall" },
+			{ value: "partout", label: "dans toutes les salles et sur le profil public" }
+		],
+		{canBeLocal: false}
+	);
+	await miaou.requestTag({
 		name: "MountyHall",
 		description:
 			"https://games.mountyhall.com/mountyhall/Images/Troll_accueil_1.jpg\n"+
@@ -27,11 +40,9 @@ exports.init = function(miaou){
 			"Le jeu se déroule en tour-par-tour d'une durée de 12 heures durant lesquelles"+
 			" les joueurs peuvent faire agir leur Troll en dépensant jusqu'à 6 Points d'Actions.*\n"+
 			"Donner ce tag à une salle Miaou apporte de nombreuses fonctions liées au jeu MountyHall."
-	})
-	.then(function(){
-		return db.on().then(function(){
-			return require("./auto-badges.js").registerBadges(this, miaou);
-		}).finally(db.off);
+	});
+	await db.do(async function(con){
+		await require("./auto-badges.js").registerBadges(con, miaou);
 	});
 }
 
@@ -50,8 +61,11 @@ function createMHProfile(user, pluginPlayerInfos, vals){
 	});
 }
 
-function filterMHProfile(ppi, room){
-	return room && room.tags.includes("MountyHall");
+async function filterMHProfile(con, ppi, room){
+	if (room && room.tags.includes("MountyHall")) return false;
+	let gups = await prefs.getUserGlobalPrefs(con, ppi.player);
+	let pval = gups["mountyhall.trollVisible"];
+	return pval == "partout";
 }
 
 // returns the HTML of the profile
