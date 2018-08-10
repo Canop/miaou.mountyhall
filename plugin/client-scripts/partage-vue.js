@@ -356,7 +356,7 @@ miaou(function(mountyhall, chat, fish, gui, locals, skin, time, ws){
 		if (zoom<3) return false;
 		$c.text("Appel de Chrall...");
 		$.getJSON(
-			"https://canop.org/8000/chrall/json?action=get_extract"+
+			"https://chrall.dystroy.org/json?action=get_extract"+
 			"&name="+encodeURIComponent(this.text().split(":").pop().trim()),
 			function(data){
 				$c.html(data);
