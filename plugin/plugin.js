@@ -62,7 +62,7 @@ function createMHProfile(user, pluginPlayerInfos, vals){
 }
 
 async function filterMHProfile(con, ppi, room){
-	if (room && room.tags.includes("MountyHall")) return false;
+	if (room && room.tags.includes("MountyHall")) return true;
 	let gups = await prefs.getUserGlobalPrefs(con, ppi.player);
 	let pval = gups["mountyhall.trollVisible"];
 	return pval == "partout";
