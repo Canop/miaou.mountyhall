@@ -23,7 +23,7 @@ miaou(function(mountyhall, locals){
 		"giant", "glop", "gné", "gniark", "gogo", "golem", "gowaps", "gros", "guy",
 		"hein ?", "hum", "hypnos", "hypnotiseur",
 		"imagine", "inscription", "invi", "invisible", "ira",
-		"kaboum", "kastar", "kill",
+		"kaboum", "kastar", "kiki", "kill",
 		"la bestiole", "la montagne", "lagavulin", "late", "l'autre", "le troll", "link", "lol", "lourd",
 		"malus", "maman", "mars", "maudit", "mauvais", 'max', "meuh", 'merci', "miam", "minuscule",
 		"mithril", "mini", "moche", 'moi', "monsieur", "monstre",
