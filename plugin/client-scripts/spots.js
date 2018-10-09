@@ -43,6 +43,9 @@ miaou(function(mountyhall, fmt, md){
 		.attr("title", "click to show the spot on the map")
 		.click(function(){
 			mountyhall.showSharedView(spot.troll);
+			setTimeout(function(){
+				mountyhall.centerOnPosition(spot);
+			}, 1500);
 		});
 	}
 

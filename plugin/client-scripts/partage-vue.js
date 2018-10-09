@@ -548,6 +548,15 @@ miaou(function(mountyhall, chat, fish, gui, locals, skin, time, ws){
 		});
 	}
 
+	mountyhall.centerOnPosition = function({x, y}){
+		let $spot = $("#mountyhall-view-grid .mh-cell").filter(function(){
+			let cell = $(this).dat("cell");
+			return cell.x!=x && cell.y!=y;
+		});
+		if (!$spot.length) return console.log("spot non visible"); // la vue n'est probablement pas à jour
+		$spot.reveal();
+	}
+
 	function makeGridDraggable(){
 		var	$view = $("#mountyhall-view"),
 			$grid = $("#mountyhall-view-grid"),
