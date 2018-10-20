@@ -1,7 +1,6 @@
 // gère l'affichage de la vue partagée
 miaou(function(mountyhall, chat, fish, gui, locals, skin, time, ws){
 
-	const MH_BASE = "https://games.mountyhall.com/mountyhall/View/";
 	const cellSizes = skin.getCssValue(/#mountyhall-view-grid.zoom(\d+) .line/, "height").map(function(v){
 		return parseInt(v);
 	});
@@ -494,7 +493,7 @@ miaou(function(mountyhall, chat, fish, gui, locals, skin, time, ws){
 						o = cell.trolls[k];
 						var $o = $("<a class=troll>").appendTo($cell)
 						.attr("target", "_blank")
-						.attr("href", MH_BASE + "PJView.php?ai_IDPJ=" + o.id)
+						.attr("href", mountyhall.urlBase + "View/PJView.php?ai_IDPJ=" + o.id)
 						.text(o.n + ": " + o.nom);
 					}
 				}
@@ -506,7 +505,7 @@ miaou(function(mountyhall, chat, fish, gui, locals, skin, time, ws){
 						o = cell.monstres[k];
 						var $o = $("<a class=monstre>").appendTo($cell)
 						.attr("target", "_blank")
-						.attr("href", MH_BASE + "MonsterView.php?ai_IDPJ=" + o.id);
+						.attr("href", mountyhall.urlBase + "View/MonsterView.php?ai_IDPJ=" + o.id);
 						var match = o.nom.match(/^([^\[]+)( \[[^\]]+\])$/);
 						if (match) {
 							$o.text(o.n + ": " + match[1]).append(

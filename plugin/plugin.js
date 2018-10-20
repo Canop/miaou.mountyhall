@@ -31,6 +31,33 @@ exports.init = async function(miaou){
 		],
 		{canBeLocal: false}
 	);
+	prefs.definePref(
+		"mountyhall.url",
+		"auto",
+		"Base of MH URLs",
+		[
+			{
+				value: "auto",
+				label: "automatic selection of either standard or smartphone"
+			},
+			{
+				value: "standard",
+				label: "official MH URL : https://games.mountyhall.com/mountyhall"
+			},
+			{
+				value: "smartphone",
+				label: "MH URL for mobiles: https://smartphone.mountyhall.com/mountyhall"
+			},
+			{
+				value: "raistlin",
+				label: "Raistlin's proxy : https://mh.mh.raistlin.fr/mountyhall"
+			},
+			{
+				value: "raistlin-mz",
+				label: "Raistlin's proxy with Mountyzilla : https://mh2.mh.raistlin.fr/mountyhall"
+			}
+		],
+	);
 	await miaou.requestTag({
 		name: "MountyHall",
 		description:

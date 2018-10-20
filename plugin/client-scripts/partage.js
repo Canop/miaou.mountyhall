@@ -129,7 +129,7 @@ miaou(function(mountyhall, chat, gui, locals, time, ws){
 			var	$t = $("<div class=mountyhall-team-troll>"),
 				p = troll.profil4;
 			$("<a class=nom>")
-			.attr("href", "https://games.mountyhall.com/mountyhall/View/PJView.php?ai_IDPJ="+troll.id)
+			.attr("href", mountyhall.urlBase + "View/PJView.php?ai_IDPJ="+troll.id)
 			.attr("target", "troll_"+troll.id)
 			.text(troll.nom).appendTo($t);
 			if (!p) {
