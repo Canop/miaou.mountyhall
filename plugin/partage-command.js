@@ -98,7 +98,6 @@ function updateTroll(ct, script, options){
 }
 
 commands["UpdateProfilTroll"] = function(ct){
-	ct.nostore = true;
 	return updateTroll.call(this, ct, "Profil4", {json:1})
 	.then(function(){
 		return papi.getRoomTrolls.call(this, ct.shoe.room.id);
@@ -113,7 +112,6 @@ commands["UpdateProfilTroll"] = function(ct){
 }
 
 commands["UpdateVueTroll"] = function(ct){
-	ct.nostore = true;
 	return updateTroll.call(this, ct, "Vue2", {Lieux:1})
 	.then(function(trollView){
 		ct.shoe.emit("mountyhall.setViewPlayer", trollView);

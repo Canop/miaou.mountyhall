@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "perfect": "^1.1.0",
+    "iconv-lite": "^0.4"
+  }
+}
