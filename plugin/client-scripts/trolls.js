@@ -72,6 +72,7 @@ miaou(function(mountyhall, locals){
 		['Bunkeeeeeeeer', 'bkr'],
 		['Le Comte Demont\'Cristo', 'comte'],
 		['Pên-Hïss Bélõrgàn', 'Brokète'],
+		['PõmPõmPõm', 'pom', true],
 	].forEach(function(e){
 		var	name = mountyhall.lowerCasedTrollNames[e[0].toLowerCase()],
 			alias = e[1].toLowerCase(),
