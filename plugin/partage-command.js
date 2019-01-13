@@ -1,6 +1,24 @@
 const	papi = require("./partage.js"),
 	bench = require("../../libs/bench.js"),
+	prefs = require("../../libs/prefs.js"),
 	commands = {};
+
+
+// FIXME mapping dupliqué avec le code client
+async function urlBaseMH(con, userId){
+	let userPrefs = await prefs.getUserGlobalPrefs(con, userId);
+	let pref = userPrefs["mountyhall.url"];
+	if (pref=="raistlin") {
+		return "https://mh.mh.raistlin.fr/mountyhall/"
+	}
+	if (pref=="raistlin-mz") {
+		return "https://mh2.mh.raistlin.fr/mountyhall/"
+	}
+	if ((pref=="auto" && gui.mobile) || pref=="smartphone") {
+		return "https://smartphone.mountyhall.com/mountyhall/";
+	}
+	return "https://games.mountyhall.com/mountyhall/";
+}
 
 // command adding a partage in the current room
 commands["On"] = function(ct){
@@ -150,6 +168,14 @@ commands["UpdateRoom"] = function(ct){
 	});
 }
 
+commands["PX"] = async function(ct){
+	let con = this;
+	let trolls = await papi.getRoomTrolls.call(con, ct.shoe.room.id);
+	let url = await urlBaseMH(con, ct.shoe.publicUser.id);
+	url += "MH_Play/Actions/Play_a_DonPX.php?dest=" + trolls.map(t=>t.id).join(",");
+	ct.reply("Cette URL permet de partager les px si vous êtes connecté à MH:\n" + url, true);
+}
+
 commands["RequestsUser"] = function(ct){
 	ct.nostore = true;
 	var players = [ct.shoe.publicUser.id];
@@ -212,6 +238,7 @@ exports.onPartageCommand = function(ct){
 	if (/^update[-\s]*room/i.test(ct.args)) return doCommand("UpdateRoom");
 	if (/^requests[-\s]*user/i.test(ct.args)) return doCommand("RequestsUser");
 	if (/^requests[-\s]*room/i.test(ct.args)) return doCommand("RequestsRoom");
+	if (/^px$/i.test(ct.args)) return doCommand("PX");
 	throw "Command not understood";
 }
 

@@ -64,6 +64,7 @@ miaou(function(mountyhall, ed, gui, locals, md, plugins, prefs){
 				["remove"],
 				["off"],
 				["list"],
+				["px"],
 			]);
 			mountyhall.urlBase = (function(){
 				let pref = prefs.get("mountyhall.url");
