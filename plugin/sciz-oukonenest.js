@@ -10,15 +10,15 @@ exports.init = function(_miaou){
 	miaou = _miaou;
 	eventRegex = miaou.lib("rex")`
 		^(\d\d)\/(\d\d)\/(20\d\d) (\d\d)h(\d\d):(\d\d)		// date
-		\s([A-zÀ-ÿ]{3,}(?: [A-zÀ-ÿ]{2,})*)(?: \(([^)]+)\))?	// action (modifieur)
+		\s(?:MORT\s-\s)?(.{3,}(?: [A-zÀ-ÿ]{2,})*)(?: \(([^)]+)\))?	// action (modifieur)
 		\sde ([^(]+) \((\d+)\)					// auteur (numéro)
 		\ssur ([^(]+) \((\d+)\)					// victime (numéro)
 		\s*:?
-		\s*(-?\d+PV)?						// impact en PV
-		\s*(\d+%)?						// blessure
-		.*?
-		(?:\s*\(([a-z0-9 +-]+)\))?$				// details
-	/i`;
+		\s*(-?\d+PV)?										// impact en PV
+		\s*(\d+%)?											// blessure
+		([^\(]*).*?                     // details CDM
+		(?:\s*\(([a-z0-9 +-]+)\))?$			// details frappe
+	/im`;
 }
 
 function initBot(){
@@ -46,9 +46,10 @@ exports.prepare = function(){
 }
 
 function strToEvent(str){
-	let m = str.match(eventRegex);
+	let m = str.replace("\n", " ").match(eventRegex);
 	if (!m) return;
-	let [, day, month, year, hour, min, sec, action, mod, name1, num1, name2, num2, pv, blessure, détails] = m;
+	let [, day, month, year, hour, min, sec, action, mod,
+		name1, num1, name2, num2, pv, blessure, détails2, détails] = m;
 	// parsing en temps local... mon serveur est sur la même timezone que celui de MH ^^
 	let date = new Date(year, month-1, day, hour, min, sec);
 	let event = {
@@ -56,7 +57,7 @@ function strToEvent(str){
 		p1:{nom:name1, num:+num1}, p2:{nom:name2, num:+num2},
 		pv: pv ? `**${pv}**` : '',
 		blessure,
-		détails: (détails||"").replace(/(\d+) /g, "$1|")
+		détails: (détails2||détails||"").replace(/(\d+) /g, "$1|")
 	};
 	return event;
 }
@@ -70,7 +71,7 @@ exports.parse = function(message){
 	console.log('event:', event);
 	if (event && event.p2.num==this.id) {
 		event.nom = event.p2.nom;
-		if (event.action=="CDM") {
+		if (event.action=="CDM"||event.action.includes("Connaissance des monstres")) {
 			let parts = lines.filter(l=>(/^(pv|esq|arm)/i.test(l))).map(l=>l.toLowerCase());
 			parts.push(`blessure: ${event.blessure}`);
 			event.détails = parts.join("|");
