@@ -1,6 +1,6 @@
 
 
-const checks = [
+const badges = [
 	{
 		name: "Vrai Troll",
 		level: "bronze",
@@ -12,8 +12,17 @@ const checks = [
 			return troll && troll.race && troll.id;
 		}
 	},
+	{
+		name: "Outilleur Miaou",
+		level: "silver",
+		condition: "Avoir développé un outil pour MountyHall intégré à Miaou",
+	},
+	{
+		name: "Assistant Outilleur Miaou",
+		level: "bronze",
+		condition: "Avoir aidé à développer un outil pour MountyHall intégré à Miaou",
+	},
 ];
-
 
 exports.registerBadges = async function(con, miaou){
 	var badging = miaou.plugin("badging");
@@ -26,18 +35,21 @@ exports.registerBadges = async function(con, miaou){
 		console.log("No Official Room specified for MountyHall. MH badges are disabled.");
 		return;
 	}
-	for (var i=0; i<checks.length; i++) {
-		var c = checks[i];
-		await badging.register(con, {
-			badge: {
-				tag: "MountyHall",
-				name: c.name,
-				level: c.level,
-				condition: c.condition
-			},
-			awardRoom: roomId,
-			checkPlayer: c.checkPlayer
-		});
+	for (var i=0; i<badges.length; i++) {
+		let badge = badges[i];
+		badge.tag = "MountyHall";
+		let checkPlayer = badge.checkPlayer;
+		badge.checkPlayer = null;
+		if (badge.condition) {
+			await badging.register(con, {
+				badge,
+				awardRoom: roomId,
+				checkPlayer,
+			});
+		} else {
+			badge.manual = true;
+			await badging.initBadge(con, badge);
+		}
 	}
 }
 

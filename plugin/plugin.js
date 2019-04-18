@@ -69,7 +69,7 @@ exports.init = async function(miaou){
 			"Donner ce tag à une salle Miaou apporte de nombreuses fonctions liées au jeu MountyHall."
 	});
 	await db.do(async function(con){
-		await require("./auto-badges.js").registerBadges(con, miaou);
+		await require("./badges.js").registerBadges(con, miaou);
 	});
 }
 
