@@ -4,7 +4,7 @@
 
 	/*eslint-disable max-len*/
 	var patterns = [
-		{re:/ONNAISSANCE DES MONSTRES sur (?:une?|:)\s+([^\(]+)\s+\((\d+)\)/i, clear:true, res:['nom', 'id'], vals:{cdm:'ok'}},
+		{re:/ONNAISSANCE DES MONSTRES (?:sur )?(?:une?|:)\s+([^\(]+)\s+\((\d+)\)/i, clear:true, res:['nom', 'id'], vals:{cdm:'ok'}},
 		{re:/NALYSE ANATOMIQUE sur ([^\(]+)\s+\((\d+)\)/i, clear:true, res:['nom', 'id'], vals:{aa:'ok'}},
 		{re:/ous avez utilis. le Sortil.ge : (\w+)/i, clear:true, res:['sort']},
 		{re:/Cibl. fait partie des :[^\(\)]+\(\s*([^\(]+)\s*-\s*N°(\d+)\)/i, res:['nom', 'id'], vals:{cdm:'ok'}},
