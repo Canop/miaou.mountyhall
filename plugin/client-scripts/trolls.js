@@ -20,7 +20,7 @@ miaou(function(mountyhall, locals){
 		"down", "dragon", "dudu", "durak", "durakuir",
 		"espace",
 		"fan", "fanatique", "fichtre", "fish", "folie", "forge",
-		"giant", "glop", "gné", "gniark", "gogo", "golem", "gowaps", "gros", "guy",
+		"giant", "glop", "gné", "gniark", "gogo", "golem", "gowaps", "grog", "gros", "guy",
 		"hein ?", "hum", "hypnos", "hypnotiseur",
 		"imagine", "inscription", "invi", "invisible", "ira",
 		"kaboum", "kastar", "kiki", "kill",
