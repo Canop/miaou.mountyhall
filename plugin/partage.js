@@ -2,7 +2,7 @@
 const	MAX_APPELS_DYNAMIQUES = 9,
 	fmt = require("../../libs/fmt.js"),
 	iconvlite = require('iconv-lite'),
-	http = require('http'),
+	https = require('https'),
 	Promise = require("bluebird");
 
 // queries a SP ("script public")
@@ -15,7 +15,7 @@ exports.fetchSP = function(sp, num, mdpr, options={}){
 		path += "&" + key + "=" + encodeURIComponent(options[key]);
 	}
 	console.log('path:', path);
-	var req = http.request({
+	var req = https.request({
 		hostname: "sp.mountyhall.com",
 		path,
 		method: "GET"
