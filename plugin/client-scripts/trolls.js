@@ -36,7 +36,7 @@ miaou(function(mountyhall, locals){
 		"raaaaah", "ratatouille", "refait", "retrouver", "roc", "rose", "roulette",
 		"salade", "silence", "silver", "six", 'son', "songe", "sorcière", "souris",
 		"sphynx", "steack", "sushi", "sympa",
-		'test', "titan", "tomawak", 'trolette', 'troll', "trollinet", "trou", "truc",
+		'test', "titan", "tomawak", 'trolette', 'troll', "trollette", "trollinet", "trou", "truc",
 		"vrille",
 		"wiki",
 		"yop",
