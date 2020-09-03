@@ -51,7 +51,7 @@ exports.init = async function(miaou){
 			{
 				value: "raistlin",
 				label: "Raistlin's proxy : https://mh.mh.raistlin.fr/mountyhall"
-			},			
+			},
 			{
 				value: "raistlin-mhp",
 				label: "Raistlin's proxy with Mountyzilla and Poissotron : https://mhp.mh.raistlin.fr/mountyhall"
