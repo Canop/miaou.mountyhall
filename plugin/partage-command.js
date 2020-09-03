@@ -14,6 +14,9 @@ async function urlBaseMH(con, userId){
 	if (pref=="raistlin-mz") {
 		return "https://mh2.mh.raistlin.fr/mountyhall/"
 	}
+	if (pref=="raistlin-mhp") {
+		return "https://mhp.mh.raistlin.fr/mountyhall/"
+	}
 	if ((pref=="auto" && gui.mobile) || pref=="smartphone") {
 		return "https://smartphone.mountyhall.com/mountyhall/";
 	}
