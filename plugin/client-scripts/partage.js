@@ -139,7 +139,7 @@ miaou(function(mountyhall, chat, gui, locals, time, ws){
 			var rnc = p.raceNomCourt;
 			if (!rnc) rnc = raceLetter(troll.race);
 			$("<div class=raceNiveau>").text(rnc+p.niveau).appendTo($t);
-			p.pv = tot(p.caracs.pvActuels);
+			p.pv = p.caracs.pvActuels ? p.caracs.pvActuels.CAR : "?";
 			p.pvMax = tot(p.caracs.pvMax);
 			p.pdla = p.dla+p.dureeTour*60;
 			var	now = Date.now()/1000|0,

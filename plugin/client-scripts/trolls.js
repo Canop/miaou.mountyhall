@@ -31,7 +31,7 @@ miaou(function(mountyhall, locals){
 		"mort", "mounty", "mumuse", "musaraigne",
 		"ninix", "noob", "nos",
 		"okey", "ombre", "origine", "ouille", "oups",
-		"paf", "parfait", 'pas', "pâquerette", "pépin", "phoenix", "personne", "poil", "portnawak",
+		"paf", "parfait", 'pas', "pas là", "pâquerette", "pépin", "phoenix", "personne", "poil", "portnawak",
 		"poison", "popo", "poulet", "pourri", "pub",
 		"raaaaah", "ratatouille", "refait", "retrouver", "roc", "rose", "roulette",
 		"salade", "silence", "silver", "six", 'son', "songe", "sorcière", "souris",
