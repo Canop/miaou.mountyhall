@@ -39,7 +39,7 @@ miaou(function(mountyhall, ed, gui, locals, md, plugins, prefs){
 					'>'+id+'</a>';
 			} else {
 				var name = mountyhall.trollsById[+id];
-				if (!name) return id;
+				if (!name) return s;
 				var after = t.slice(i+s.length);
 				if (/^\s*(pv|%|points)/i.test(after)) return id; // let's not replace "5000" in "j'ai enlevé 5000 pv"
 				return '<a target=_blank href='+mountyhall.urlBase+'View/PJView.php?ai_IDPJ='+id+
