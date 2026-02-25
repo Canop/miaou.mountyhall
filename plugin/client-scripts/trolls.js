@@ -12,7 +12,7 @@ miaou(function(mountyhall, locals){
 	// but they're still used when searching by number
 	[
 		"ade", "arf", 'autre', "aura", "aventure",
-		"balrog", "beurk", "belle", "bibi", "bidouille", "blabla", "blanche", "bleu", "bof",
+		"balrog", "beurk", "belle", "bibi", "bidouille", "bien vu", "blabla", "blanche", "bleu", "bof",
 		"bol", "boom", "boum", "boss", "bouarf", "boulette",
 		"ca va chier", "caché", "caribou", "cassis", "cat", "cerne", "champion", 'chonchon', "chocolat",
 		"claire", "clic", "courte", "crash", "cross",
