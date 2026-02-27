@@ -248,9 +248,8 @@
 .mountyhall-refresh-troll {
 	cursor: pointer;
 	&::before {
-		@extend .fontello;
 		font-size: 110%;
-		content: '\e834';
+		content: '\0027F3';
 	}
 	&.disabled {
 		opacity: .2;
@@ -263,9 +262,8 @@
 #mountyhall-team-open-view-button {
 	cursor: pointer;
 	&::before {
-		@extend .fontello;
 		font-size: 115%;
-		content: '\e811';
+		content: '\01F441';
 	}
 }
 #mountyhall-team-toggle-button, #mountyhall-team-minimize-button {
@@ -287,9 +285,8 @@
 	height: 20px;
 	&::before {
 		color: $miaou-logo-color;
-		@extend .fontello;
 		font-size: 20px;
-		content: '\e80b';
+		content: '\0024D8';
 	}
 }
 
