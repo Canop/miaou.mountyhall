@@ -112,6 +112,9 @@ function renderMHProfile(ppi, room){
 			/^http:\/\/blason.mountyhall.com\//,
 			"https://games.mountyhall.com/MH_Blasons/"
 		);
+		if (src.startsWith('/')) {
+			src = "https://games.mountyhall.com" + src;
+		}
 		html += '<img src="' + src + '">'; // fixme possible injection
 	}
 	html += '<div>';
@@ -146,7 +149,13 @@ exports.externalProfile = {
 	},
 	comments: "This profile is only displayed in rooms having the MountyHall tag.",
 	avatarUrl: function(ppi){
-		return ppi.troll.blason;
+		if (!ppi || !ppi.troll) return;
+		let blason = ppi.troll.blason;
+		if (blason && blason.startsWith('/')) {
+			// fixing old blason URL
+			blason = "https://games.mountyhall.com" + blason;
+		}
+		return blason;
 	}
 }
 
